@@ -1,0 +1,20 @@
+CLASS zcl_art_normal DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    DATA:
+      x TYPE decfloat16,
+      y TYPE decfloat16,
+      z TYPE decfloat16.
+
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_art_normal IMPLEMENTATION.
+ENDCLASS.
