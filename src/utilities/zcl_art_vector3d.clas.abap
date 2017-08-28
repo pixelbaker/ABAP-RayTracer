@@ -21,11 +21,35 @@ CLASS zcl_art_vector3d DEFINITION
           REFERENCE(i_normal) TYPE REF TO zcl_art_normal OPTIONAL
           REFERENCE(i_point)  TYPE REF TO zcl_art_point3d OPTIONAL,
 
-      dot_product_normal
+      get_dot_product_by_normal
         IMPORTING
           i_normal             TYPE REF TO zcl_art_normal
         RETURNING
-          VALUE(r_dot_product) TYPE decfloat16.
+          VALUE(r_dot_product) TYPE decfloat16,
+
+      get_dot_product_by_vector
+        IMPORTING
+          i_vector             TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_dot_product) TYPE decfloat16,
+
+      get_sum_by_vector
+        IMPORTING
+          i_vector        TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
+      get_product_by_decfloat
+        IMPORTING
+          i_value         TYPE decfloat16
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
+      get_quotient_by_decfloat
+        IMPORTING
+          i_value         TYPE decfloat16
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d.
 
 
   PROTECTED SECTION.
@@ -34,7 +58,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_vector3d IMPLEMENTATION.
+CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -95,8 +119,39 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD dot_product_normal.
+  METHOD get_dot_product_by_normal.
     r_dot_product = x * i_normal->x + y * i_normal->y + z * i_normal->z.
   ENDMETHOD.
 
+
+  METHOD get_dot_product_by_vector.
+    r_dot_product = x * i_vector->x + y * i_vector->y + z * i_vector->z.
+  ENDMETHOD.
+
+
+  METHOD get_product_by_decfloat.
+    CREATE OBJECT r_vector
+      EXPORTING
+        i_x = x * i_value
+        i_y = y * i_value
+        i_z = z * i_value.
+  ENDMETHOD.
+
+
+  METHOD get_quotient_by_decfloat.
+    CREATE OBJECT r_vector
+      EXPORTING
+        i_x = x / i_value
+        i_y = y / i_value
+        i_z = z / i_value.
+  ENDMETHOD.
+
+
+  METHOD get_sum_by_vector.
+    CREATE OBJECT r_vector
+      EXPORTING
+        i_x = x + i_vector->x
+        i_y = y + i_vector->y
+        i_z = z + i_vector->z.
+  ENDMETHOD.
 ENDCLASS.

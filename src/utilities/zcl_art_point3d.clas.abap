@@ -18,13 +18,19 @@ CLASS zcl_art_point3d DEFINITION
           VALUE(i_z)         TYPE decfloat16 OPTIONAL
           REFERENCE(i_point) TYPE REF TO zcl_art_point3d OPTIONAL,
 
-      subtract_point
+      get_difference_from_point
         IMPORTING
           i_point         TYPE REF TO zcl_art_point3d
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
-      subtract_vector
+      get_difference_from_vector
+        IMPORTING
+          i_vector       TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_point) TYPE REF TO zcl_art_point3d,
+
+      get_sum_by_vector
         IMPORTING
           i_vector       TYPE REF TO zcl_art_vector3d
         RETURNING
@@ -37,7 +43,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_POINT3D IMPLEMENTATION.
+CLASS zcl_art_point3d IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -74,7 +80,7 @@ CLASS ZCL_ART_POINT3D IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD subtract_point.
+  METHOD get_difference_from_point.
     "vector joining two points
 
     CREATE OBJECT r_vector
@@ -85,11 +91,21 @@ CLASS ZCL_ART_POINT3D IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD subtract_vector.
+  METHOD get_difference_from_vector.
     CREATE OBJECT r_point
       EXPORTING
         i_x = x - i_vector->x
         i_y = y - i_vector->y
         i_z = z - i_vector->z.
   ENDMETHOD.
+
+
+  METHOD get_sum_by_vector.
+    CREATE OBJECT r_point
+      EXPORTING
+        i_x = x + i_vector->x
+        i_y = x + i_vector->y
+        i_z = x + i_vector->z.
+  ENDMETHOD.
+
 ENDCLASS.

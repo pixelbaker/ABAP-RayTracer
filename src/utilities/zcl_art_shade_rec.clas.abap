@@ -29,11 +29,9 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
 
 
   METHOD constructor.
-    ASSERT i_world IS BOUND OR
-           i_shade_rec IS BOUND.
+    IF i_world IS SUPPLIED.
+      ASSERT i_world IS BOUND.
 
-
-    IF i_world IS BOUND.
       hit_an_object = abap_false.
       CREATE OBJECT local_hit_point.
       CREATE OBJECT normal.
@@ -45,7 +43,8 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
     ENDIF.
 
 
-    IF i_shade_rec IS BOUND.
+    IF i_shade_rec IS SUPPLIED.
+      ASSERT i_shade_rec IS BOUND.
       SYSTEM-CALL OBJMGR CLONE i_shade_rec TO me.
     ENDIF.
   ENDMETHOD.

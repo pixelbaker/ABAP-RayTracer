@@ -5,12 +5,16 @@ CLASS zcl_art_normal DEFINITION
 
   PUBLIC SECTION.
     DATA:
-      x TYPE decfloat16,
-      y TYPE decfloat16,
-      z TYPE decfloat16.
+      x TYPE decfloat16 READ-ONLY,
+      y TYPE decfloat16 READ-ONLY,
+      z TYPE decfloat16 READ-ONLY.
 
     METHODS:
-      normalize.
+      normalize,
+
+      assignment_by_vector
+        IMPORTING
+          i_vector TYPE REF TO zcl_art_vector3d.
 
 
   PROTECTED SECTION.
@@ -28,6 +32,13 @@ CLASS zcl_art_normal IMPLEMENTATION.
     x = x / length.
     y = y / length.
     z = z / length.
+  ENDMETHOD.
+
+
+  METHOD assignment_by_vector.
+    x = i_vector->x.
+    y = i_vector->y.
+    z = i_vector->z.
   ENDMETHOD.
 
 ENDCLASS.

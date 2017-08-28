@@ -15,7 +15,6 @@ CLASS zcl_art_plane DEFINITION
       hit REDEFINITION.
 
 
-
   PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS:
@@ -39,12 +38,14 @@ CLASS zcl_art_plane IMPLEMENTATION.
     "  constructor which needs point and normal and
     "  copy constructor
 
+
     super->constructor( ).
 
     "Constructor (point and normal)
-    IF i_point IS BOUND OR
-       i_normal IS BOUND.
+    IF i_point IS SUPPLIED OR
+       i_normal IS SUPPLIED.
       ASSERT i_point IS BOUND AND i_normal IS BOUND.
+
 
       _point = i_point.
       _normal = i_normal.
@@ -60,6 +61,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
 
       _point = i_plane->_point.
       _normal = i_plane->_normal.
+      set_color( i_plane->color ).
       RETURN.
     ENDIF.
 
@@ -74,12 +76,15 @@ CLASS zcl_art_plane IMPLEMENTATION.
   METHOD hit.
     DATA t TYPE decfloat16.
     "t = (p - ray.o) * n / ( ray.d * n)
-    t = _point->subtract_point( i_ray->origin )->dot_product_normal( _normal ) / i_ray->direction->dot_product_normal( _normal ).
+    t = _point->get_difference_from_point( i_ray->origin )->get_dot_product_by_normal( _normal ) /
+        i_ray->direction->get_dot_product_by_normal( _normal ).
 
     IF t > kepsilon.
       e_tmin = t.
       c_shade_rec->normal = _normal.
-      "c_shade_rec->local_hit_point = i_ray->origin + t * i_ray->direction.
+
+      "shadeRec = ray.o + t * ray.d
+      c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t ) ).
 
       e_hit = abap_true.
     ELSE.
