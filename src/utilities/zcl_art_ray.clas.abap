@@ -5,8 +5,8 @@ CLASS zcl_art_ray DEFINITION
 
   PUBLIC SECTION.
     DATA:
-      origin    TYPE REF TO zcl_art_point3d READ-ONLY,
-      direction TYPE REF TO zcl_art_vector3d READ-ONLY.
+      origin    TYPE REF TO zcl_art_point3d,
+      direction TYPE REF TO zcl_art_vector3d.
 
 
     METHODS:
@@ -29,7 +29,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_ray IMPLEMENTATION.
+CLASS ZCL_ART_RAY IMPLEMENTATION.
 
 
   METHOD assignment.

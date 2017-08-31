@@ -5,9 +5,9 @@ CLASS zcl_art_point3d DEFINITION
 
   PUBLIC SECTION.
     DATA:
-      x TYPE decfloat16 READ-ONLY,
-      y TYPE decfloat16 READ-ONLY,
-      z TYPE decfloat16 READ-ONLY.
+      x TYPE decfloat16,
+      y TYPE decfloat16,
+      z TYPE decfloat16.
 
     METHODS:
       constructor
@@ -43,7 +43,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_point3d IMPLEMENTATION.
+CLASS ZCL_ART_POINT3D IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -107,5 +107,4 @@ CLASS zcl_art_point3d IMPLEMENTATION.
         i_y = x + i_vector->y
         i_z = x + i_vector->z.
   ENDMETHOD.
-
 ENDCLASS.
