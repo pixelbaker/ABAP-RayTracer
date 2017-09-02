@@ -16,7 +16,8 @@ CLASS zcl_art_world DEFINITION
 
       objects          TYPE geometric_objects,
 
-      paint_area       TYPE c.
+      paint_area       TYPE c,
+      bitmap           TYPE REF TO zcl_art_bitmap.
 
 
     METHODS:
@@ -75,6 +76,10 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
     build_single_sphere( ).
+
+    bitmap = NEW zcl_art_bitmap(
+      i_image_height_in_pixel = viewplane->vres
+      i_image_width_in_pixel = viewplane->hres ).
   ENDMETHOD.
 
 
@@ -152,15 +157,23 @@ CLASS zcl_art_world IMPLEMENTATION.
     g = mapped_color->g * 255.
     b = mapped_color->b * 255.
 
-    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    IF x = 0.
-      WRITE /1(*) y NO-GAP.
-    ENDIF.
+    bitmap->add_pixel(
+      VALUE #(
+        x = x
+        y = y
+        r = r
+        g = g
+        b = b ) ).
 
-    IF r > 0 OR g > 0 OR b > 0.
-      WRITE AT x(1) '#'.
-    ENDIF.
-    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+*    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+*    IF x = 0.
+*      WRITE /1(*) y NO-GAP.
+*    ENDIF.
+*
+*    IF r > 0 OR g > 0 OR b > 0.
+*      WRITE AT x(1) '#'.
+*    ENDIF.
+*    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 *    paint_area->set_pixel(
@@ -229,7 +242,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     DATA column TYPE int4.
     WHILE row < vres.
       column = 0.
-      WHILE column <= hres.
+      WHILE column < hres.
         ray->origin = NEW zcl_art_point3d(
           i_x = s * ( column - hres / '2.0' + '0.5' )
           i_y = s * ( row - vres / '2.0' + '0.5' )
