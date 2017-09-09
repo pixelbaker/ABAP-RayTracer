@@ -29,7 +29,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_RAY IMPLEMENTATION.
+CLASS zcl_art_ray IMPLEMENTATION.
 
 
   METHOD assignment.
@@ -59,6 +59,6 @@ CLASS ZCL_ART_RAY IMPLEMENTATION.
 
 
     CREATE OBJECT me->origin.
-    CREATE OBJECT me->direction.
+    me->direction = zcl_art_vector3d=>new_default( ).
   ENDMETHOD.
 ENDCLASS.

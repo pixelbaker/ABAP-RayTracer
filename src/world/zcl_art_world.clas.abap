@@ -236,7 +236,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     s = viewplane->s.
 
     DATA(ray) = NEW zcl_art_ray( ).
-    ray->direction = NEW zcl_art_vector3d( i_x = 0 i_y = 0 i_z = -1 ).
+    ray->direction = zcl_art_vector3d=>new_individual( i_x = 0 i_y = 0 i_z = -1 ).
 
     DATA row TYPE int4.
     DATA column TYPE int4.

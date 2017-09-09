@@ -43,7 +43,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_POINT3D IMPLEMENTATION.
+CLASS zcl_art_point3d IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -83,11 +83,10 @@ CLASS ZCL_ART_POINT3D IMPLEMENTATION.
   METHOD get_difference_from_point.
     "vector joining two points
 
-    CREATE OBJECT r_vector
-      EXPORTING
-        i_x = x - i_point->x
-        i_y = y - i_point->y
-        i_z = z - i_point->z.
+    r_vector = zcl_art_vector3d=>new_individual(
+      i_x = x - i_point->x
+      i_y = y - i_point->y
+      i_z = z - i_point->z ).
   ENDMETHOD.
 
 
