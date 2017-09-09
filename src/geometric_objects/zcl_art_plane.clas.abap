@@ -61,7 +61,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
 
       _point = i_plane->_point.
       _normal = i_plane->_normal.
-      set_color( i_plane->color ).
+      set_color( i_plane->_color ).
       RETURN.
     ENDIF.
 
