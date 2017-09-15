@@ -32,34 +32,57 @@ CLASS zcl_art_shade_rec DEFINITION
           VALUE(r_instance)      TYPE REF TO zcl_art_shade_rec.
 
 
-  PROTECTED SECTION.
   PRIVATE SECTION.
+    METHODS:
+      constructor
+        IMPORTING
+          VALUE(i_hit_an_object)       TYPE abap_bool
+          REFERENCE(i_local_hit_point) TYPE REF TO zcl_art_point3d
+          REFERENCE(i_normal)          TYPE REF TO zcl_art_normal
+          REFERENCE(i_color)           TYPE REF TO zcl_art_rgb_color
+          REFERENCE(i_world)           TYPE REF TO zcl_art_world.
+
 ENDCLASS.
 
 
 
-CLASS ZCL_ART_SHADE_REC IMPLEMENTATION.
+CLASS zcl_art_shade_rec IMPLEMENTATION.
 
 
   METHOD new_copy.
     ASSERT i_shade_rec IS BOUND.
 
-    r_instance = NEW #( ).
-    r_instance->hit_an_object = i_shade_rec->hit_an_object.
-    r_instance->local_hit_point = zcl_art_point3d=>new_copy( i_shade_rec->local_hit_point ).
-    r_instance->color = zcl_art_rgb_color=>new_copy( i_shade_rec->color ).
-    r_instance->world = i_shade_rec->world.
+    r_instance = NEW #(
+      i_world           = i_shade_rec->world
+      i_hit_an_object   = i_shade_rec->hit_an_object
+      i_normal          = zcl_art_normal=>new_copy( i_shade_rec->normal )
+      i_color           = zcl_art_rgb_color=>new_copy( i_shade_rec->color )
+      i_local_hit_point = zcl_art_point3d=>new_copy( i_shade_rec->local_hit_point ) ).
   ENDMETHOD.
 
 
   METHOD new_from_world.
     ASSERT i_world IS BOUND.
 
-    r_instance = NEW #( ).
-    r_instance->world = i_world.
-    r_instance->hit_an_object = abap_false.
-    r_instance->normal = NEW #( ).
-    r_instance->local_hit_point = zcl_art_point3d=>new_default( ).
-    r_instance->color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    r_instance = NEW #(
+      i_world           = i_world
+      i_hit_an_object   = abap_false
+      i_normal          = zcl_art_normal=>new_default( )
+      i_local_hit_point = zcl_art_point3d=>new_default( )
+      i_color           = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ) ).
+  ENDMETHOD.
+
+
+  METHOD constructor.
+    ASSERT i_local_hit_point IS BOUND AND
+           i_normal IS BOUND AND
+           i_color IS BOUND AND
+           i_world IS BOUND.
+
+    me->local_hit_point = i_local_hit_point.
+    me->hit_an_object = i_hit_an_object.
+    me->normal = i_normal.
+    me->color = i_color.
+    me->world = i_world.
   ENDMETHOD.
 ENDCLASS.

@@ -29,7 +29,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_PLANE IMPLEMENTATION.
+CLASS zcl_art_plane IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -68,7 +68,7 @@ CLASS ZCL_ART_PLANE IMPLEMENTATION.
 
     "Default constructor
     _point = zcl_art_point3d=>new_default( ).
-    CREATE OBJECT _normal.
+    _normal = zcl_art_normal=>new_default( ).
   ENDMETHOD.
 
 
