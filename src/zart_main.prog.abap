@@ -6,11 +6,11 @@
 REPORT zart_main.
 
 
-
 DATA:
   container1 TYPE REF TO cl_gui_custom_container,
   picture    TYPE REF TO cl_gui_picture,
   url        TYPE cndp_url.
+
 
 START-OF-SELECTION.
   "define some objects

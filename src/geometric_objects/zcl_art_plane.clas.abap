@@ -67,9 +67,8 @@ CLASS ZCL_ART_PLANE IMPLEMENTATION.
 
 
     "Default constructor
-    CREATE OBJECT _point.
+    _point = zcl_art_point3d=>new_default( ).
     CREATE OBJECT _normal.
-
   ENDMETHOD.
 
 

@@ -3,6 +3,13 @@ CLASS zcl_art_world DEFINITION
   FINAL
   CREATE PUBLIC.
 
+  " The World class does not have a copy constructor or an assignment operator, for the following reasons:
+  " 1    There's no need to copy construct or assign the World
+  " 2    We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data
+  " 3    These operations wouldn't work because the world is self-referencing:
+  "      the Tracer base class contains a pointer to the world. If we wrote a correct copy constructor for the
+  "      Tracer class, the World copy constructor would call itself recursively until we ran out of memory.
+
   PUBLIC SECTION.
     TYPES:
       geometric_objects TYPE TABLE OF REF TO zcl_art_geometric_object WITH DEFAULT KEY.
@@ -55,7 +62,7 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_shade_rec) TYPE REF TO zcl_art_shade_rec.
 
-  PROTECTED SECTION.
+
   PRIVATE SECTION.
     METHODS:
       delete_objects,
@@ -100,7 +107,7 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD clamp_to_color.
     "Set color to red if any component is greater than one
 
-    r_color = NEW zcl_art_rgb_color( i_color = i_color ).
+    r_color = zcl_art_rgb_color=>new_copy( i_color ).
 
     IF r_color->r > '1.0' OR
        r_color->g > '1.0' OR
@@ -188,7 +195,7 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD hit_bare_bones_objects.
     DATA t TYPE decfloat16.
     DATA tmin TYPE decfloat16 VALUE '10000000000'.
-    r_shade_rec = NEW zcl_art_shade_rec( i_world = me ).
+    r_shade_rec = zcl_art_shade_rec=>new_from_world( me ).
 
     LOOP AT objects ASSIGNING FIELD-SYMBOL(<object>).
       <object>->hit(
@@ -243,7 +250,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     WHILE row < vres.
       column = 0.
       WHILE column < hres.
-        ray->origin = NEW zcl_art_point3d(
+        ray->origin = zcl_art_point3d=>new_individual(
           i_x = s * ( column - hres / '2.0' + '0.5' )
           i_y = s * ( row - vres / '2.0' + '0.5' )
           i_z = zw ).

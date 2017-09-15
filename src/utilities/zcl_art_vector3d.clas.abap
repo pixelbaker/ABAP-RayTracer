@@ -3,6 +3,7 @@ CLASS zcl_art_vector3d DEFINITION
   FINAL
   CREATE PRIVATE.
 
+
   PUBLIC SECTION.
     DATA:
       x TYPE decfloat16 READ-ONLY,
@@ -80,13 +81,28 @@ CLASS zcl_art_vector3d DEFINITION
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d.
 
 
-  PROTECTED SECTION.
   PRIVATE SECTION.
+    METHODS:
+      constructor
+        IMPORTING
+          i_x TYPE decfloat16
+          i_y TYPE decfloat16
+          i_z TYPE decfloat16.
+
 ENDCLASS.
 
 
 
-CLASS zcl_art_vector3d IMPLEMENTATION.
+CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
+
+
+  METHOD constructor.
+    me->x = i_x.
+    me->y = i_y.
+    me->z = i_z.
+  ENDMETHOD.
+
+
   METHOD get_dot_product_by_normal.
     r_dot_product = x * i_normal->x + y * i_normal->y + z * i_normal->z.
   ENDMETHOD.
@@ -122,42 +138,46 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
 
 
   METHOD new_copy.
-    r_instance = NEW #( ).
-    r_instance->x = i_vector->x.
-    r_instance->y = i_vector->y.
-    r_instance->z = i_vector->z.
+    r_instance = NEW #(
+      i_x = i_vector->x
+      i_y = i_vector->y
+      i_z = i_vector->z ).
   ENDMETHOD.
 
 
   METHOD new_default.
-    r_instance = NEW #( ).
+    r_instance = new_unified( 0 ).
   ENDMETHOD.
 
 
   METHOD new_from_normal.
-    r_instance = NEW #( ).
-    r_instance->x = i_normal->x.
-    r_instance->y = i_normal->y.
-    r_instance->z = i_normal->z.
+    r_instance = NEW #(
+      i_x = i_normal->x
+      i_y = i_normal->y
+      i_z = i_normal->z ).
   ENDMETHOD.
 
 
   METHOD new_from_point.
-    r_instance = NEW #( ).
-    r_instance->x = i_point->x.
-    r_instance->y = i_point->y.
-    r_instance->z = i_point->z.
+    r_instance = NEW #(
+      i_x = i_point->x
+      i_y = i_point->y
+      i_z = i_point->z ).
   ENDMETHOD.
+
 
   METHOD new_individual.
-    r_instance = NEW #( ).
-    r_instance->x = i_x.
-    r_instance->y = i_y.
-    r_instance->z = i_z.
+    r_instance = NEW #(
+      i_x = i_x
+      i_y = i_y
+      i_z = i_z ).
   ENDMETHOD.
 
+
   METHOD new_unified.
-    r_instance = NEW #( ).
-    r_instance->x = r_instance->y = r_instance->z = i_value.
+    r_instance = NEW #(
+      i_x = i_value
+      i_y = i_value
+      i_z = i_value ).
   ENDMETHOD.
 ENDCLASS.

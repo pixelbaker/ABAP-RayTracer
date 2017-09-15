@@ -76,7 +76,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
 
     "Default constructor
-    CREATE OBJECT _center.
+    _center = zcl_art_point3d=>new_default( ).
     _radius = '1.0'.
   ENDMETHOD.
 

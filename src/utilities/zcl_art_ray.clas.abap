@@ -58,7 +58,7 @@ CLASS zcl_art_ray IMPLEMENTATION.
     ENDIF.
 
 
-    CREATE OBJECT me->origin.
+    me->origin = zcl_art_point3d=>new_default( ).
     me->direction = zcl_art_vector3d=>new_default( ).
   ENDMETHOD.
 ENDCLASS.

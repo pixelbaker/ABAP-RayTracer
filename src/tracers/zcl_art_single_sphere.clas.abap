@@ -26,7 +26,7 @@ CLASS zcl_art_single_sphere IMPLEMENTATION.
 
 
   METHOD trace_ray.
-    DATA(shade_rec) = NEW zcl_art_shade_rec( i_world = _world ).
+    DATA(shade_rec) = zcl_art_shade_rec=>new_from_world( _world ).
     DATA t TYPE decfloat16.
 
     _world->sphere->hit(
