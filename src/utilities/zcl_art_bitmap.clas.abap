@@ -32,7 +32,7 @@ CLASS zcl_art_bitmap DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS:
-      _co_bi_rgb_comporession     TYPE x LENGTH 4 VALUE '00000000',
+      _co_bi_rgb_compression      TYPE x LENGTH 4 VALUE '00000000',
       _co_empty_byte              TYPE x LENGTH 1 VALUE '00',
       _co_header_size_in_byte     TYPE int4 VALUE 54,
       _co_magic_number            TYPE x LENGTH 2 VALUE '424D',
@@ -61,8 +61,6 @@ CLASS zcl_art_bitmap DEFINITION
     METHODS:
       build_header,
 
-      build_pixel_array,
-
       get_row_size
         RETURNING
           VALUE(r_row_size_in_byte) TYPE int4,
@@ -83,16 +81,14 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
 
   METHOD add_pixel.
-*    INSERT i_pixel INTO TABLE _pixels.
-    DATA r TYPE x LENGTH 1.
-    DATA g TYPE x LENGTH 1.
-    DATA b TYPE x LENGTH 1.
+    DATA:
+      r TYPE x LENGTH 1,
+      g TYPE x LENGTH 1,
+      b TYPE x LENGTH 1.
+
     _conv->convert( EXPORTING data = i_pixel-r IMPORTING buffer = r ).
     _conv->convert( EXPORTING data = i_pixel-g IMPORTING buffer = g ).
     _conv->convert( EXPORTING data = i_pixel-b IMPORTING buffer = b ).
-*    r = i_pixel-r.
-*    g = i_pixel-g.
-*    b = i_pixel-b.
 
     CONCATENATE _data b g r INTO _data IN BYTE MODE.
 
@@ -105,10 +101,7 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
   METHOD build.
     CLEAR _header.
     build_header( ).
-*    build_pixel_array( ).
-
     CONCATENATE _header _data INTO r_bitmap IN BYTE MODE.
-*    r_bitmap = _header && _data.
   ENDMETHOD.
 
 
@@ -117,46 +110,34 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
     DATA magic_number TYPE x LENGTH 2.
     _conv->convert( EXPORTING data = _co_magic_number_in_ascii IMPORTING buffer = magic_number ).
-*    magic_number = _co_magic_number_in_ascii.
-*    magic_number = _co_magic_number.
 
     DATA file_size TYPE x LENGTH 4.
     DATA(bmp_file_size_in_byte) = get_bmp_file_size( ).
     _conv->convert( EXPORTING data = bmp_file_size_in_byte IMPORTING buffer = file_size ).
-*    file_size = bmp_file_size_in_byte.
 
     DATA offset TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = _co_header_size_in_byte IMPORTING buffer = offset ).
-*    offset = _co_header_size_in_byte.
 
     DATA dib_header_size TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = _co_dib_header_size_in_byte IMPORTING buffer = dib_header_size ).
-*    dib_header_size = _co_dib_header_size_in_byte.
 
     DATA image_width TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = _image_width_in_pixel IMPORTING buffer = image_width ).
-*    image_width = _image_width_in_pixel.
 
     DATA image_height TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = _image_height_in_pixel IMPORTING buffer = image_height ).
-*    image_height = _image_height_in_pixel.
 
     DATA num_color_palates TYPE x LENGTH 2.
     _conv->convert( EXPORTING data = _co_num_color_palettes IMPORTING buffer = num_color_palates ).
-*    num_color_palates = _co_num_color_palettes.
 
     DATA bits_per_pixel TYPE x LENGTH 2.
     _conv->convert( EXPORTING data = _bits_per_pixel IMPORTING buffer = bits_per_pixel ).
-*    bits_per_pixel = _bits_per_pixel.
 
     DATA raw_bitmap_size TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = ( bmp_file_size_in_byte - _co_header_size_in_byte ) IMPORTING buffer = raw_bitmap_size ).
-*    raw_bitmap_size = bmp_file_size_in_byte - _co_header_size_in_byte.
 
     DATA print_resolution TYPE x LENGTH 4.
     _conv->convert( EXPORTING data = _co_print_resolution IMPORTING buffer = print_resolution ).
-*    print_resolution = _co_print_resolution.
-
 
     CONCATENATE magic_number
                 file_size
@@ -168,34 +149,13 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
                 image_height
                 num_color_palates
                 bits_per_pixel
-                _co_bi_rgb_comporession
+                _co_bi_rgb_compression
                 raw_bitmap_size
                 print_resolution
                 print_resolution
                 _co_num_colors_in_palettes
                 _co_important_colors
                 INTO _header IN BYTE MODE.
-*    _header = magic_number &&
-*              file_size &&
-*              _co_application_specific &&
-*              _co_application_specific &&
-*              offset &&
-*              dib_header_size &&
-*              image_width &&
-*              image_height &&
-*              num_color_palates &&
-*              bits_per_pixel &&
-*              _co_bi_rgb_comporession &&
-*              raw_bitmap_size &&
-*              print_resolution &&
-*              print_resolution &&
-*              _co_num_colors_in_palettes &&
-*              _co_important_colors.
-  ENDMETHOD.
-
-
-  METHOD build_pixel_array.
-
   ENDMETHOD.
 
 
