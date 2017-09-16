@@ -7,7 +7,7 @@ CLASS zcl_art_geometric_object DEFINITION
     METHODS:
       constructor
         IMPORTING
-          i_object TYPE REF TO zcl_art_geometric_object OPTIONAL,
+          i_object TYPE REF TO zcl_art_geometric_object OPTIONAL, "Copy Constructor
 
       hit ABSTRACT
         IMPORTING
@@ -40,14 +40,12 @@ ENDCLASS.
 
 
 CLASS zcl_art_geometric_object IMPLEMENTATION.
-
-
   METHOD constructor.
     "Copy Constructor
     IF i_object IS SUPPLIED.
       ASSERT i_object IS BOUND.
 
-      _color = i_object->_color.
+      _color = zcl_art_rgb_color=>new_copy( i_object->_color ).
       RETURN.
     ENDIF.
 

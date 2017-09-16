@@ -2,16 +2,29 @@ CLASS zcl_art_plane DEFINITION
   PUBLIC
   INHERITING FROM zcl_art_geometric_object
   FINAL
-  CREATE PUBLIC.
+  CREATE PRIVATE.
 
   PUBLIC SECTION.
-    METHODS:
-      constructor
-        IMPORTING
-          VALUE(i_point)     TYPE REF TO zcl_art_point3d OPTIONAL "Constructor with point and normal
-          VALUE(i_normal)    TYPE REF TO zcl_art_normal OPTIONAL "Constructor with point and normal
-          REFERENCE(i_plane) TYPE REF TO zcl_art_plane OPTIONAL, "Copy constructor
+    CLASS-METHODS:
+      new_default
+        RETURNING
+          VALUE(r_instance) TYPE REF TO zcl_art_plane,
 
+      new_copy
+        IMPORTING
+          REFERENCE(i_plane) TYPE REF TO zcl_art_plane
+        RETURNING
+          VALUE(r_instance)  TYPE REF TO zcl_art_plane,
+
+      new_by_normal_and_point
+        IMPORTING
+          REFERENCE(i_normal) TYPE REF TO zcl_art_normal
+          REFERENCE(i_point)  TYPE REF TO zcl_art_point3d
+        RETURNING
+          VALUE(r_instance)   TYPE REF TO zcl_art_plane.
+
+
+    METHODS:
       hit REDEFINITION.
 
 
@@ -25,50 +38,28 @@ CLASS zcl_art_plane DEFINITION
       _point  TYPE REF TO zcl_art_point3d, "point through which plane passes
       _normal TYPE REF TO zcl_art_normal. "normal to the plane
 
+
+    METHODS:
+      constructor
+        IMPORTING
+          VALUE(i_point)  TYPE REF TO zcl_art_point3d
+          VALUE(i_normal) TYPE REF TO zcl_art_normal.
+
 ENDCLASS.
 
 
 
-CLASS zcl_art_plane IMPLEMENTATION.
+CLASS ZCL_ART_PLANE IMPLEMENTATION.
 
 
   METHOD constructor.
-    "Contains a
-    "  default constructor and
-    "  constructor which needs point and normal and
-    "  copy constructor
-
+    ASSERT i_point IS BOUND AND
+           i_normal IS BOUND.
 
     super->constructor( ).
 
-    "Constructor (point and normal)
-    IF i_point IS SUPPLIED OR
-       i_normal IS SUPPLIED.
-      ASSERT i_point IS BOUND AND i_normal IS BOUND.
-
-
-      _point = i_point.
-      _normal = i_normal.
-
-      _normal->normalize( ).
-      RETURN.
-    ENDIF.
-
-
-    "Copy Constructor
-    IF i_plane IS SUPPLIED.
-      ASSERT i_plane IS BOUND.
-
-      _point = i_plane->_point.
-      _normal = i_plane->_normal.
-      set_color( i_plane->_color ).
-      RETURN.
-    ENDIF.
-
-
-    "Default constructor
-    _point = zcl_art_point3d=>new_default( ).
-    _normal = zcl_art_normal=>new_default( ).
+    _point = i_point.
+    _normal = i_normal.
   ENDMETHOD.
 
 
@@ -89,5 +80,28 @@ CLASS zcl_art_plane IMPLEMENTATION.
     ELSE.
       e_hit = abap_false.
     ENDIF.
+  ENDMETHOD.
+
+
+  METHOD new_by_normal_and_point.
+    r_instance = NEW #(
+      i_point = zcl_art_point3d=>new_copy( i_point )
+      i_normal = zcl_art_normal=>new_copy( i_normal ) ).
+    r_instance->_normal->normalize( ).
+  ENDMETHOD.
+
+
+  METHOD new_copy.
+    r_instance = NEW #(
+      i_point = zcl_art_point3d=>new_copy( i_plane->_point )
+      i_normal = zcl_art_normal=>new_copy( i_plane->_normal ) ).
+    r_instance->set_color( zcl_art_rgb_color=>new_copy( i_plane->_color ) ).
+  ENDMETHOD.
+
+
+  METHOD new_default.
+    r_instance = NEW #(
+      i_point = zcl_art_point3d=>new_default( )
+      i_normal = zcl_art_normal=>new_default( ) ).
   ENDMETHOD.
 ENDCLASS.
