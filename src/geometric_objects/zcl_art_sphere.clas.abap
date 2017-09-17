@@ -2,16 +2,30 @@ CLASS zcl_art_sphere DEFINITION
   PUBLIC
   INHERITING FROM zcl_art_geometric_object
   FINAL
-  CREATE PUBLIC.
+  CREATE PRIVATE.
+
 
   PUBLIC SECTION.
-    METHODS:
-      constructor
-        IMPORTING
-          VALUE(i_center)     TYPE REF TO zcl_art_point3d OPTIONAL "Constructor with center and radius
-          VALUE(i_radius)     TYPE decfloat16 OPTIONAL "Constructor with center and radius
-          REFERENCE(i_sphere) TYPE REF TO zcl_art_sphere OPTIONAL, "Copy constructor
+    CLASS-METHODS:
+      new_default
+        RETURNING
+          VALUE(r_instance) TYPE REF TO zcl_art_sphere,
 
+      new_copy
+        IMPORTING
+          REFERENCE(i_sphere) TYPE REF TO zcl_art_sphere
+        RETURNING
+          VALUE(r_instance)   TYPE REF TO zcl_art_sphere,
+
+      new_by_center_and_radius
+        IMPORTING
+          REFERENCE(i_center) TYPE REF TO zcl_art_point3d
+          VALUE(i_radius)     TYPE decfloat16
+        RETURNING
+          VALUE(r_instance)   TYPE REF TO zcl_art_sphere.
+
+
+    METHODS:
       hit REDEFINITION,
 
       set_center
@@ -38,6 +52,12 @@ CLASS zcl_art_sphere DEFINITION
       _radius TYPE decfloat16.
 
 
+    METHODS:
+      constructor
+        IMPORTING
+          VALUE(i_center) TYPE REF TO zcl_art_point3d
+          VALUE(i_radius) TYPE decfloat16.
+
 ENDCLASS.
 
 
@@ -46,38 +66,12 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
 
   METHOD constructor.
-    "Contains a
-    "  default constructor and
-    "  constructor which needs center and radius and
-    "  copy constructor
+    ASSERT i_center IS BOUND.
 
     super->constructor( ).
 
-    "Constructor (center and radius)
-    IF i_center IS SUPPLIED OR
-       i_radius IS SUPPLIED.
-      ASSERT i_center IS BOUND AND i_radius IS SUPPLIED.
-
-      _center = i_center.
-      _radius = i_radius.
-      RETURN.
-    ENDIF.
-
-
-    "Copy Constructor
-    IF i_sphere IS SUPPLIED.
-      ASSERT i_sphere IS BOUND.
-
-      _center = i_sphere->_center.
-      _radius = i_sphere->_radius.
-      set_color( i_sphere->_color ).
-      RETURN.
-    ENDIF.
-
-
-    "Default constructor
-    _center = zcl_art_point3d=>new_default( ).
-    _radius = '1.0'.
+    _center = i_center.
+    _radius = i_radius.
   ENDMETHOD.
 
 
@@ -132,6 +126,32 @@ CLASS zcl_art_sphere IMPLEMENTATION.
     ENDIF.
 
     e_hit = abap_false.
+  ENDMETHOD.
+
+
+  METHOD new_by_center_and_radius.
+    ASSERT i_center IS BOUND.
+
+    r_instance = NEW #(
+      i_center = zcl_art_point3d=>new_copy( i_center )
+      i_radius = i_radius ).
+  ENDMETHOD.
+
+
+  METHOD new_copy.
+    ASSERT i_sphere IS BOUND.
+
+    r_instance = NEW #(
+      i_center = zcl_art_point3d=>new_copy( i_sphere->_center )
+      i_radius = i_sphere->_radius ).
+    r_instance->set_color( zcl_art_rgb_color=>new_copy( i_sphere->_color ) ).
+  ENDMETHOD.
+
+
+  METHOD new_default.
+    r_instance = NEW #(
+      i_center = zcl_art_point3d=>new_default( )
+      i_radius = '1.0' ).
   ENDMETHOD.
 
 

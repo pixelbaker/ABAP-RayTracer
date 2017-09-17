@@ -23,7 +23,6 @@ CLASS zcl_art_world DEFINITION
 
       objects          TYPE geometric_objects,
 
-      paint_area       TYPE c,
       bitmap           TYPE REF TO zcl_art_bitmap.
 
 
@@ -123,7 +122,7 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD constructor.
     viewplane = NEW zcl_art_viewplane( ).
     background_color = zcl_art_rgb_color=>black.
-    sphere = NEW zcl_art_sphere( ).
+    sphere = zcl_art_sphere=>new_default( ).
   ENDMETHOD.
 
 
@@ -181,14 +180,6 @@ CLASS zcl_art_world IMPLEMENTATION.
 *      WRITE AT x(1) '#'.
 *    ENDIF.
 *    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-*    paint_area->set_pixel(
-*      i_x = x
-*      i_y = y
-*      i_r = CAST #( mapped_color->r * 255 )
-*      i_g = CAST #( mapped_color->g * 255 )
-*      i_b = CAST #( mapped_color->b * 255 ) ).
   ENDMETHOD.
 
 
