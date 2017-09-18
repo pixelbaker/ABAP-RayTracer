@@ -62,13 +62,21 @@ CLASS zcl_art_sphere DEFINITION
       constructor
         IMPORTING
           VALUE(i_center) TYPE REF TO zcl_art_point3d
-          VALUE(i_radius) TYPE decfloat16.
+          VALUE(i_radius) TYPE decfloat16,
+
+      calc_normal_and_hit_point
+        IMPORTING
+          i_ray       TYPE REF TO zcl_art_ray
+          i_t         TYPE decfloat16
+          i_temp      TYPE REF TO zcl_art_vector3d
+        CHANGING
+          c_shade_rec TYPE REF TO zcl_art_shade_rec.
 
 ENDCLASS.
 
 
 
-CLASS ZCL_ART_SPHERE IMPLEMENTATION.
+CLASS zcl_art_sphere IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -107,13 +115,17 @@ CLASS ZCL_ART_SPHERE IMPLEMENTATION.
       denom = 2 * a.
 
       t = ( - b - e ) / denom. "smaller root
-
       IF t > _co_kepsilon.
         e_tmin = t.
-        c_shade_rec->normal->assignment_by_vector( i_ray->direction->get_product_by_decfloat( t
-            )->get_sum_by_vector( temp
-            )->get_quotient_by_decfloat( _radius ) ).
-        c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t ) ).
+
+        calc_normal_and_hit_point(
+          EXPORTING
+            i_ray = i_ray
+            i_t = t
+            i_temp = temp
+          CHANGING
+            c_shade_rec = c_shade_rec ).
+
         e_hit = abap_true.
         RETURN.
       ENDIF.
@@ -122,16 +134,33 @@ CLASS ZCL_ART_SPHERE IMPLEMENTATION.
 
       IF t > _co_kepsilon.
         e_tmin = t.
-        c_shade_rec->normal->assignment_by_vector( i_ray->direction->get_product_by_decfloat( t
-            )->get_sum_by_vector( temp
-            )->get_quotient_by_decfloat( _radius ) ).
-        c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t ) ).
+
+        calc_normal_and_hit_point(
+          EXPORTING
+            i_ray = i_ray
+            i_t = t
+            i_temp = temp
+          CHANGING
+            c_shade_rec = c_shade_rec ).
+
         e_hit = abap_true.
         RETURN.
       ENDIF.
     ENDIF.
 
     e_hit = abap_false.
+  ENDMETHOD.
+
+  METHOD calc_normal_and_hit_point.
+    "sr.normal = (temp + t * ray.direction) / radius;
+
+    DATA(vector) = i_ray->direction->get_product_by_decfloat( i_t ).
+    DATA(normal) = vector->get_sum_by_vector( i_temp ).
+    normal = normal->get_quotient_by_decfloat( _radius ).
+    c_shade_rec->normal->assignment_by_vector( normal ).
+
+    DATA(local_hit_point)  = i_ray->origin->get_sum_by_vector( vector ).
+    c_shade_rec->local_hit_point = local_hit_point.
   ENDMETHOD.
 
 
