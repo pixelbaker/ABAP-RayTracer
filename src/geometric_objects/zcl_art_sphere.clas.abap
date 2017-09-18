@@ -28,13 +28,19 @@ CLASS zcl_art_sphere DEFINITION
     METHODS:
       hit REDEFINITION,
 
-      set_center
+      set_center_by_value
         IMPORTING
-          i_point TYPE REF TO zcl_art_point3d OPTIONAL
-          i_value TYPE decfloat16 OPTIONAL
-          i_x     TYPE decfloat16 OPTIONAL
-          i_y     TYPE decfloat16 OPTIONAL
-          i_z     TYPE decfloat16 OPTIONAL,
+          i_value TYPE decfloat16,
+
+      set_center_by_components
+        IMPORTING
+          i_x TYPE decfloat16
+          i_y TYPE decfloat16
+          i_z TYPE decfloat16,
+
+      set_center_by_point
+        IMPORTING
+          i_point TYPE REF TO zcl_art_point3d,
 
       set_radius
         IMPORTING
@@ -62,7 +68,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_sphere IMPLEMENTATION.
+CLASS ZCL_ART_SPHERE IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -155,27 +161,21 @@ CLASS zcl_art_sphere IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_center.
-    IF i_point IS SUPPLIED.
-      ASSERT i_point IS BOUND.
-      _center = i_point.
-      RETURN.
-    ENDIF.
+  METHOD set_center_by_components.
+    _center->x = i_x.
+    _center->y = i_y.
+    _center->z = i_z.
+  ENDMETHOD.
 
 
-    IF i_value IS SUPPLIED.
-      _center->x = _center->y = _center->z = i_value.
-      RETURN.
-    ENDIF.
+  METHOD set_center_by_point.
+    ASSERT i_point IS BOUND.
+    _center = i_point.
+  ENDMETHOD.
 
 
-    IF i_x IS SUPPLIED OR i_y IS SUPPLIED OR i_z IS SUPPLIED.
-      ASSERT i_x IS SUPPLIED AND i_y IS SUPPLIED AND i_z IS SUPPLIED.
-      _center->x = i_x.
-      _center->y = i_y.
-      _center->z = i_z.
-      RETURN.
-    ENDIF.
+  METHOD set_center_by_value.
+    _center->x = _center->y = _center->z = i_value.
   ENDMETHOD.
 
 

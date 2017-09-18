@@ -31,7 +31,7 @@ CLASS zcl_art_plane DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS:
-      kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
+      _co_kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
 
 
     DATA:
@@ -69,7 +69,7 @@ CLASS ZCL_ART_PLANE IMPLEMENTATION.
     t = _point->get_difference_from_point( i_ray->origin )->get_dot_product_by_normal( _normal ) /
         i_ray->direction->get_dot_product_by_normal( _normal ).
 
-    IF t > kepsilon.
+    IF t > _co_kepsilon.
       e_tmin = t.
       c_shade_rec->normal = _normal.
 

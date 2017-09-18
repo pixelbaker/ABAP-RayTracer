@@ -16,14 +16,14 @@ CLASS zcl_art_world DEFINITION
 
 
     DATA:
-      viewplane        TYPE REF TO zcl_art_viewplane,
-      background_color TYPE REF TO zcl_art_rgb_color,
-      tracer           TYPE REF TO zcl_art_tracer,
-      sphere           TYPE REF TO zcl_art_sphere,
+      viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
+      background_color TYPE REF TO zcl_art_rgb_color READ-ONLY,
+      tracer           TYPE REF TO zcl_art_tracer READ-ONLY,
+      sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
 
-      objects          TYPE geometric_objects,
+      objects          TYPE geometric_objects READ-ONLY,
 
-      bitmap           TYPE REF TO zcl_art_bitmap.
+      bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY.
 
 
     METHODS:
@@ -72,7 +72,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_world IMPLEMENTATION.
+CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -90,16 +90,16 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build_single_sphere.
-    viewplane->set_hres( 200 ).
-    viewplane->set_vres( 200 ).
-    viewplane->set_pixel_size( '1.0' ).
-    viewplane->set_gamma( '1.0' ).
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+    me->viewplane->set_pixel_size( '1.0' ).
+    me->viewplane->set_gamma( '1.0' ).
 
-    background_color = zcl_art_rgb_color=>white.
-    tracer = NEW zcl_art_single_sphere( me ).
+    me->background_color = zcl_art_rgb_color=>white.
+    me->tracer = NEW zcl_art_single_sphere( me ).
 
-    sphere->set_center( i_value = '0.0' ).
-    sphere->set_radius( '85.0' ).
+    me->sphere->set_center_by_value( '0.0' ).
+    me->sphere->set_radius( '85.0' ).
   ENDMETHOD.
 
 
@@ -254,5 +254,4 @@ CLASS zcl_art_world IMPLEMENTATION.
       ADD 1 TO row.
     ENDWHILE.
   ENDMETHOD.
-
 ENDCLASS.
