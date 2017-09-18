@@ -43,26 +43,24 @@ FORM display USING i_bitmap_stream.
   DATA(picture) = NEW cl_gui_picture( parent = container ).
 
   "now we go from XSTRING back to binary
-  DATA:
-    BEGIN OF graphic_table_new OCCURS 0,
-      line(255) TYPE x,
-    END OF graphic_table_new.
+  TYPES binary_row TYPE x LENGTH 256.
+  DATA binary_rows TYPE TABLE OF binary_row WITH DEFAULT KEY.
 
   CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
     EXPORTING
       buffer     = i_bitmap_stream
     TABLES
-      binary_tab = graphic_table_new[].
+      binary_tab = binary_rows.
 
 
-  "and now we prepare everything for displaying
+  "and now we prepare everything for display
   DATA url TYPE cndp_url.
   CALL FUNCTION 'DP_CREATE_URL'
     EXPORTING
       type    = 'IMAGE'
       subtype = 'BMP'
     TABLES
-      data    = graphic_table_new[]
+      data    = binary_rows
     CHANGING
       url     = url.
 

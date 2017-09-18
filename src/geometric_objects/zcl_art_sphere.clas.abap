@@ -44,7 +44,7 @@ CLASS zcl_art_sphere DEFINITION
   PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS:
-      kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
+      _co_kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
 
 
     DATA:
@@ -102,7 +102,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
       t = ( - b - e ) / denom. "smaller root
 
-      IF t > kepsilon.
+      IF t > _co_kepsilon.
         e_tmin = t.
         c_shade_rec->normal->assignment_by_vector( i_ray->direction->get_product_by_decfloat( t
             )->get_sum_by_vector( temp
@@ -114,7 +114,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
       t = ( - b + e ) / denom. "larger root
 
-      IF t > kepsilon.
+      IF t > _co_kepsilon.
         e_tmin = t.
         c_shade_rec->normal->assignment_by_vector( i_ray->direction->get_product_by_decfloat( t
             )->get_sum_by_vector( temp
