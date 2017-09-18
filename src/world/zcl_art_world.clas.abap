@@ -120,9 +120,9 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD constructor.
-    viewplane = NEW zcl_art_viewplane( ).
-    background_color = zcl_art_rgb_color=>black.
-    sphere = zcl_art_sphere=>new_default( ).
+    me->viewplane = zcl_art_viewplane=>new_default( ).
+    me->background_color = zcl_art_rgb_color=>black.
+    me->sphere = zcl_art_sphere=>new_default( ).
   ENDMETHOD.
 
 
@@ -186,6 +186,7 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD hit_bare_bones_objects.
     DATA t TYPE decfloat16.
     DATA tmin TYPE decfloat16 VALUE '10000000000'.
+
     r_shade_rec = zcl_art_shade_rec=>new_from_world( me ).
 
     LOOP AT objects ASSIGNING FIELD-SYMBOL(<object>).
@@ -209,10 +210,9 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD max_to_one.
     DATA max_value TYPE decfloat16.
-    max_value = nmax(
-      val1 = i_color->r
-      val2 = nmax( val1 = i_color->g
-                   val2 = i_color->b  ) ).
+    max_value = nmax( val1 = i_color->r
+                      val2 = nmax( val1 = i_color->g
+                                   val2 = i_color->b  ) ).
 
     IF max_value > '1.0'.
       r_color = i_color->get_quotient_by_decfloat( max_value ).
@@ -223,15 +223,11 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD render_scene.
-    DATA:
-      hres TYPE int4,
-      vres TYPE int4,
-      s    TYPE decfloat16,
-      zw   TYPE decfloat16 VALUE '100.0'. "hard wired in
+    DATA zw TYPE decfloat16 VALUE '100.0'. "hard wired in
 
-    hres = viewplane->hres.
-    vres = viewplane->vres.
-    s = viewplane->s.
+    DATA(hres) = me->viewplane->hres.
+    DATA(vres) = me->viewplane->vres.
+    DATA(pixel_size) = me->viewplane->pixel_size.
 
     DATA(ray) = zcl_art_ray=>new_default( ).
     ray->direction = zcl_art_vector3d=>new_individual( i_x = 0 i_y = 0 i_z = -1 ).
@@ -242,8 +238,8 @@ CLASS zcl_art_world IMPLEMENTATION.
       column = 0.
       WHILE column < hres.
         ray->origin = zcl_art_point3d=>new_individual(
-          i_x = s * ( column - hres / '2.0' + '0.5' )
-          i_y = s * ( row - vres / '2.0' + '0.5' )
+          i_x = pixel_size * ( column - hres / '2.0' + '0.5' )
+          i_y = pixel_size * ( row - vres / '2.0' + '0.5' )
           i_z = zw ).
 
         DATA(pixel_color) = tracer->trace_ray( ray ).

@@ -1,24 +1,33 @@
 CLASS zcl_art_viewplane DEFINITION
   PUBLIC
   FINAL
-  CREATE PUBLIC.
+  CREATE PRIVATE.
 
   PUBLIC SECTION.
     DATA:
-      hres              TYPE int4,
-      vres              TYPE int4,
-      s                 TYPE decfloat16, "pixel size
+      hres              TYPE int4 READ-ONLY,
+      vres              TYPE int4 READ-ONLY,
+      pixel_size        TYPE decfloat16 READ-ONLY,
 
-      gamma             TYPE decfloat16,
-      inv_gamma         TYPE decfloat16, "the inverse of the gamma correction factor
+      gamma             TYPE decfloat16 READ-ONLY,
+      inv_gamma         TYPE decfloat16 READ-ONLY, "the inverse of the gamma correction factor
 
-      show_out_of_gamut TYPE abap_bool.
+      show_out_of_gamut TYPE abap_bool READ-ONLY.
+
+
+    CLASS-METHODS:
+      new_default
+        RETURNING
+          VALUE(r_instance) TYPE REF TO zcl_art_viewplane,
+
+      new_copy
+        IMPORTING
+          REFERENCE(i_viewplane) TYPE REF TO zcl_art_viewplane
+        RETURNING
+          VALUE(r_instance)      TYPE REF TO zcl_art_viewplane.
+
 
     METHODS:
-      constructor
-        IMPORTING
-          i_viewplane TYPE REF TO zcl_art_viewplane OPTIONAL,
-
       assignment
         IMPORTING
           i_rhs              TYPE REF TO zcl_art_viewplane
@@ -46,78 +55,96 @@ CLASS zcl_art_viewplane DEFINITION
           i_show TYPE abap_bool.
 
 
-  PROTECTED SECTION.
   PRIVATE SECTION.
+    METHODS:
+      constructor
+        IMPORTING
+          i_hres              TYPE int4
+          i_vres              TYPE int4
+          i_pixel_size        TYPE decfloat16
+          i_gamma             TYPE decfloat16
+          i_inv_gamma         TYPE decfloat16
+          i_show_out_of_gamut TYPE abap_bool.
+
 ENDCLASS.
 
 
 
-CLASS zcl_art_viewplane IMPLEMENTATION.
+CLASS ZCL_ART_VIEWPLANE IMPLEMENTATION.
+
+
   METHOD assignment.
+    r_viewplane = me.
+
     IF me = i_rhs.
-      r_viewplane = me.
       RETURN.
     ENDIF.
 
-    hres = i_rhs->hres.
-    vres = i_rhs->vres.
-    s = i_rhs->s.
-    gamma = i_rhs->gamma.
-    inv_gamma = i_rhs->inv_gamma.
-    show_out_of_gamut = i_rhs->show_out_of_gamut.
-
-    r_viewplane = me.
+    me->hres = i_rhs->hres.
+    me->vres = i_rhs->vres.
+    me->pixel_size = i_rhs->pixel_size.
+    me->gamma = i_rhs->gamma.
+    me->inv_gamma = i_rhs->inv_gamma.
+    me->show_out_of_gamut = i_rhs->show_out_of_gamut.
   ENDMETHOD.
 
 
   METHOD constructor.
-    "Copy constructor
-    IF i_viewplane IS SUPPLIED.
-      ASSERT i_viewplane IS BOUND.
-
-      hres = i_viewplane->hres.
-      vres = i_viewplane->vres.
-      s = i_viewplane->s.
-      gamma = i_viewplane->gamma.
-      inv_gamma = i_viewplane->inv_gamma.
-      show_out_of_gamut = i_viewplane->show_out_of_gamut.
-      RETURN.
-    ENDIF.
+    me->hres = i_hres.
+    me->vres = i_vres.
+    me->pixel_size = i_pixel_size.
+    me->gamma = i_gamma.
+    me->inv_gamma = i_inv_gamma.
+    me->show_out_of_gamut = i_show_out_of_gamut.
+  ENDMETHOD.
 
 
-    "Default constructor
-    hres = 400.
-    vres = 400.
-    s = '1.0'.
-    gamma = '1.0'.
-    inv_gamma = '1.0'.
-    show_out_of_gamut = abap_false.
-    RETURN.
+  METHOD new_copy.
+    ASSERT i_viewplane IS BOUND.
+
+    r_instance = NEW #(
+      i_hres = i_viewplane->hres
+      i_vres = i_viewplane->vres
+      i_pixel_size = i_viewplane->pixel_size
+      i_gamma = i_viewplane->gamma
+      i_inv_gamma = i_viewplane->inv_gamma
+      i_show_out_of_gamut = i_viewplane->show_out_of_gamut ).
+  ENDMETHOD.
+
+
+  METHOD new_default.
+    r_instance = NEW #(
+      i_hres = 400
+      i_vres = 400
+      i_pixel_size = '1.0'
+      i_gamma = '1.0'
+      i_inv_gamma = '1.0'
+      i_show_out_of_gamut = abap_false ).
   ENDMETHOD.
 
 
   METHOD set_gamma.
-    gamma = i_gamma.
-    inv_gamma = '1.0' / gamma.
+    me->gamma = i_gamma.
+    me->inv_gamma = '1.0' / gamma.
   ENDMETHOD.
 
 
   METHOD set_gamut_display.
-    show_out_of_gamut = i_show.
+    me->show_out_of_gamut = i_show.
   ENDMETHOD.
 
 
   METHOD set_hres.
-    hres = i_hres.
-  ENDMETHOD.
-
-
-  METHOD set_vres.
-    vres = i_vres.
+    me->hres = i_hres.
   ENDMETHOD.
 
 
   METHOD set_pixel_size.
-    s = i_size.
+    me->pixel_size = i_size.
+  ENDMETHOD.
+
+
+  METHOD set_vres.
+    me->vres = i_vres.
   ENDMETHOD.
 ENDCLASS.
