@@ -49,7 +49,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_PLANE IMPLEMENTATION.
+CLASS zcl_art_plane IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -65,16 +65,21 @@ CLASS ZCL_ART_PLANE IMPLEMENTATION.
 
   METHOD hit.
     DATA t TYPE decfloat16.
+
     "t = (p - ray.o) * n / ( ray.d * n)
-    t = _point->get_difference_from_point( i_ray->origin )->get_dot_product_by_normal( _normal ) /
-        i_ray->direction->get_dot_product_by_normal( _normal ).
+    DATA(difference_vector) = _point->get_difference_from_point( i_ray->origin ).
+    DATA(dot_product1) = difference_vector->get_dot_product_by_normal( _normal ).
+    DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( _normal ).
+    t = dot_product1 / dot_product2.
 
     IF t > _co_kepsilon.
       e_tmin = t.
+
       c_shade_rec->normal = _normal.
 
       "shadeRec = ray.o + t * ray.d
-      c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t ) ).
+      DATA(product_vector) = i_ray->direction->get_product_by_decfloat( t ).
+      c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( product_vector ).
 
       e_hit = abap_true.
     ELSE.
