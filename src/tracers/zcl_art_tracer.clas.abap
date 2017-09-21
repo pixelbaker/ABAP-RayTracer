@@ -13,7 +13,7 @@ CLASS zcl_art_tracer DEFINITION
           i_ray           TYPE REF TO zcl_art_ray
           i_depth         TYPE int4 OPTIONAL
         RETURNING
-          VALUE(r_result) TYPE REF TO zcl_art_rgb_color.
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
 
 
   PROTECTED SECTION.
@@ -28,7 +28,7 @@ ENDCLASS.
 
 CLASS zcl_art_tracer IMPLEMENTATION.
   METHOD trace_ray.
-    r_result = zcl_art_rgb_color=>black.
+    r_color = zcl_art_rgb_color=>black.
   ENDMETHOD.
 
 

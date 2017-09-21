@@ -20,7 +20,17 @@ CLASS zcl_art_geometric_object DEFINITION
 
       get_color
         RETURNING
-          VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
+      set_color_by_color
+        IMPORTING
+          i_color TYPE REF TO zcl_art_rgb_color,
+
+      set_color_by_components
+        IMPORTING
+          i_r TYPE decfloat16
+          i_g TYPE decfloat16
+          i_b TYPE decfloat16.
 
 
   PROTECTED SECTION.
@@ -40,6 +50,8 @@ ENDCLASS.
 
 
 CLASS zcl_art_geometric_object IMPLEMENTATION.
+
+
   METHOD constructor.
     "Copy Constructor
     IF i_object IS SUPPLIED.
@@ -50,7 +62,7 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
     ENDIF.
 
     "Default Constructor
-    _color = zcl_art_rgb_color=>black.
+    _color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
   ENDMETHOD.
 
 
@@ -61,5 +73,18 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
 
   METHOD set_color.
     _color = i_color.
+  ENDMETHOD.
+
+
+  METHOD set_color_by_color.
+    ASSERT i_color IS BOUND.
+    _color = i_color.
+  ENDMETHOD.
+
+
+  METHOD set_color_by_components.
+    _color->r = i_r.
+    _color->g = i_g.
+    _color->b = i_b.
   ENDMETHOD.
 ENDCLASS.

@@ -39,9 +39,9 @@ CLASS zcl_art_single_sphere IMPLEMENTATION.
         c_shade_rec = shade_rec ).
 
     IF hit = abap_true.
-      r_result = zcl_art_rgb_color=>red.
+      r_color = zcl_art_rgb_color=>red.
     ELSE.
-      r_result = zcl_art_rgb_color=>black.
+      r_color = zcl_art_rgb_color=>black.
     ENDIF.
   ENDMETHOD.
 

@@ -66,24 +66,27 @@ CLASS zcl_art_world DEFINITION
     METHODS:
       delete_objects,
 
-      build_single_sphere.
+      build_single_sphere,
+
+      build_multiple_objects.
 
 ENDCLASS.
 
 
 
-CLASS ZCL_ART_WORLD IMPLEMENTATION.
+CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD add_objects.
-    INSERT i_object INTO TABLE objects.
+    INSERT i_object INTO TABLE me->objects.
   ENDMETHOD.
 
 
   METHOD build.
-    build_single_sphere( ).
+*    build_single_sphere( ).
+    build_multiple_objects( ).
 
-    bitmap = NEW zcl_art_bitmap(
+    me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = viewplane->vres
       i_image_width_in_pixel = viewplane->hres ).
   ENDMETHOD.
@@ -93,13 +96,42 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     me->viewplane->set_hres( 200 ).
     me->viewplane->set_vres( 200 ).
     me->viewplane->set_pixel_size( '1.0' ).
-    me->viewplane->set_gamma( '1.0' ).
+    me->viewplane->set_gamma( '2.2' ).
 
     me->background_color = zcl_art_rgb_color=>white.
     me->tracer = NEW zcl_art_single_sphere( me ).
 
     me->sphere->set_center_by_value( '0.0' ).
     me->sphere->set_radius( '85.0' ).
+  ENDMETHOD.
+
+
+  METHOD build_multiple_objects.
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    me->tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA sphere TYPE REF TO zcl_art_sphere.
+
+    sphere = zcl_art_sphere=>new_default( ).
+    sphere->set_center_by_components( i_x = 0 i_y = -25 i_z = 0 ).
+    sphere->set_radius( '80.0' ).
+    sphere->set_color_by_components( i_r = 1 i_g = 0 i_b = 0 ).
+    add_objects( sphere ).
+
+    sphere = zcl_art_sphere=>new_by_center_and_radius(
+      i_center = zcl_art_point3d=>new_individual( i_x = 0 i_y = 30 i_z = 0 )
+      i_radius = 60 ).
+    sphere->set_color_by_components( i_r = 1 i_g = 1 i_b = 0 ).
+    add_objects( sphere ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+      i_point = zcl_art_point3d=>new_default( )
+      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 1 ) ).
+    plane->set_color_by_components( i_r = 0 i_g = '0.3' i_b = 0 ).
+    add_objects( plane ).
   ENDMETHOD.
 
 
@@ -143,18 +175,18 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
     DATA mapped_color TYPE REF TO zcl_art_rgb_color.
 
-    IF viewplane->show_out_of_gamut = abap_true.
+    IF me->viewplane->show_out_of_gamut = abap_true.
       mapped_color = clamp_to_color( i_pixel_color ).
     ELSE.
       mapped_color = max_to_one( i_pixel_color ).
     ENDIF.
 
-    IF viewplane->gamma <> '1.0'.
-      mapped_color = mapped_color->powc( viewplane->inv_gamma ).
+    IF me->viewplane->gamma <> '1.0'.
+      mapped_color = mapped_color->powc( me->viewplane->inv_gamma ).
     ENDIF.
 
     DATA(x) = i_column.
-    DATA(y) = viewplane->vres - i_row - 1.
+    DATA(y) = me->viewplane->vres - i_row - 1.
 
     DATA r TYPE int4.
     DATA g TYPE int4.
@@ -163,7 +195,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     g = mapped_color->g * 255.
     b = mapped_color->b * 255.
 
-    bitmap->add_pixel(
+    me->bitmap->add_pixel(
       VALUE #(
         x = x
         y = y
@@ -189,7 +221,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
     r_shade_rec = zcl_art_shade_rec=>new_from_world( me ).
 
-    LOOP AT objects ASSIGNING FIELD-SYMBOL(<object>).
+    LOOP AT me->objects ASSIGNING FIELD-SYMBOL(<object>).
       <object>->hit(
         EXPORTING
           i_ray = i_ray
@@ -242,7 +274,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
           i_y = pixel_size * ( row - vres / '2.0' + '0.5' )
           i_z = zw ).
 
-        DATA(pixel_color) = tracer->trace_ray( ray ).
+        DATA(pixel_color) = me->tracer->trace_ray( ray ).
 
         display_pixel(
           i_row = row
