@@ -91,30 +91,30 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
   METHOD hit.
     DATA:
-      t    TYPE decfloat16,
-      temp TYPE REF TO zcl_art_vector3d,
-      a    TYPE decfloat16,
-      b    TYPE decfloat16,
-      c    TYPE decfloat16,
-      disc TYPE decfloat16.
+      t            TYPE decfloat16,
+      temp         TYPE REF TO zcl_art_vector3d,
+      a            TYPE decfloat16,
+      b            TYPE decfloat16,
+      c            TYPE decfloat16,
+      discriminant TYPE decfloat16.
 
     temp = i_ray->origin->get_difference_from_point( _center ).
     a = i_ray->direction->get_dot_product_by_vector( i_ray->direction ).
-    b = '2.0' * temp->get_dot_product_by_vector( i_ray->direction ).
+    b = 2 * temp->get_dot_product_by_vector( i_ray->direction ).
     c = temp->get_dot_product_by_vector( temp ) - _radius * _radius.
-    disc = b * b - 4 * a * c.
+    discriminant = b * b - 4 * a * c. "https://en.wikipedia.org/wiki/Discriminant
 
-    IF disc < 0.
+    IF discriminant < 0.
       e_hit = abap_false.
       RETURN.
     ELSE.
       DATA e TYPE decfloat16.
-      e = sqrt( disc ).
+      e = sqrt( discriminant ).
 
-      DATA denom TYPE decfloat16.
-      denom = 2 * a.
+      DATA denominator TYPE decfloat16.
+      denominator = 2 * a.
 
-      t = ( - b - e ) / denom. "smaller root
+      t = ( - b - e ) / denominator. "smaller root
       IF t > _co_kepsilon.
         e_tmin = t.
 
@@ -130,7 +130,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
         RETURN.
       ENDIF.
 
-      t = ( - b + e ) / denom. "larger root
+      t = ( - b + e ) / denominator. "larger root
 
       IF t > _co_kepsilon.
         e_tmin = t.
