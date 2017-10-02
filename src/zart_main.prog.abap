@@ -43,8 +43,9 @@ FORM display USING i_bitmap_stream.
   DATA(picture) = NEW cl_gui_picture( parent = container ).
 
   "now we go from XSTRING back to binary
-  TYPES binary_row TYPE x LENGTH 256.
+  TYPES binary_row TYPE x LENGTH 255. "255 might get better along with CL_IGS_IMAGE_CONVERTER, see set_image
   DATA binary_rows TYPE TABLE OF binary_row WITH DEFAULT KEY.
+
 
   CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
     EXPORTING
