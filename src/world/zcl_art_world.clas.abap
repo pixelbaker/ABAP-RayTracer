@@ -53,6 +53,8 @@ CLASS zcl_art_world DEFINITION
 
       build_multiple_objects,
 
+      build_sap,
+
       max_to_one
         IMPORTING
           REFERENCE(i_color) TYPE REF TO zcl_art_rgb_color
@@ -85,7 +87,8 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-    build_multiple_objects( ).
+*    build_multiple_objects( ).
+    build_sap( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
@@ -119,6 +122,75 @@ CLASS zcl_art_world IMPLEMENTATION.
       i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 1 ) ).
     plane->set_color_by_components( i_r = 0 i_g = '0.3' i_b = 0 ).
     add_objects( plane ).
+  ENDMETHOD.
+
+
+  METHOD build_sap.
+    cl_mime_repository_api=>get_api( )->get(
+      EXPORTING
+        i_url = `/SAP/PUBLIC/ZART/sap_logo_black_and_white.bmp`
+      IMPORTING
+        e_content = DATA(img) ).
+
+    _viewplane->set_hres( 195 ).
+    _viewplane->set_vres( 97 ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>white ).
+    _tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA:
+      sphere    TYPE REF TO zcl_art_sphere,
+      b         TYPE x,
+      g         TYPE x,
+      r         TYPE x,
+      x         TYPE decfloat16,
+      y         TYPE decfloat16,
+      row       TYPE int4,
+      column    TYPE int4,
+      half_hres TYPE decfloat16,
+      half_vres TYPE decfloat16.
+
+    DATA(converter) = cl_abap_conv_in_ce=>create(
+      endian = cl_abap_char_utilities=>endian
+      input = img ).
+
+    converter->skip_x( n = 54 ).
+
+    half_hres = 195 / 2.
+    half_vres = 97 / -2.
+
+    WHILE row < 97.
+      column = 0.
+      WHILE column < 195.
+        CLEAR: b, g, r.
+        converter->read( EXPORTING n = 1 IMPORTING data = b ).
+        converter->read( EXPORTING n = 1 IMPORTING data = g ).
+        converter->read( EXPORTING n = 1 IMPORTING data = r ).
+
+        IF b <> 0 OR g <> 0 OR r <> 0.
+          ADD 1 TO column.
+          CONTINUE.
+        ENDIF.
+
+        IF ( column MOD 4 ) = 0 AND
+           ( row MOD 4 ) = 0.
+          x = column - half_hres.
+          y = half_vres + row.
+          sphere = zcl_art_sphere=>new_default( ).
+          sphere->set_color_by_components( i_r = 0 i_g = 0 i_b = 1 ).
+          sphere->set_center_by_components(
+            i_x = x
+            i_y = y
+            i_z = 0 ).
+          sphere->set_radius( 2 ).
+          add_objects( sphere ).
+        ENDIF.
+        ADD 1 TO column.
+      ENDWHILE.
+
+      converter->skip_x( n = 3 ).
+      ADD 1 TO row.
+    ENDWHILE.
   ENDMETHOD.
 
 
