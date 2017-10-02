@@ -50,7 +50,6 @@ CLASS zcl_art_bitmap DEFINITION
       _data                  TYPE xstring,
       _image_height_in_pixel TYPE int4,
       _image_width_in_pixel  TYPE int4,
-      _num_remaining_bytes   TYPE int4,
       _remaining_bytes       TYPE xstring,
       _converter             TYPE REF TO cl_abap_conv_out_ce.
 
@@ -170,8 +169,8 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
   METHOD precalc_empty_remaining_bytes.
     DATA(num_bytes) = _image_width_in_pixel * 3.
-    _num_remaining_bytes = num_bytes MOD 4.
-    DO _num_remaining_bytes TIMES.
+    DATA(num_remaining_bytes) = 4 - ( num_bytes MOD 4 ).
+    DO num_remaining_bytes TIMES.
       CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
     ENDDO.
   ENDMETHOD.
@@ -189,6 +188,8 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
 
   METHOD get_row_size.
-    r_row_size_in_byte = floor( ( _bits_per_pixel * _image_width_in_pixel + 31 ) / 32 ) * 4.
+    DATA temp TYPE decfloat16.
+    temp = ( _bits_per_pixel * _image_width_in_pixel + 31 ) / 32.
+    r_row_size_in_byte = floor( temp ) * 4.
   ENDMETHOD.
 ENDCLASS.
