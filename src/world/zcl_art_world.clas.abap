@@ -53,7 +53,7 @@ CLASS zcl_art_world DEFINITION
 
       build_multiple_objects,
 
-      build_sap,
+      build_from_image_mask,
 
       max_to_one
         IMPORTING
@@ -88,7 +88,7 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD build.
 *    build_single_sphere( ).
 *    build_multiple_objects( ).
-    build_sap( ).
+    build_from_image_mask( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
@@ -125,17 +125,31 @@ CLASS zcl_art_world IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD build_sap.
+  METHOD build_from_image_mask.
     cl_mime_repository_api=>get_api( )->get(
       EXPORTING
-        i_url = `/SAP/PUBLIC/ZART/sap_logo_black_and_white.bmp`
+*        i_url = `/SAP/PUBLIC/ZART/sap_logo_black_and_white.bmp`
+        i_url = `/SAP/PUBLIC/ZART/pixelbaker_logo_mask.bmp`
       IMPORTING
         e_content = DATA(img) ).
 
-    _viewplane->set_hres( 195 ).
-    _viewplane->set_vres( 97 ).
+    DATA factor TYPE decfloat16 VALUE '1.0'.
+    DATA density TYPE int4 VALUE 6.
+    DATA hres TYPE int4.
+    DATA vres TYPE int4.
 
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>white ).
+    DATA(converter) = cl_abap_conv_in_ce=>create(
+      endian = cl_abap_char_utilities=>endian
+      input = img ).
+
+    converter->skip_x( n = 18 ).
+    converter->read( EXPORTING n = 4 IMPORTING data = hres ).
+    converter->read( EXPORTING n = 4 IMPORTING data = vres ).
+
+    _viewplane->set_hres( hres * factor ).
+    _viewplane->set_vres( vres * factor ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
     _tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA:
@@ -150,45 +164,39 @@ CLASS zcl_art_world IMPLEMENTATION.
       half_hres TYPE decfloat16,
       half_vres TYPE decfloat16.
 
-    DATA(converter) = cl_abap_conv_in_ce=>create(
-      endian = cl_abap_char_utilities=>endian
-      input = img ).
 
-    converter->skip_x( n = 54 ).
+    converter->skip_x( n = 28 ).
 
-    half_hres = 195 / 2.
-    half_vres = 97 / -2.
+    half_hres = ( hres * factor ) / 2.
+    half_vres = ( vres * factor ) / -2.
 
-    WHILE row < 97.
+    DATA(rand) = cl_abap_random_decfloat16=>create( seed = 354345 ).
+
+
+    WHILE row < vres.
       column = 0.
-      WHILE column < 195.
+      WHILE column < hres.
         CLEAR: b, g, r.
         converter->read( EXPORTING n = 1 IMPORTING data = b ).
         converter->read( EXPORTING n = 1 IMPORTING data = g ).
         converter->read( EXPORTING n = 1 IMPORTING data = r ).
 
-        IF b <> 0 OR g <> 0 OR r <> 0.
-          ADD 1 TO column.
-          CONTINUE.
-        ENDIF.
-
-        IF ( column MOD 4 ) = 0 AND
-           ( row MOD 4 ) = 0.
-          x = column - half_hres.
-          y = half_vres + row.
-          sphere = zcl_art_sphere=>new_default( ).
-          sphere->set_color_by_components( i_r = 0 i_g = 0 i_b = 1 ).
-          sphere->set_center_by_components(
-            i_x = x
-            i_y = y
-            i_z = 0 ).
-          sphere->set_radius( 2 ).
-          add_objects( sphere ).
+        IF b = 0 AND g = 0 AND r = 0.
+          IF ( column MOD density ) = 0 AND
+             ( row MOD density ) = 0.
+            x = ( column * factor ) - half_hres.
+            y = half_vres + ( row * factor ).
+            sphere = zcl_art_sphere=>new_default( ).
+            sphere->set_color_by_components( i_r = rand->get_next( ) i_g = rand->get_next( ) i_b = rand->get_next( ) ).
+            sphere->set_center_by_components( i_x = x i_y = y i_z = 0 ).
+            sphere->set_radius( ( rand->get_next( ) * 2 ) ).
+            add_objects( sphere ).
+          ENDIF.
         ENDIF.
         ADD 1 TO column.
       ENDWHILE.
 
-      converter->skip_x( n = 3 ).
+*      converter->skip_x( n = 3 ).
       ADD 1 TO row.
     ENDWHILE.
   ENDMETHOD.
