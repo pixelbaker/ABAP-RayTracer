@@ -90,7 +90,8 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
     CONCATENATE _data b g r INTO _data IN BYTE MODE.
 
-    IF i_pixel-x + 1 = _image_width_in_pixel.
+    IF _remaining_bytes IS NOT INITIAL AND
+       i_pixel-x + 1 = _image_width_in_pixel.
       CONCATENATE _data _remaining_bytes INTO _data IN BYTE MODE.
     ENDIF.
   ENDMETHOD.
@@ -169,10 +170,13 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
   METHOD precalc_empty_remaining_bytes.
     DATA(num_bytes) = _image_width_in_pixel * 3.
-    DATA(num_remaining_bytes) = 4 - ( num_bytes MOD 4 ).
-    DO num_remaining_bytes TIMES.
-      CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
-    ENDDO.
+    DATA(remainder) = num_bytes MOD 4.
+    IF remainder > 0.
+      DATA(num_remaining_bytes) = 4 - ( num_bytes MOD 4 ).
+      DO num_remaining_bytes TIMES.
+        CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
+      ENDDO.
+    ENDIF.
   ENDMETHOD.
 
 
