@@ -2,12 +2,12 @@
 
 class Foo {
 public:
-    void foobar(int& e_value);
+    void foobar(int& c_value);
 };
 
-void Foo::foobar(int& e_value) {
-    if (e_value != 42) {
-        e_value = 42;
+void Foo::foobar(int& c_value) {
+    if (c_value != 42) {
+        c_value = 42;
     }
 }
 
