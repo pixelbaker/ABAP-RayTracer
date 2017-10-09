@@ -2,7 +2,7 @@
 
 class Foo {
 public:
-    void foobar(const int value);
+    void foobar(const int i_value);
 };
 
 void Foo::foobar(const int i_value) {
