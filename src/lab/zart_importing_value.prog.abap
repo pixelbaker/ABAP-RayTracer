@@ -20,6 +20,6 @@ ENDCLASS.
 
 
 START-OF-SELECTION.
-  DATA(instance) = NEW cl_foo( ).
+  DATA(foo) = NEW cl_foo( ).
   DATA value TYPE int4 VALUE 42.
-  instance->foobar( value ).
+  foo->foobar( value ).

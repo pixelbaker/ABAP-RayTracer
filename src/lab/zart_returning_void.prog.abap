@@ -12,11 +12,11 @@ ENDCLASS.
 
 CLASS cl_foo IMPLEMENTATION.
   METHOD foobar.
-    WRITE 'Total bore!'.
+    WRITE 42.
   ENDMETHOD.
 ENDCLASS.
 
 
 START-OF-SELECTION.
-  DATA(instance) = NEW cl_foo( ).
-  instance->foobar( ).
+  DATA(foo) = NEW cl_foo( ).
+  foo->foobar( ).

@@ -20,7 +20,7 @@ ENDCLASS.
 
 
 START-OF-SELECTION.
-  DATA(instance) = NEW cl_foo( ).
+  DATA(foo) = NEW cl_foo( ).
   DATA value TYPE int4.
-  instance->foobar( IMPORTING e_value = value ).
+  foo->foobar( IMPORTING e_value = value ).
   WRITE value.

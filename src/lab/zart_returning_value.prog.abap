@@ -20,6 +20,6 @@ ENDCLASS.
 
 
 START-OF-SELECTION.
-  DATA(instance) = NEW cl_foo( ).
-  DATA(value) = instance->foobar( ).
+  DATA(foo) = NEW cl_foo( ).
+  DATA(value) = foo->foobar( ).
   WRITE value.

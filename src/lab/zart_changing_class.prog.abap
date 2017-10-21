@@ -3,7 +3,7 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT zart_importing_class.
+REPORT zart_changing_class.
 
 
 CLASS cl_bar DEFINITION.
@@ -23,22 +23,22 @@ CLASS cl_foo DEFINITION.
   PUBLIC SECTION.
     METHODS:
       pass_class_by_reference
-        IMPORTING
-          REFERENCE(i_value) TYPE REF TO cl_bar,
+        CHANGING
+          REFERENCE(c_value) TYPE REF TO cl_bar,
 
       pass_class_by_value
-        IMPORTING
-          VALUE(i_value) TYPE REF TO cl_bar.
+        CHANGING
+          VALUE(c_value) TYPE REF TO cl_bar.
 
 ENDCLASS.
 
 CLASS cl_foo IMPLEMENTATION.
   METHOD pass_class_by_reference.
-    i_value->set( 42 ).
+    c_value->set( 42 ).
   ENDMETHOD.
 
   METHOD pass_class_by_value.
-    i_value->set( 42 ).
+    c_value->set( 42 ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -53,8 +53,8 @@ CLASS cl_main IMPLEMENTATION.
     DATA(foo) = NEW cl_foo( ).
     DATA(bar) = NEW cl_bar( ).
 
-    foo->pass_class_by_reference( bar ).
-*    foo->pass_class_by_value( bar ).
+    foo->pass_class_by_reference( CHANGING c_value = bar ).
+*    foo->pass_class_by_value( CHANGING c_value = bar ).
 
     WRITE bar->value.
   ENDMETHOD.

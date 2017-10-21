@@ -22,7 +22,7 @@ ENDCLASS.
 
 
 START-OF-SELECTION.
-  DATA(instance) = NEW cl_foo( ).
+  DATA(foo) = NEW cl_foo( ).
   DATA value TYPE int4.
-  instance->foobar( CHANGING c_value = value ).
+  foo->foobar( CHANGING c_value = value ).
   WRITE value.
