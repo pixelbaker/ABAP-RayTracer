@@ -3,13 +3,13 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT zart_exporting_value.
+REPORT zart_exporting_reference.
 
 CLASS cl_foo DEFINITION.
   PUBLIC SECTION.
     METHODS foobar
       EXPORTING
-        VALUE(e_value) TYPE int4.
+        REFERENCE(e_value) TYPE int4.
 ENDCLASS.
 
 CLASS cl_foo IMPLEMENTATION.

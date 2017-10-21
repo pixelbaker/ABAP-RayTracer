@@ -3,18 +3,20 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT zart_exporting_value.
+REPORT zart_changing_reference.
 
 CLASS cl_foo DEFINITION.
   PUBLIC SECTION.
     METHODS foobar
-      EXPORTING
-        VALUE(e_value) TYPE int4.
+      CHANGING
+        REFERENCE(c_value) TYPE int4.
 ENDCLASS.
 
 CLASS cl_foo IMPLEMENTATION.
   METHOD foobar.
-    e_value = 42.
+    IF c_value <> 42.
+      c_value = 42.
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
 
@@ -22,5 +24,5 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA(instance) = NEW cl_foo( ).
   DATA value TYPE int4.
-  instance->foobar( IMPORTING e_value = value ).
+  instance->foobar( CHANGING c_value = value ).
   WRITE value.
