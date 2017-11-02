@@ -10,11 +10,4 @@ Legend
 
 2017-11-02 v0.1.0
 ------------------
-* WEBI fixes
-* IMAU fix
-! Better http errors errors
-* downport
-* Improve usability of repository popup
-! More global exception classes
-+ proxy configuration user exit
-* Buffer settings
+* test
