@@ -8,3 +8,5 @@ My goal is to to educate myself on the math behind ray tracing and improve my AB
 
 * [Offical Webpage](http://www.raytracegroundup.com/)
 * [Book at Amazon](https://www.amazon.com/gp/product/1568812728/sr=8-1/qid=1191938342/ref=olp_product_details/103-8287340-1623806?ie=UTF8&me=&qid=1191938342&sr=8-1&seller=)
+
+![SAP Logo](/render/sap_logo.gif?raw=true)
