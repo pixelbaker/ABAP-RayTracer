@@ -12,16 +12,16 @@ CLASS zcl_art_plane DEFINITION
 
       new_copy
         IMPORTING
-          REFERENCE(i_plane) TYPE REF TO zcl_art_plane
+          i_plane TYPE REF TO zcl_art_plane
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_plane,
+          VALUE(r_instance) TYPE REF TO zcl_art_plane,
 
       new_by_normal_and_point
         IMPORTING
-          REFERENCE(i_normal) TYPE REF TO zcl_art_normal
-          REFERENCE(i_point)  TYPE REF TO zcl_art_point3d
+          i_normal TYPE REF TO zcl_art_normal
+          i_point  TYPE REF TO zcl_art_point3d
         RETURNING
-          VALUE(r_instance)   TYPE REF TO zcl_art_plane.
+          VALUE(r_instance) TYPE REF TO zcl_art_plane.
 
 
     METHODS:
@@ -42,8 +42,8 @@ CLASS zcl_art_plane DEFINITION
     METHODS:
       constructor
         IMPORTING
-          VALUE(i_point)  TYPE REF TO zcl_art_point3d
-          VALUE(i_normal) TYPE REF TO zcl_art_normal.
+          i_point  TYPE REF TO zcl_art_point3d
+          i_normal TYPE REF TO zcl_art_normal.
 
 ENDCLASS.
 
@@ -64,6 +64,8 @@ CLASS zcl_art_plane IMPLEMENTATION.
 
 
   METHOD hit.
+    CLEAR e_tmin.
+
     DATA t TYPE decfloat16.
 
     "t = (p - ray.o) * n / ( ray.d * n)
@@ -81,9 +83,9 @@ CLASS zcl_art_plane IMPLEMENTATION.
       DATA(product_vector) = i_ray->direction->get_product_by_decfloat( t ).
       c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( product_vector ).
 
-      e_hit = abap_true.
+      r_hit = abap_true.
     ELSE.
-      e_hit = abap_false.
+      r_hit = abap_false.
     ENDIF.
   ENDMETHOD.
 
@@ -100,7 +102,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
     r_instance = NEW #(
       i_point = zcl_art_point3d=>new_copy( i_plane->_point )
       i_normal = zcl_art_normal=>new_copy( i_plane->_normal ) ).
-    r_instance->set_color( zcl_art_rgb_color=>new_copy( i_plane->_color ) ).
+    r_instance->set_color_by_color( zcl_art_rgb_color=>new_copy( i_plane->_color ) ).
   ENDMETHOD.
 
 

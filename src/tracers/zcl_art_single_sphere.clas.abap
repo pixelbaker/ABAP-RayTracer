@@ -29,12 +29,11 @@ CLASS zcl_art_single_sphere IMPLEMENTATION.
     DATA(shade_rec) = zcl_art_shade_rec=>new_from_world( _world ).
     DATA t TYPE decfloat16.
 
-    _world->sphere->hit(
+    DATA(hit) = _world->sphere->hit(
       EXPORTING
         i_ray = i_ray
       IMPORTING
         e_tmin = t
-        e_hit = DATA(hit)
       CHANGING
         c_shade_rec = shade_rec ).
 

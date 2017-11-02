@@ -11,12 +11,13 @@ CLASS zcl_art_geometric_object DEFINITION
 
       hit ABSTRACT
         IMPORTING
-          REFERENCE(i_ray)       TYPE REF TO zcl_art_ray
+          i_ray        TYPE REF TO zcl_art_ray
         EXPORTING
-          VALUE(e_tmin)          TYPE decfloat16
-          VALUE(e_hit)           TYPE abap_bool
+          e_tmin       TYPE decfloat16
         CHANGING
-          REFERENCE(c_shade_rec) TYPE REF TO zcl_art_shade_rec,
+          c_shade_rec  TYPE REF TO zcl_art_shade_rec
+        RETURNING
+          VALUE(r_hit) TYPE abap_bool,
 
       get_color
         RETURNING

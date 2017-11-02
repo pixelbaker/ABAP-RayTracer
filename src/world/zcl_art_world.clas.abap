@@ -57,13 +57,13 @@ CLASS zcl_art_world DEFINITION
 
       max_to_one
         IMPORTING
-          REFERENCE(i_color) TYPE REF TO zcl_art_rgb_color
+          i_color TYPE REF TO zcl_art_rgb_color
         RETURNING
           VALUE(r_color)     TYPE REF TO zcl_art_rgb_color,
 
       clamp_to_color
         IMPORTING
-          REFERENCE(i_color) TYPE REF TO zcl_art_rgb_color
+          i_color TYPE REF TO zcl_art_rgb_color
         RETURNING
           VALUE(r_color)     TYPE REF TO zcl_art_rgb_color,
 
@@ -304,12 +304,11 @@ CLASS zcl_art_world IMPLEMENTATION.
     r_shade_rec = zcl_art_shade_rec=>new_from_world( me ).
 
     LOOP AT _objects ASSIGNING FIELD-SYMBOL(<object>).
-      <object>->hit(
+      DATA(hit) = <object>->hit(
         EXPORTING
           i_ray = i_ray
         IMPORTING
           e_tmin = t
-          e_hit = DATA(hit)
         CHANGING
           c_shade_rec = r_shade_rec ).
 

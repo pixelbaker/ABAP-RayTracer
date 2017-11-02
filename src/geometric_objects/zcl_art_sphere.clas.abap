@@ -77,8 +77,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_sphere IMPLEMENTATION.
-
-
   METHOD constructor.
     ASSERT i_center IS BOUND.
 
@@ -90,6 +88,8 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
 
   METHOD hit.
+    CLEAR e_tmin.
+
     DATA:
       t            TYPE decfloat16,
       temp         TYPE REF TO zcl_art_vector3d,
@@ -105,7 +105,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
     discriminant = b * b - 4 * a * c. "https://en.wikipedia.org/wiki/Discriminant
 
     IF discriminant < 0.
-      e_hit = abap_false.
+      r_hit = abap_false.
       RETURN.
     ELSE.
       DATA e TYPE decfloat16.
@@ -126,7 +126,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
           CHANGING
             c_shade_rec = c_shade_rec ).
 
-        e_hit = abap_true.
+        r_hit = abap_true.
         RETURN.
       ENDIF.
 
@@ -143,13 +143,14 @@ CLASS zcl_art_sphere IMPLEMENTATION.
           CHANGING
             c_shade_rec = c_shade_rec ).
 
-        e_hit = abap_true.
+        r_hit = abap_true.
         RETURN.
       ENDIF.
     ENDIF.
 
-    e_hit = abap_false.
+    r_hit = abap_false.
   ENDMETHOD.
+
 
   METHOD calc_normal_and_hit_point.
     "sr.normal = (temp + t * ray.direction) / radius;
@@ -158,9 +159,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
     DATA(normal) = vector->get_sum_by_vector( i_temp ).
     normal = normal->get_quotient_by_decfloat( _radius ).
     c_shade_rec->normal->assignment_by_vector( normal ).
-
-    DATA(local_hit_point)  = i_ray->origin->get_sum_by_vector( vector ).
-    c_shade_rec->local_hit_point = local_hit_point.
+    c_shade_rec->local_hit_point = i_ray->origin->get_sum_by_vector( vector ).
   ENDMETHOD.
 
 
@@ -179,7 +178,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
     r_instance = NEW #(
       i_center = zcl_art_point3d=>new_copy( i_sphere->_center )
       i_radius = i_sphere->_radius ).
-    r_instance->set_color( zcl_art_rgb_color=>new_copy( i_sphere->_color ) ).
+    r_instance->set_color_by_color( zcl_art_rgb_color=>new_copy( i_sphere->_color ) ).
   ENDMETHOD.
 
 
