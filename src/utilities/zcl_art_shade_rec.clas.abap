@@ -15,38 +15,52 @@ CLASS zcl_art_shade_rec DEFINITION
       local_hit_point TYPE REF TO zcl_art_point3d,
       normal          TYPE REF TO zcl_art_normal,
       color           TYPE REF TO zcl_art_rgb_color,
-      world           TYPE REF TO zcl_art_world.
+      world           TYPE REF TO zcl_art_world READ-ONLY.
 
 
     CLASS-METHODS:
       new_from_world
         IMPORTING
-          REFERENCE(i_world) TYPE REF TO zcl_art_world
+          i_world           TYPE REF TO zcl_art_world
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_shade_rec,
+          VALUE(r_instance) TYPE REF TO zcl_art_shade_rec,
 
       new_copy
         IMPORTING
-          REFERENCE(i_shade_rec) TYPE REF TO zcl_art_shade_rec
+          i_shade_rec       TYPE REF TO zcl_art_shade_rec
         RETURNING
-          VALUE(r_instance)      TYPE REF TO zcl_art_shade_rec.
+          VALUE(r_instance) TYPE REF TO zcl_art_shade_rec.
 
 
   PRIVATE SECTION.
     METHODS:
       constructor
         IMPORTING
-          VALUE(i_hit_an_object)       TYPE abap_bool
-          REFERENCE(i_local_hit_point) TYPE REF TO zcl_art_point3d
-          REFERENCE(i_normal)          TYPE REF TO zcl_art_normal
-          REFERENCE(i_color)           TYPE REF TO zcl_art_rgb_color
-          REFERENCE(i_world)           TYPE REF TO zcl_art_world.
+          i_hit_an_object   TYPE abap_bool
+          i_local_hit_point TYPE REF TO zcl_art_point3d
+          i_normal          TYPE REF TO zcl_art_normal
+          i_color           TYPE REF TO zcl_art_rgb_color
+          VALUE(i_world)    TYPE REF TO zcl_art_world.
 
 ENDCLASS.
 
 
 
 CLASS zcl_art_shade_rec IMPLEMENTATION.
+
+
+  METHOD constructor.
+    ASSERT i_local_hit_point IS BOUND AND
+           i_normal IS BOUND AND
+           i_color IS BOUND AND
+           i_world IS BOUND.
+
+    me->local_hit_point = i_local_hit_point.
+    me->hit_an_object = i_hit_an_object.
+    me->normal = i_normal.
+    me->color = i_color.
+    me->world = i_world.
+  ENDMETHOD.
 
 
   METHOD new_copy.
@@ -70,19 +84,5 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
       i_normal          = zcl_art_normal=>new_default( )
       i_local_hit_point = zcl_art_point3d=>new_default( )
       i_color           = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ) ).
-  ENDMETHOD.
-
-
-  METHOD constructor.
-    ASSERT i_local_hit_point IS BOUND AND
-           i_normal IS BOUND AND
-           i_color IS BOUND AND
-           i_world IS BOUND.
-
-    me->local_hit_point = i_local_hit_point.
-    me->hit_an_object = i_hit_an_object.
-    me->normal = i_normal.
-    me->color = i_color.
-    me->world = i_world.
   ENDMETHOD.
 ENDCLASS.

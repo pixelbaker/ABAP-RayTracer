@@ -77,7 +77,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_world IMPLEMENTATION.
+CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -87,41 +87,12 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-*    build_multiple_objects( ).
-    build_from_image_mask( ).
+    build_multiple_objects( ).
+*    build_from_image_mask( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
       i_image_width_in_pixel = _viewplane->hres ).
-  ENDMETHOD.
-
-
-  METHOD build_multiple_objects.
-    _viewplane->set_hres( 200 ).
-    _viewplane->set_vres( 200 ).
-
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    _tracer = NEW zcl_art_multiple_objects( me ).
-
-    DATA sphere TYPE REF TO zcl_art_sphere.
-
-    sphere = zcl_art_sphere=>new_default( ).
-    sphere->set_center_by_components( i_x = 0 i_y = -25 i_z = 0 ).
-    sphere->set_radius( '80.0' ).
-    sphere->set_color_by_components( i_r = 1 i_g = 0 i_b = 0 ).
-    add_objects( sphere ).
-
-    sphere = zcl_art_sphere=>new_by_center_and_radius(
-      i_center = zcl_art_point3d=>new_individual( i_x = 0 i_y = 30 i_z = 0 )
-      i_radius = 60 ).
-    sphere->set_color_by_components( i_r = 1 i_g = 1 i_b = 0 ).
-    add_objects( sphere ).
-
-    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
-      i_point = zcl_art_point3d=>new_default( )
-      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 1 ) ).
-    plane->set_color_by_components( i_r = 0 i_g = '0.3' i_b = 0 ).
-    add_objects( plane ).
   ENDMETHOD.
 
 
@@ -199,6 +170,35 @@ CLASS zcl_art_world IMPLEMENTATION.
 *      converter->skip_x( n = 3 ).
       ADD 1 TO row.
     ENDWHILE.
+  ENDMETHOD.
+
+
+  METHOD build_multiple_objects.
+    _viewplane->set_hres( 200 ).
+    _viewplane->set_vres( 200 ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    _tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA sphere TYPE REF TO zcl_art_sphere.
+
+    sphere = zcl_art_sphere=>new_default( ).
+    sphere->set_center_by_components( i_x = 0 i_y = -25 i_z = 0 ).
+    sphere->set_radius( '80.0' ).
+    sphere->set_color_by_components( i_r = 1 i_g = 0 i_b = 0 ).
+    add_objects( sphere ).
+
+    sphere = zcl_art_sphere=>new_by_center_and_radius(
+      i_center = zcl_art_point3d=>new_individual( i_x = 0 i_y = 30 i_z = 0 )
+      i_radius = 60 ).
+    sphere->set_color_by_components( i_r = 1 i_g = 1 i_b = 0 ).
+    add_objects( sphere ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+      i_point = zcl_art_point3d=>new_default( )
+      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 1 ) ).
+    plane->set_color_by_components( i_r = 0 i_g = '0.3' i_b = 0 ).
+    add_objects( plane ).
   ENDMETHOD.
 
 

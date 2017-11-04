@@ -18,35 +18,35 @@ CLASS zcl_art_vector3d DEFINITION
 
       new_unified
         IMPORTING
-          VALUE(i_value)    TYPE decfloat16
+          i_value           TYPE decfloat16
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_vector3d,
 
       new_individual
         IMPORTING
-          VALUE(i_x)        TYPE decfloat16
-          VALUE(i_y)        TYPE decfloat16
-          VALUE(i_z)        TYPE decfloat16
+          i_x               TYPE decfloat16
+          i_y               TYPE decfloat16
+          i_z               TYPE decfloat16
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_vector3d,
 
       new_copy
         IMPORTING
-          REFERENCE(i_vector) TYPE REF TO zcl_art_vector3d
+          i_vector          TYPE REF TO zcl_art_vector3d
         RETURNING
-          VALUE(r_instance)   TYPE REF TO zcl_art_vector3d,
+          VALUE(r_instance) TYPE REF TO zcl_art_vector3d,
 
       new_from_normal
         IMPORTING
-          REFERENCE(i_normal) TYPE REF TO zcl_art_normal
+          i_normal          TYPE REF TO zcl_art_normal
         RETURNING
-          VALUE(r_instance)   TYPE REF TO zcl_art_vector3d,
+          VALUE(r_instance) TYPE REF TO zcl_art_vector3d,
 
       new_from_point
         IMPORTING
-          REFERENCE(i_point) TYPE REF TO zcl_art_point3d
+          i_point           TYPE REF TO zcl_art_point3d
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_vector3d.
+          VALUE(r_instance) TYPE REF TO zcl_art_vector3d.
 
 
     METHODS:

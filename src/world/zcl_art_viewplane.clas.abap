@@ -22,9 +22,9 @@ CLASS zcl_art_viewplane DEFINITION
 
       new_copy
         IMPORTING
-          REFERENCE(i_viewplane) TYPE REF TO zcl_art_viewplane
+          i_viewplane       TYPE REF TO zcl_art_viewplane
         RETURNING
-          VALUE(r_instance)      TYPE REF TO zcl_art_viewplane.
+          VALUE(r_instance) TYPE REF TO zcl_art_viewplane.
 
 
     METHODS:
@@ -70,7 +70,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_VIEWPLANE IMPLEMENTATION.
+CLASS zcl_art_viewplane IMPLEMENTATION.
 
 
   METHOD assignment.

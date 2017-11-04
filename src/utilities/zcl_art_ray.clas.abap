@@ -16,38 +16,40 @@ CLASS zcl_art_ray DEFINITION
 
       new_copy
         IMPORTING
-          REFERENCE(i_ray)  TYPE REF TO zcl_art_ray
+          i_ray             TYPE REF TO zcl_art_ray
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_ray,
 
       new_from_point_and_vector
         IMPORTING
-          REFERENCE(i_direction) TYPE REF TO zcl_art_vector3d
-          REFERENCE(i_origin)    TYPE REF TO zcl_art_point3d
+          i_direction       TYPE REF TO zcl_art_vector3d
+          i_origin          TYPE REF TO zcl_art_point3d
         RETURNING
-          VALUE(r_instance)      TYPE REF TO zcl_art_ray.
+          VALUE(r_instance) TYPE REF TO zcl_art_ray.
 
 
     METHODS:
       assignment
         IMPORTING
-          REFERENCE(i_rhs) TYPE REF TO zcl_art_ray
+          i_rhs        TYPE REF TO zcl_art_ray
         RETURNING
-          VALUE(r_ray)     TYPE REF TO zcl_art_ray.
+          VALUE(r_ray) TYPE REF TO zcl_art_ray.
 
 
   PRIVATE SECTION.
     METHODS:
       constructor
         IMPORTING
-          REFERENCE(i_direction) TYPE REF TO zcl_art_vector3d
-          REFERENCE(i_origin)    TYPE REF TO zcl_art_point3d.
+          i_direction TYPE REF TO zcl_art_vector3d
+          i_origin    TYPE REF TO zcl_art_point3d.
 
 ENDCLASS.
 
 
 
 CLASS zcl_art_ray IMPLEMENTATION.
+
+
   METHOD assignment.
     IF me <> i_rhs.
       me->origin = i_rhs->origin.
