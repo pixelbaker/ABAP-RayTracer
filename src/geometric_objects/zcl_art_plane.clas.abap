@@ -12,14 +12,14 @@ CLASS zcl_art_plane DEFINITION
 
       new_copy
         IMPORTING
-          i_plane TYPE REF TO zcl_art_plane
+          i_plane           TYPE REF TO zcl_art_plane
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_plane,
 
       new_by_normal_and_point
         IMPORTING
-          i_normal TYPE REF TO zcl_art_normal
-          i_point  TYPE REF TO zcl_art_point3d
+          i_normal          TYPE REF TO zcl_art_normal
+          i_point           TYPE REF TO zcl_art_point3d
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_plane.
 
@@ -49,7 +49,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_plane IMPLEMENTATION.
+CLASS ZCL_ART_PLANE IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -77,7 +77,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
     IF t > _co_kepsilon.
       e_tmin = t.
 
-      c_shade_rec->normal = _normal.
+      c_shade_rec->normal->assignment_by_normal( _normal ).
 
       "shadeRec = ray.o + t * ray.d
       DATA(product_vector) = i_ray->direction->get_product_by_decfloat( t ).

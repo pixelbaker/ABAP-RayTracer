@@ -45,9 +45,17 @@ CLASS zcl_art_normal DEFINITION
     METHODS:
       normalize,
 
+      assignment_by_normal
+        IMPORTING
+          i_normal        TYPE REF TO zcl_art_normal
+        RETURNING
+          VALUE(r_normal) TYPE REF TO zcl_art_normal,
+
       assignment_by_vector
         IMPORTING
-          i_vector TYPE REF TO zcl_art_vector3d.
+          i_vector        TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_normal) TYPE REF TO zcl_art_normal.
 
 
   PRIVATE SECTION.
@@ -62,13 +70,28 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_NORMAL IMPLEMENTATION.
+CLASS zcl_art_normal IMPLEMENTATION.
+
+
+  METHOD assignment_by_normal.
+    r_normal = me.
+
+    IF me = i_normal.
+      RETURN.
+    ENDIF.
+
+    x = i_normal->x.
+    y = i_normal->y.
+    z = i_normal->z.
+  ENDMETHOD.
 
 
   METHOD assignment_by_vector.
     x = i_vector->x.
     y = i_vector->y.
     z = i_vector->z.
+
+    r_normal = me.
   ENDMETHOD.
 
 
