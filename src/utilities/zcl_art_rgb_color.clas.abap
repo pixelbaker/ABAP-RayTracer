@@ -45,6 +45,12 @@ CLASS zcl_art_rgb_color DEFINITION
 
 
     METHODS:
+      assignment_by_color
+        IMPORTING
+          i_color        TYPE REF TO zcl_art_rgb_color
+        RETURNING
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
       get_quotient_by_decfloat
         IMPORTING
           i_value        TYPE decfloat16
@@ -89,6 +95,17 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
     me->r = i_r.
     me->g = i_g.
     me->b = i_b.
+  ENDMETHOD.
+
+
+  METHOD assignment_by_color.
+    IF me <> i_color.
+      me->r = i_color->r.
+      me->g = i_color->g.
+      me->b = i_color->b.
+    ENDIF.
+
+    r_color = me.
   ENDMETHOD.
 
 

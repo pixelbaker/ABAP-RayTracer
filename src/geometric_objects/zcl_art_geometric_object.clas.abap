@@ -39,12 +39,6 @@ CLASS zcl_art_geometric_object DEFINITION
       _color TYPE REF TO zcl_art_rgb_color.
 
 
-    METHODS:
-      set_color
-        IMPORTING
-          i_color TYPE REF TO zcl_art_rgb_color.
-
-
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -68,12 +62,7 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
 
 
   METHOD get_color.
-    r_color = _color.
-  ENDMETHOD.
-
-
-  METHOD set_color.
-    _color = i_color.
+    r_color = zcl_art_rgb_color=>new_copy( _color ).
   ENDMETHOD.
 
 

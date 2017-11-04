@@ -52,8 +52,8 @@ CLASS zcl_art_ray IMPLEMENTATION.
 
   METHOD assignment.
     IF me <> i_rhs.
-      me->origin = i_rhs->origin.
-      me->direction = i_rhs->direction.
+      me->origin->assignment( i_rhs->origin ).
+      me->direction->assignment_by_vector( i_rhs->direction ).
     ENDIF.
 
     r_ray = me.

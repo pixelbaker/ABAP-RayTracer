@@ -50,6 +50,12 @@ CLASS zcl_art_vector3d DEFINITION
 
 
     METHODS:
+      assignment_by_vector
+        IMPORTING
+          i_vector        TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
       get_dot_product_by_normal
         IMPORTING
           i_normal             TYPE REF TO zcl_art_normal
@@ -93,13 +99,25 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
+CLASS zcl_art_vector3d IMPLEMENTATION.
 
 
   METHOD constructor.
     me->x = i_x.
     me->y = i_y.
     me->z = i_z.
+  ENDMETHOD.
+
+
+  METHOD assignment_by_vector.
+    r_vector = me.
+    IF me = i_vector.
+      RETURN.
+    ENDIF.
+
+    me->x = i_vector->x.
+    me->y = i_vector->y.
+    me->z = i_vector->z.
   ENDMETHOD.
 
 

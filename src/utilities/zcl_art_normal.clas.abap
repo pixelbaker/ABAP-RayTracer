@@ -74,22 +74,21 @@ CLASS zcl_art_normal IMPLEMENTATION.
 
 
   METHOD assignment_by_normal.
+    ASSERT i_normal IS BOUND.
     r_normal = me.
+    CHECK me <> i_normal.
 
-    IF me = i_normal.
-      RETURN.
-    ENDIF.
-
-    x = i_normal->x.
-    y = i_normal->y.
-    z = i_normal->z.
+    me->x = i_normal->x.
+    me->y = i_normal->y.
+    me->z = i_normal->z.
   ENDMETHOD.
 
 
   METHOD assignment_by_vector.
-    x = i_vector->x.
-    y = i_vector->y.
-    z = i_vector->z.
+    ASSERT i_vector IS BOUND.
+    me->x = i_vector->x.
+    me->y = i_vector->y.
+    me->z = i_vector->z.
 
     r_normal = me.
   ENDMETHOD.
