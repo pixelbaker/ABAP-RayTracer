@@ -80,7 +80,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_WORLD IMPLEMENTATION.
+CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -222,11 +222,11 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD build_sinusoid_function.
-    _viewplane->set_hres( 100 ).
-    _viewplane->set_vres( 100 ).
+    _viewplane->set_hres( 512 ).
+    _viewplane->set_vres( 512 ).
     _viewplane->set_pixel_size( '1.0' ).
     _viewplane->set_gamma( '2.2' ).
-    _viewplane->set_num_samples( 1 ).
+    _viewplane->set_num_samples( 25 ).
 
     _tracer = NEW zcl_art_function_tracer( me ).
 
@@ -364,6 +364,8 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     DATA n TYPE int2.
     n = sqrt( _viewplane->num_samples ).
 
+    DATA(rand) = cl_abap_random_decfloat16=>create( ).
+
     DATA(ray) = zcl_art_ray=>new_default( ).
     ray->direction = zcl_art_vector3d=>new_individual( i_x = 0 i_y = 0 i_z = -1 ).
 
@@ -381,8 +383,17 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
         WHILE p < n. "up pixel
           q = 0.
           WHILE q < n. "across pixel
-            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + '0.5' ) / n ).
-            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + '0.5' ) / n ).
+            "Regular or uniform sampling
+*            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + '0.5' ) / n ).
+*            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + '0.5' ) / n ).
+
+*            "Random sampling
+*            sample_point->x = pixel_size * ( column - '0.5' * hres + rand->get_next( ) ).
+*            sample_point->y = pixel_size * ( row    - '0.5' * vres + rand->get_next( ) ).
+
+            "Jittered sampling
+            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + rand->get_next( ) ) / n ).
+            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + rand->get_next( ) ) / n ).
 
             ray->origin = zcl_art_point3d=>new_individual(
               i_x = sample_point->x
