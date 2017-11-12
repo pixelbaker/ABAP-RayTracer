@@ -45,9 +45,21 @@ CLASS zcl_art_rgb_color DEFINITION
 
 
     METHODS:
-      assignment_by_color
+      add_and_assign_by_color
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
+        RETURNING
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
+      assign_by_color
+        IMPORTING
+          i_color        TYPE REF TO zcl_art_rgb_color
+        RETURNING
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
+      divide_and_assign_by_float
+        IMPORTING
+          i_value        TYPE decfloat16
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
@@ -79,6 +91,28 @@ ENDCLASS.
 CLASS zcl_art_rgb_color IMPLEMENTATION.
 
 
+  METHOD add_and_assign_by_color.
+    "operator+=
+    ADD i_color->r TO me->r.
+    ADD i_color->g TO me->g.
+    ADD i_color->b TO me->b.
+
+    r_color = me.
+  ENDMETHOD.
+
+
+  METHOD assign_by_color.
+    "operator=
+    IF me <> i_color.
+      me->r = i_color->r.
+      me->g = i_color->g.
+      me->b = i_color->b.
+    ENDIF.
+
+    r_color = me.
+  ENDMETHOD.
+
+
   METHOD class_constructor.
     white = zcl_art_rgb_color=>new_unified( 1 ).
 
@@ -98,12 +132,11 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD assignment_by_color.
-    IF me <> i_color.
-      me->r = i_color->r.
-      me->g = i_color->g.
-      me->b = i_color->b.
-    ENDIF.
+  METHOD divide_and_assign_by_float.
+    "operator/=
+    DIVIDE me->r BY i_value.
+    DIVIDE me->g BY i_value.
+    DIVIDE me->b BY i_value.
 
     r_color = me.
   ENDMETHOD.
@@ -114,14 +147,6 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
       i_r = r / i_value
       i_g = g / i_value
       i_b = b / i_value ).
-  ENDMETHOD.
-
-
-  METHOD powc.
-    r_color = zcl_art_rgb_color=>new_individual(
-      i_r = r ** i_power
-      i_g = g ** i_power
-      i_b = b ** i_power ).
   ENDMETHOD.
 
 
@@ -153,5 +178,13 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
       i_r = i_value
       i_g = i_value
       i_b = i_value ).
+  ENDMETHOD.
+
+
+  METHOD powc.
+    r_color = zcl_art_rgb_color=>new_individual(
+      i_r = r ** i_power
+      i_g = g ** i_power
+      i_b = b ** i_power ).
   ENDMETHOD.
 ENDCLASS.

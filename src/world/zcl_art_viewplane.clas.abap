@@ -12,7 +12,9 @@ CLASS zcl_art_viewplane DEFINITION
       gamma             TYPE decfloat16 READ-ONLY,
       inv_gamma         TYPE decfloat16 READ-ONLY, "the inverse of the gamma correction factor
 
-      show_out_of_gamut TYPE abap_bool READ-ONLY.
+      show_out_of_gamut TYPE abap_bool READ-ONLY,
+
+      num_samples       TYPE int2 VALUE 1 READ-ONLY.
 
 
     CLASS-METHODS:
@@ -52,7 +54,11 @@ CLASS zcl_art_viewplane DEFINITION
 
       set_gamut_display
         IMPORTING
-          i_show TYPE abap_bool.
+          i_show TYPE abap_bool,
+
+      set_num_samples
+        IMPORTING
+          i_num_samples LIKE num_samples.
 
 
   PRIVATE SECTION.
@@ -136,6 +142,11 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
 
   METHOD set_hres.
     me->hres = i_hres.
+  ENDMETHOD.
+
+
+  METHOD set_num_samples.
+    me->num_samples = i_num_samples.
   ENDMETHOD.
 
 

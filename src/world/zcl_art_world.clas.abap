@@ -14,7 +14,9 @@ CLASS zcl_art_world DEFINITION
     DATA:
       background_color TYPE REF TO zcl_art_rgb_color READ-ONLY,
       sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
-      bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY.
+      bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
+      function         TYPE REF TO zcl_art_function_definition READ-ONLY,
+      _viewplane       TYPE REF TO zcl_art_viewplane READ-ONLY.
 
 
     METHODS:
@@ -41,9 +43,8 @@ CLASS zcl_art_world DEFINITION
 
 
     DATA:
-      _viewplane TYPE REF TO zcl_art_viewplane,
-      _objects   TYPE _geometric_objects,
-      _tracer    TYPE REF TO zcl_art_tracer.
+      _objects TYPE _geometric_objects,
+      _tracer  TYPE REF TO zcl_art_tracer.
 
 
     METHODS:
@@ -57,21 +58,23 @@ CLASS zcl_art_world DEFINITION
 
       max_to_one
         IMPORTING
-          i_color TYPE REF TO zcl_art_rgb_color
+          i_color        TYPE REF TO zcl_art_rgb_color
         RETURNING
-          VALUE(r_color)     TYPE REF TO zcl_art_rgb_color,
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       clamp_to_color
         IMPORTING
-          i_color TYPE REF TO zcl_art_rgb_color
+          i_color        TYPE REF TO zcl_art_rgb_color
         RETURNING
-          VALUE(r_color)     TYPE REF TO zcl_art_rgb_color,
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       display_pixel
         IMPORTING
           i_row         TYPE int4
           i_column      TYPE int4
-          i_pixel_color TYPE REF TO zcl_art_rgb_color.
+          i_pixel_color TYPE REF TO zcl_art_rgb_color,
+
+      build_sinusoid_function.
 
 ENDCLASS.
 
@@ -87,8 +90,9 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-    build_multiple_objects( ).
+*    build_multiple_objects( ).
 *    build_from_image_mask( ).
+    build_sinusoid_function( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
@@ -207,12 +211,26 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     _viewplane->set_vres( 200 ).
     _viewplane->set_pixel_size( '1.0' ).
     _viewplane->set_gamma( '2.2' ).
+    _viewplane->set_num_samples( 16 ).
 
     me->background_color = zcl_art_rgb_color=>white.
     _tracer = NEW zcl_art_single_sphere( me ).
 
     me->sphere->set_center_by_value( '0.0' ).
     me->sphere->set_radius( '85.0' ).
+  ENDMETHOD.
+
+
+  METHOD build_sinusoid_function.
+    _viewplane->set_hres( 100 ).
+    _viewplane->set_vres( 100 ).
+    _viewplane->set_pixel_size( '1.0' ).
+    _viewplane->set_gamma( '2.2' ).
+    _viewplane->set_num_samples( 1 ).
+
+    _tracer = NEW zcl_art_function_tracer( me ).
+
+    me->function = NEW zcl_art_sinusoid_function( ).
   ENDMETHOD.
 
 
@@ -341,6 +359,10 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     DATA(hres) = _viewplane->hres.
     DATA(vres) = _viewplane->vres.
     DATA(pixel_size) = _viewplane->pixel_size.
+    DATA(sample_point) = NEW zcl_art_point2d( ).
+
+    DATA n TYPE int2.
+    n = sqrt( _viewplane->num_samples ).
 
     DATA(ray) = zcl_art_ray=>new_default( ).
     ray->direction = zcl_art_vector3d=>new_individual( i_x = 0 i_y = 0 i_z = -1 ).
@@ -350,12 +372,33 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     WHILE row < vres.
       column = 0.
       WHILE column < hres.
-        ray->origin = zcl_art_point3d=>new_individual(
-          i_x = pixel_size * ( column - hres / '2.0' + '0.5' )
-          i_y = pixel_size * ( row - vres / '2.0' + '0.5' )
-          i_z = zw ).
+        DATA(pixel_color) = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
 
-        DATA(pixel_color) = _tracer->trace_ray( ray ).
+        "Sampling
+        DATA p TYPE int2 VALUE 0.
+        DATA q TYPE int2 VALUE 0.
+        p = 0.
+        WHILE p < n. "up pixel
+          q = 0.
+          WHILE q < n. "across pixel
+            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + '0.5' ) / n ).
+            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + '0.5' ) / n ).
+
+            ray->origin = zcl_art_point3d=>new_individual(
+              i_x = sample_point->x
+              i_y = sample_point->y
+              i_z = zw ).
+
+            pixel_color->add_and_assign_by_color( _tracer->trace_ray( ray ) ).
+
+            ADD 1 TO q.
+          ENDWHILE.
+
+          ADD 1 TO p.
+        ENDWHILE.
+
+        "Average the color
+        pixel_color->divide_and_assign_by_float( CONV #( _viewplane->num_samples ) ).
 
         display_pixel(
           i_row = row
