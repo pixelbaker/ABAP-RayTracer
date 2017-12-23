@@ -5,6 +5,13 @@
 *&---------------------------------------------------------------------*
 REPORT zart_main.
 
+DATA:
+  t_resolution  TYPE string,
+  t_render_time TYPE string,
+  t_memory      TYPE string,
+  t_objects     TYPE string,
+  t_rays        TYPE string.
+
 
 START-OF-SELECTION.
   "define some objects
@@ -25,8 +32,20 @@ START-OF-SELECTION.
 
 MODULE status_0100 OUTPUT.
   DATA bitmap_stream TYPE xstring.
+
+  GET TIME STAMP FIELD DATA(start_time).
+  cl_abap_memory_utilities=>get_total_used_size( IMPORTING size = DATA(start_size) ).
+
   PERFORM render CHANGING bitmap_stream.
+
+  cl_abap_memory_utilities=>get_total_used_size( IMPORTING size = DATA(end_size) ).
+  GET TIME STAMP FIELD DATA(end_time).
+
+  t_render_time = |{ ( end_time - start_time ) / 1000 DECIMALS = 0 } s|.
+  t_memory = |{ ( ( end_size - start_size ) / 1024 ) DECIMALS = 0 } kb|.
+
   PERFORM display USING bitmap_stream.
+  t_resolution = ' '.
 ENDMODULE.
 
 
@@ -35,6 +54,9 @@ FORM render CHANGING c_bitmap_stream.
   world->build( ).
   world->render_scene( ).
   c_bitmap_stream = world->bitmap->build( ).
+
+  t_objects = world->get_num_objects( ).
+  t_rays = world->num_rays.
 ENDFORM.
 
 

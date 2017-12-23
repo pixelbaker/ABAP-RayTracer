@@ -16,7 +16,8 @@ CLASS zcl_art_world DEFINITION
       sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
-      _viewplane       TYPE REF TO zcl_art_viewplane READ-ONLY.
+      _viewplane       TYPE REF TO zcl_art_viewplane READ-ONLY,
+      num_rays         TYPE int4 READ-ONLY.
 
 
     METHODS:
@@ -34,7 +35,11 @@ CLASS zcl_art_world DEFINITION
         IMPORTING
           i_ray              TYPE REF TO zcl_art_ray
         RETURNING
-          VALUE(r_shade_rec) TYPE REF TO zcl_art_shade_rec.
+          VALUE(r_shade_rec) TYPE REF TO zcl_art_shade_rec,
+
+      get_num_objects
+        RETURNING
+          VALUE(r_num_objects) TYPE int4.
 
 
   PRIVATE SECTION.
@@ -90,9 +95,9 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-*    build_multiple_objects( ).
+    build_multiple_objects( ).
 *    build_from_image_mask( ).
-    build_sinusoid_function( ).
+*    build_sinusoid_function( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
@@ -314,6 +319,11 @@ CLASS zcl_art_world IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_num_objects.
+    r_num_objects = lines( _objects ).
+  ENDMETHOD.
+
+
   METHOD hit_bare_bones_objects.
     DATA:
       t    TYPE decfloat16,
@@ -401,6 +411,7 @@ CLASS zcl_art_world IMPLEMENTATION.
               i_z = zw ).
 
             pixel_color->add_and_assign_by_color( _tracer->trace_ray( ray ) ).
+            ADD 1 TO me->num_rays.
 
             ADD 1 TO q.
           ENDWHILE.
