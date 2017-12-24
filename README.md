@@ -2,7 +2,7 @@
 
 ![SAP Logo](/render/sap_logo.gif?raw=true)
 
-This is a self-study project and a very very long prosponed project, I got inspired to do in Sydney/Australia :koala: during my time at [Animal Logic](www.animallogic.com). Kudos to the development team there.
+This is a self-study project and a very very long prosponed project, I got inspired to do in Sydney/Australia :koala: during my time at [Animal Logic](http://www.animallogic.com). Kudos to the development team there.
 
 I gonna teach myself writing a ray tracer with ABAP with the help of the book *"Ray Tracing from the Ground Up"* :green_book: by Kevin Suffern.
 
