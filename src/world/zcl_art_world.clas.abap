@@ -95,9 +95,9 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-    build_multiple_objects( ).
+*    build_multiple_objects( ).
 *    build_from_image_mask( ).
-*    build_sinusoid_function( ).
+    build_sinusoid_function( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = _viewplane->vres
