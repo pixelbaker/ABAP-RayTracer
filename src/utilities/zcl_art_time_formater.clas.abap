@@ -7,7 +7,7 @@ CLASS zcl_art_time_formater DEFINITION
     METHODS:
       make_human_readable_time_code
         IMPORTING
-          i_seconds       TYPE int4
+          i_seconds       TYPE int8
         RETURNING
           VALUE(r_output) TYPE string.
 

@@ -41,7 +41,15 @@ MODULE status_0100 OUTPUT.
   cl_abap_memory_utilities=>get_total_used_size( IMPORTING size = DATA(end_size) ).
   GET TIME STAMP FIELD DATA(end_time).
 
-  t_render_time = NEW zcl_art_time_formater( )->make_human_readable_time_code( end_time - start_time ).
+  DATA elapsed_seconds TYPE int8.
+  CALL FUNCTION 'RSSM_SUBSTRACT_TIMESTAMPS'
+    EXPORTING
+      timestamp1 = end_time
+      timestamp2 = start_time
+    IMPORTING
+      secs       = elapsed_seconds.
+
+  t_render_time = NEW zcl_art_time_formater( )->make_human_readable_time_code( elapsed_seconds ).
   t_memory = NEW zcl_art_byte_formater( )->make_human_readable_byte_count( end_size - start_size ).
 
   PERFORM display USING bitmap_stream.
