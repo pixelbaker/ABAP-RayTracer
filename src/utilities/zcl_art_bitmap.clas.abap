@@ -14,6 +14,11 @@ CLASS zcl_art_bitmap DEFINITION
       END OF pixel.
 
 
+    DATA:
+      image_height_in_pixel TYPE int4 READ-ONLY,
+      image_width_in_pixel  TYPE int4 READ-ONLY.
+
+
     METHODS:
       constructor
         IMPORTING
@@ -45,13 +50,11 @@ CLASS zcl_art_bitmap DEFINITION
 
 
     DATA:
-      _bits_per_pixel        TYPE int4 VALUE 24,
-      _header                TYPE xstring,
-      _data                  TYPE xstring,
-      _image_height_in_pixel TYPE int4,
-      _image_width_in_pixel  TYPE int4,
-      _remaining_bytes       TYPE xstring,
-      _converter             TYPE REF TO cl_abap_conv_out_ce.
+      _bits_per_pixel  TYPE int4 VALUE 24,
+      _header          TYPE xstring,
+      _data            TYPE xstring,
+      _remaining_bytes TYPE xstring,
+      _converter       TYPE REF TO cl_abap_conv_out_ce.
 
 
     METHODS:
@@ -91,7 +94,7 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
     CONCATENATE _data b g r INTO _data IN BYTE MODE.
 
     IF _remaining_bytes IS NOT INITIAL AND
-       i_pixel-x + 1 = _image_width_in_pixel.
+       i_pixel-x + 1 = me->image_width_in_pixel.
       CONCATENATE _data _remaining_bytes INTO _data IN BYTE MODE.
     ENDIF.
   ENDMETHOD.
@@ -119,10 +122,10 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
     _converter->convert( EXPORTING data = _co_dib_header_size_in_byte IMPORTING buffer = dib_header_size ).
 
     DATA image_width TYPE x LENGTH 4.
-    _converter->convert( EXPORTING data = _image_width_in_pixel IMPORTING buffer = image_width ).
+    _converter->convert( EXPORTING data = me->image_width_in_pixel IMPORTING buffer = image_width ).
 
     DATA image_height TYPE x LENGTH 4.
-    _converter->convert( EXPORTING data = _image_height_in_pixel IMPORTING buffer = image_height ).
+    _converter->convert( EXPORTING data = me->image_height_in_pixel IMPORTING buffer = image_height ).
 
     DATA num_color_palates TYPE x LENGTH 2.
     _converter->convert( EXPORTING data = _co_num_color_palettes IMPORTING buffer = num_color_palates ).
@@ -159,8 +162,8 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
 
   METHOD constructor.
-    _image_height_in_pixel = i_image_height_in_pixel.
-    _image_width_in_pixel = i_image_width_in_pixel.
+    me->image_height_in_pixel = i_image_height_in_pixel.
+    me->image_width_in_pixel = i_image_width_in_pixel.
 
     precalc_empty_remaining_bytes( ).
 
@@ -168,21 +171,9 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD precalc_empty_remaining_bytes.
-    DATA(num_bytes) = _image_width_in_pixel * 3.
-    DATA(remainder) = num_bytes MOD 4.
-    IF remainder > 0.
-      DATA(num_remaining_bytes) = 4 - ( num_bytes MOD 4 ).
-      DO num_remaining_bytes TIMES.
-        CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
-      ENDDO.
-    ENDIF.
-  ENDMETHOD.
-
-
   METHOD get_array_size.
     DATA(row_size) = get_row_size( ).
-    r_array_size_in_byte = row_size * abs( _image_height_in_pixel ).
+    r_array_size_in_byte = row_size * abs( me->image_height_in_pixel ).
   ENDMETHOD.
 
 
@@ -193,7 +184,19 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
   METHOD get_row_size.
     DATA temp TYPE decfloat16.
-    temp = ( _bits_per_pixel * _image_width_in_pixel + 31 ) / 32.
+    temp = ( _bits_per_pixel * me->image_width_in_pixel + 31 ) / 32.
     r_row_size_in_byte = floor( temp ) * 4.
+  ENDMETHOD.
+
+
+  METHOD precalc_empty_remaining_bytes.
+    DATA(num_bytes) = me->image_width_in_pixel * 3.
+    DATA(remainder) = num_bytes MOD 4.
+    IF remainder > 0.
+      DATA(num_remaining_bytes) = 4 - ( num_bytes MOD 4 ).
+      DO num_remaining_bytes TIMES.
+        CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
+      ENDDO.
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.

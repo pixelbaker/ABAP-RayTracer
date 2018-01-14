@@ -16,7 +16,7 @@ CLASS zcl_art_world DEFINITION
       sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
-      _viewplane       TYPE REF TO zcl_art_viewplane READ-ONLY,
+      viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
       num_rays         TYPE int4 READ-ONLY.
 
 
@@ -100,8 +100,8 @@ CLASS zcl_art_world IMPLEMENTATION.
     build_sinusoid_function( ).
 
     me->bitmap = NEW zcl_art_bitmap(
-      i_image_height_in_pixel = _viewplane->vres
-      i_image_width_in_pixel = _viewplane->hres ).
+      i_image_height_in_pixel = me->viewplane->vres
+      i_image_width_in_pixel = me->viewplane->hres ).
   ENDMETHOD.
 
 
@@ -126,8 +126,8 @@ CLASS zcl_art_world IMPLEMENTATION.
     converter->read( EXPORTING n = 4 IMPORTING data = hres ).
     converter->read( EXPORTING n = 4 IMPORTING data = vres ).
 
-    _viewplane->set_hres( hres * factor ).
-    _viewplane->set_vres( vres * factor ).
+    me->viewplane->set_hres( hres * factor ).
+    me->viewplane->set_vres( vres * factor ).
 
     me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
     _tracer = NEW zcl_art_multiple_objects( me ).
@@ -183,8 +183,8 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build_multiple_objects.
-    _viewplane->set_hres( 200 ).
-    _viewplane->set_vres( 200 ).
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
 
     me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
     _tracer = NEW zcl_art_multiple_objects( me ).
@@ -212,11 +212,11 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build_single_sphere.
-    _viewplane->set_hres( 200 ).
-    _viewplane->set_vres( 200 ).
-    _viewplane->set_pixel_size( '1.0' ).
-    _viewplane->set_gamma( '2.2' ).
-    _viewplane->set_num_samples( 16 ).
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+    me->viewplane->set_pixel_size( '1.0' ).
+    me->viewplane->set_gamma( '2.2' ).
+    me->viewplane->set_num_samples( 16 ).
 
     me->background_color = zcl_art_rgb_color=>white.
     _tracer = NEW zcl_art_single_sphere( me ).
@@ -227,11 +227,11 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build_sinusoid_function.
-    _viewplane->set_hres( 512 ).
-    _viewplane->set_vres( 512 ).
-    _viewplane->set_pixel_size( '1.0' ).
-    _viewplane->set_gamma( '2.2' ).
-    _viewplane->set_num_samples( 25 ).
+    me->viewplane->set_hres( 512 ).
+    me->viewplane->set_vres( 512 ).
+    me->viewplane->set_pixel_size( '1.0' ).
+    me->viewplane->set_gamma( '2.2' ).
+    me->viewplane->set_num_samples( 25 ).
 
     _tracer = NEW zcl_art_function_tracer( me ).
 
@@ -256,7 +256,7 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD constructor.
-    _viewplane = zcl_art_viewplane=>new_default( ).
+    me->viewplane = zcl_art_viewplane=>new_default( ).
     me->background_color = zcl_art_rgb_color=>black.
     me->sphere = zcl_art_sphere=>new_default( ).
   ENDMETHOD.
@@ -279,18 +279,18 @@ CLASS zcl_art_world IMPLEMENTATION.
 
     DATA mapped_color TYPE REF TO zcl_art_rgb_color.
 
-    IF _viewplane->show_out_of_gamut = abap_true.
+    IF me->viewplane->show_out_of_gamut = abap_true.
       mapped_color = clamp_to_color( i_pixel_color ).
     ELSE.
       mapped_color = max_to_one( i_pixel_color ).
     ENDIF.
 
-    IF _viewplane->gamma <> '1.0'.
-      mapped_color = mapped_color->powc( _viewplane->inv_gamma ).
+    IF me->viewplane->gamma <> '1.0'.
+      mapped_color = mapped_color->powc( me->viewplane->inv_gamma ).
     ENDIF.
 
     DATA(x) = i_column.
-    DATA(y) = _viewplane->vres - i_row - 1.
+    DATA(y) = me->viewplane->vres - i_row - 1.
 
     DATA r TYPE int4.
     DATA g TYPE int4.
@@ -366,13 +366,13 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD render_scene.
     DATA zw TYPE decfloat16 VALUE '100.0'. "hard wired in
 
-    DATA(hres) = _viewplane->hres.
-    DATA(vres) = _viewplane->vres.
-    DATA(pixel_size) = _viewplane->pixel_size.
+    DATA(hres) = me->viewplane->hres.
+    DATA(vres) = me->viewplane->vres.
+    DATA(pixel_size) = me->viewplane->pixel_size.
     DATA(sample_point) = NEW zcl_art_point2d( ).
 
     DATA n TYPE int2.
-    n = sqrt( _viewplane->num_samples ).
+    n = sqrt( me->viewplane->num_samples ).
 
     DATA(rand) = cl_abap_random_decfloat16=>create( ).
 
@@ -420,7 +420,7 @@ CLASS zcl_art_world IMPLEMENTATION.
         ENDWHILE.
 
         "Average the color
-        pixel_color->divide_and_assign_by_float( CONV #( _viewplane->num_samples ) ).
+        pixel_color->divide_and_assign_by_float( CONV #( me->viewplane->num_samples ) ).
 
         display_pixel(
           i_row = row

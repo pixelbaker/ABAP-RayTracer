@@ -10,7 +10,9 @@ DATA:
   t_render_time TYPE string,
   t_memory      TYPE string,
   t_objects     TYPE string,
-  t_rays        TYPE string.
+  t_rays        TYPE string,
+  t_dimension   TYPE string,
+  t_samples     TYPE string.
 
 
 START-OF-SELECTION.
@@ -53,7 +55,6 @@ MODULE status_0100 OUTPUT.
   t_memory = NEW zcl_art_byte_formater( )->make_human_readable_byte_count( end_size - start_size ).
 
   PERFORM display USING bitmap_stream.
-  t_resolution = ' '.
 ENDMODULE.
 
 
@@ -63,8 +64,11 @@ FORM render CHANGING c_bitmap_stream.
   world->render_scene( ).
   c_bitmap_stream = world->bitmap->build( ).
 
+  t_samples =  |{ world->viewplane->num_samples NUMBER = USER }|.
+  t_dimension = |{ world->bitmap->image_height_in_pixel }x{ world->bitmap->image_width_in_pixel } px|.
+  t_resolution = |{ ( world->bitmap->image_height_in_pixel * world->bitmap->image_width_in_pixel ) NUMBER = USER } px|.
   t_objects = world->get_num_objects( ).
-  t_rays = world->num_rays.
+  t_rays = |{ world->num_rays NUMBER = USER }|.
 ENDFORM.
 
 

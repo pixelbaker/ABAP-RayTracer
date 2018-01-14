@@ -16,8 +16,8 @@ ENDCLASS.
 
 CLASS zcl_art_function_tracer IMPLEMENTATION.
   METHOD trace_ray.
-    DATA(hres) = _world->_viewplane->hres.
-    DATA(vres) = _world->_viewplane->vres.
+    DATA(hres) = _world->viewplane->hres.
+    DATA(vres) = _world->viewplane->vres.
 
     DATA(factor_x) = ( i_ray->origin->x + ( hres / 2 ) ) / hres.
     DATA(factor_y) = ( i_ray->origin->y + ( vres / 2 ) ) / vres.
