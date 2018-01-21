@@ -11,6 +11,12 @@ CLASS zcl_art_sampler DEFINITION
           i_num_sets    TYPE int4 OPTIONAL
           i_sampler     TYPE REF TO zcl_art_sampler OPTIONAL, "Copy Constructor
 
+      assignment_by_sampler
+        IMPORTING
+          i_rhs            TYPE REF TO zcl_art_sampler
+        RETURNING
+          VALUE(r_sampler) TYPE REF TO zcl_art_sampler,
+
       set_num_sets
         IMPORTING
           i_num_sets TYPE int4,
@@ -101,38 +107,12 @@ ENDCLASS.
 
 CLASS zcl_art_sampler IMPLEMENTATION.
 
-
   METHOD constructor.
     "Copy Constructor
     IF i_sampler IS SUPPLIED.
       ASSERT i_sampler IS BOUND.
 
-      _num_samples = i_sampler->_num_samples.
-      _num_sets = i_sampler->_num_sets.
-      _shuffeled_indices = i_sampler->_shuffeled_indices.
-
-      LOOP AT i_sampler->_samples INTO DATA(sample).
-        SYSTEM-CALL OBJMGR CLONE sample TO sample.
-        APPEND sample TO _samples.
-      ENDLOOP.
-
-      LOOP AT i_sampler->_disk_samples INTO DATA(disk_sample).
-        SYSTEM-CALL OBJMGR CLONE disk_sample TO disk_sample.
-        APPEND disk_sample TO _disk_samples.
-      ENDLOOP.
-
-      LOOP AT i_sampler->_hemisphere_samples INTO DATA(hemisphere_sample).
-        SYSTEM-CALL OBJMGR CLONE hemisphere_sample TO hemisphere_sample.
-        APPEND hemisphere_sample TO _hemisphere_samples.
-      ENDLOOP.
-
-      LOOP AT i_sampler->_sphere_samples INTO DATA(sphere_sample).
-        SYSTEM-CALL OBJMGR CLONE sphere_sample TO sphere_sample.
-        APPEND sphere_sample TO _sphere_samples.
-      ENDLOOP.
-
-      _count = i_sampler->_count.
-      _jump = i_sampler->_jump.
+      assignment_by_sampler(  i_sampler ).
       RETURN.
     ENDIF.
 
@@ -168,7 +148,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD get_num_samples.
-
+    r_num_samples = _num_samples.
   ENDMETHOD.
 
 
@@ -213,12 +193,22 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD setup_shuffled_indices.
+    DATA indices LIKE _shuffeled_indices.
+    DO _num_samples TIMES.
+      APPEND sy-index TO indices.
+    ENDDO.
 
+    DO _num_sets TIMES.
+
+      LOOP AT indices INTO DATA(index).
+        APPEND index TO _shuffeled_indices.
+      ENDLOOP.
+    ENDDO.
   ENDMETHOD.
 
 
   METHOD set_num_sets.
-
+    _num_sets = i_num_sets.
   ENDMETHOD.
 
 
@@ -229,5 +219,43 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
   METHOD shuffle_y_coordinates.
 
+  ENDMETHOD.
+
+
+  METHOD assignment_by_sampler.
+    IF me = i_rhs.
+      r_sampler = me.
+      RETURN.
+    ENDIF.
+
+    _num_samples = i_rhs->_num_samples.
+    _num_sets = i_rhs->_num_sets.
+
+    _shuffeled_indices = i_rhs->_shuffeled_indices.
+
+    LOOP AT i_rhs->_samples INTO DATA(sample).
+      SYSTEM-CALL OBJMGR CLONE sample TO sample.
+      APPEND sample TO _samples.
+    ENDLOOP.
+
+    LOOP AT i_rhs->_disk_samples INTO DATA(disk_sample).
+      SYSTEM-CALL OBJMGR CLONE disk_sample TO disk_sample.
+      APPEND disk_sample TO _disk_samples.
+    ENDLOOP.
+
+    LOOP AT i_rhs->_hemisphere_samples INTO DATA(hemisphere_sample).
+      SYSTEM-CALL OBJMGR CLONE hemisphere_sample TO hemisphere_sample.
+      APPEND hemisphere_sample TO _hemisphere_samples.
+    ENDLOOP.
+
+    LOOP AT i_rhs->_sphere_samples INTO DATA(sphere_sample).
+      SYSTEM-CALL OBJMGR CLONE sphere_sample TO sphere_sample.
+      APPEND sphere_sample TO _sphere_samples.
+    ENDLOOP.
+
+    _count = i_rhs->_count.
+    _jump = i_rhs->_jump.
+
+    r_sampler = me.
   ENDMETHOD.
 ENDCLASS.
