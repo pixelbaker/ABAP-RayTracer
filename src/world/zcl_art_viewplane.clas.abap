@@ -14,7 +14,8 @@ CLASS zcl_art_viewplane DEFINITION
 
       show_out_of_gamut TYPE abap_bool READ-ONLY,
 
-      num_samples       TYPE int2 VALUE 1 READ-ONLY.
+      num_samples       TYPE int4 VALUE 1 READ-ONLY,
+      sampler           TYPE REF TO zcl_art_sampler READ-ONLY.
 
 
     CLASS-METHODS:
@@ -58,7 +59,11 @@ CLASS zcl_art_viewplane DEFINITION
 
       set_num_samples
         IMPORTING
-          i_num_samples LIKE num_samples.
+          i_num_samples LIKE num_samples,
+
+      set_sampler
+        IMPORTING
+          i_sampler TYPE REF TO zcl_art_sampler.
 
 
   PRIVATE SECTION.
@@ -76,7 +81,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_viewplane IMPLEMENTATION.
+CLASS ZCL_ART_VIEWPLANE IMPLEMENTATION.
 
 
   METHOD assignment.
@@ -147,11 +152,23 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
 
   METHOD set_num_samples.
     me->num_samples = i_num_samples.
+
+    IF me->num_samples > 1.
+      me->sampler = zcl_art_regular=>new_by_num_samples( i_num_samples ).
+    ELSE.
+      me->sampler = zcl_art_regular=>new_by_num_samples( 1 ).
+    ENDIF.
   ENDMETHOD.
 
 
   METHOD set_pixel_size.
     me->pixel_size = i_size.
+  ENDMETHOD.
+
+
+  METHOD set_sampler.
+    me->num_samples = i_sampler->get_num_samples( ).
+    me->sampler = i_sampler.
   ENDMETHOD.
 
 

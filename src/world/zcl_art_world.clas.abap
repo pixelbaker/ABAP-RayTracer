@@ -85,7 +85,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_world IMPLEMENTATION.
+CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -94,10 +94,10 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build.
-*    build_single_sphere( ).
+    build_single_sphere( ).
 *    build_multiple_objects( ).
 *    build_from_image_mask( ).
-    build_sinusoid_function( ).
+*    build_sinusoid_function( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = me->viewplane->vres
@@ -370,6 +370,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     DATA(vres) = me->viewplane->vres.
     DATA(pixel_size) = me->viewplane->pixel_size.
     DATA(sample_point) = NEW zcl_art_point2d( ).
+    DATA(pixel_point) = NEW zcl_art_point2d( ).
 
     DATA n TYPE int2.
     n = sqrt( me->viewplane->num_samples ).
@@ -386,38 +387,19 @@ CLASS zcl_art_world IMPLEMENTATION.
       WHILE column < hres.
         DATA(pixel_color) = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
 
-        "Sampling
-        DATA p TYPE int2 VALUE 0.
-        DATA q TYPE int2 VALUE 0.
-        p = 0.
-        WHILE p < n. "up pixel
-          q = 0.
-          WHILE q < n. "across pixel
-            "Regular or uniform sampling
-*            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + '0.5' ) / n ).
-*            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + '0.5' ) / n ).
+        DO me->viewplane->num_samples TIMES.
+          sample_point = me->viewplane->sampler->sample_unit_square( ).
+          pixel_point->x = pixel_size * ( column - '0.5' * hres + sample_point->x ).
+          pixel_point->y = pixel_size * ( row - '0.5' * vres + sample_point->y ).
 
-*            "Random sampling
-*            sample_point->x = pixel_size * ( column - '0.5' * hres + rand->get_next( ) ).
-*            sample_point->y = pixel_size * ( row    - '0.5' * vres + rand->get_next( ) ).
+          ray->origin = zcl_art_point3d=>new_individual(
+            i_x = pixel_point->x
+            i_y = pixel_point->y
+            i_z = zw ).
 
-            "Jittered sampling
-            sample_point->x = pixel_size * ( column - '0.5' * hres + ( q + rand->get_next( ) ) / n ).
-            sample_point->y = pixel_size * ( row    - '0.5' * vres + ( p + rand->get_next( ) ) / n ).
-
-            ray->origin = zcl_art_point3d=>new_individual(
-              i_x = sample_point->x
-              i_y = sample_point->y
-              i_z = zw ).
-
-            pixel_color->add_and_assign_by_color( _tracer->trace_ray( ray ) ).
-            ADD 1 TO me->num_rays.
-
-            ADD 1 TO q.
-          ENDWHILE.
-
-          ADD 1 TO p.
-        ENDWHILE.
+          pixel_color->add_and_assign_by_color( _tracer->trace_ray( ray ) ).
+          ADD 1 TO me->num_rays.
+        ENDDO.
 
         "Average the color
         pixel_color->divide_and_assign_by_float( CONV #( me->viewplane->num_samples ) ).
