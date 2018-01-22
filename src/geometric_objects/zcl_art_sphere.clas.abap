@@ -49,10 +49,6 @@ CLASS zcl_art_sphere DEFINITION
 
   PROTECTED SECTION.
   PRIVATE SECTION.
-    CONSTANTS:
-      _co_kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
-
-
     DATA:
       _center TYPE REF TO zcl_art_point3d,
       _radius TYPE decfloat16.
@@ -115,7 +111,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
       denominator = 2 * a.
 
       t = ( - b - e ) / denominator. "smaller root
-      IF t > _co_kepsilon.
+      IF t > zcl_art_constants=>k_epsilon.
         e_tmin = t.
 
         calc_normal_and_hit_point(
@@ -132,7 +128,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
       t = ( - b + e ) / denominator. "larger root
 
-      IF t > _co_kepsilon.
+      IF t > zcl_art_constants=>k_epsilon.
         e_tmin = t.
 
         calc_normal_and_hit_point(

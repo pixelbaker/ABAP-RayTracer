@@ -38,7 +38,7 @@ CLASS zcl_art_sampler DEFINITION
 
       map_samples_to_hemisphere
         IMPORTING
-          i_p TYPE decfloat16,
+          i_exponent TYPE decfloat16,
 
       map_samples_to_sphere,
 
@@ -111,7 +111,6 @@ CLASS zcl_art_sampler IMPLEMENTATION.
     "Copy Constructor
     IF i_sampler IS SUPPLIED.
       ASSERT i_sampler IS BOUND.
-
       assignment_by_sampler(  i_sampler ).
       RETURN.
     ENDIF.
@@ -153,17 +152,90 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD map_samples_to_hemisphere.
-
+    "Maps the 2D sample points to 3D points on a unit hemisphere with a cosine power
+    "density distribution in the polar angle
+    DATA(num_lines) = lines( _samples ).
+    DO num_lines TIMES.
+      DATA(cos_phi) = cos( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
+      DATA(sin_phi) = sin( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
+      DATA(cos_theta) = ( '1.0' - _samples[ sy-index ]->y ) ** ( '1.0' / ( i_exponent + '1.0') ).
+      DATA(sin_theta) = sqrt( '1.0' - cos_theta * cos_theta ).
+      DATA(pu) = sin_theta * cos_phi.
+      DATA(pv) = sin_theta * sin_phi.
+      DATA(pw) = cos_theta.
+      APPEND zcl_art_point3d=>new_individual( i_x = pu i_y = pv i_z = pw ) TO _hemisphere_samples.
+    ENDDO.
   ENDMETHOD.
 
 
   METHOD map_samples_to_sphere.
+    "Maps the 2D sample points to 3D points on a unit sphere with a uniform density
+    "distribution over the surface this is used for modelling a spherical light
 
+    DATA phi TYPE float.
+    DATA r TYPE float.
+
+    DO _num_samples * _num_sets TIMES.
+      DATA(r1) = _samples[ sy-index ]->x.
+      DATA(r2) = _samples[ sy-index ]->y.
+      DATA(z) = '1.0' - '2.0' * r1.
+      r = sqrt( '1.0' - z * z ).
+      phi = zcl_art_constants=>two_pi * r2.
+      DATA(x) = r * cos( phi ).
+      DATA(y) = r * sin( phi ).
+      APPEND zcl_art_point3d=>new_individual( i_x = CONV #( x ) i_y = CONV #( y ) i_z = z ) TO _sphere_samples.
+    ENDDO.
   ENDMETHOD.
 
 
   METHOD map_samples_to_unit_disk.
+    "Maps the 2D sample points in the square [-1,1] X [-1,1] to a unit disk, using Peter Shirley's
+    "concentric map function
 
+
+    DATA(num_lines) = lines( _samples ).
+
+    "polar coordinates
+    DATA r TYPE float.
+    DATA phi TYPE float.
+
+    "Sample point on unit disk
+    DATA(sp) = NEW zcl_art_point2d( ).
+
+    DO num_lines TIMES.
+      "map sample point to [-1, 1] X [-1,1]
+      sp->x = '2.0' * _samples[ sy-index ]->x - '1.0'.
+      sp->y = '2.0' * _samples[ sy-index ]->y - '1.0'.
+
+      IF sp->x > ( -1 * sp->y ). "Sectors 1 and 2
+        IF sp->x > sp->y. "Sector 1
+          r = sp->x.
+          phi = sp->y / sp->x.
+        ELSE. "Sector 2
+          r = sp->y.
+          phi = '2.0' - sp->x / sp->y.
+        ENDIF.
+      ELSE. "Sectors 3 and 4
+        IF sp->x < sp->y. "Sector 3
+          r = -1 * sp->x.
+          phi = '4.0' + sp->y / sp->x.
+        ELSE. "Sector 4
+          r = -1 * sp->y.
+          IF sp->y <> '0.0'. "Avoid division by zero at origin
+            phi = '6.0' - sp->x / sp->y.
+          ELSE.
+            phi = '0.0'.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      phi = phi * ( zcl_art_constants=>pi / '4.0' ).
+
+      APPEND NEW zcl_art_point2d( i_x = r * cos( phi )
+                                  i_y = r * sin( phi ) ) TO _disk_samples.
+    ENDDO.
+
+    CLEAR _samples.
   ENDMETHOD.
 
 
@@ -198,7 +270,10 @@ CLASS zcl_art_sampler IMPLEMENTATION.
       APPEND sy-index TO indices.
     ENDDO.
 
+    DATA(shuffler) = NEW zcl_art_random_shuffle( ).
+
     DO _num_sets TIMES.
+      shuffler->random_shuffle( CHANGING c_itab = indices ).
 
       LOOP AT indices INTO DATA(index).
         APPEND index TO _shuffeled_indices.

@@ -30,10 +30,6 @@ CLASS zcl_art_plane DEFINITION
 
   PROTECTED SECTION.
   PRIVATE SECTION.
-    CONSTANTS:
-      _co_kepsilon TYPE decfloat16 VALUE '0.001'. "for shadows and secondary rays
-
-
     DATA:
       _point  TYPE REF TO zcl_art_point3d, "point through which plane passes
       _normal TYPE REF TO zcl_art_normal. "normal to the plane
@@ -49,7 +45,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_PLANE IMPLEMENTATION.
+CLASS zcl_art_plane IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -74,7 +70,7 @@ CLASS ZCL_ART_PLANE IMPLEMENTATION.
     DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( _normal ).
     t = dot_product1 / dot_product2.
 
-    IF t > _co_kepsilon.
+    IF t > zcl_art_constants=>k_epsilon.
       e_tmin = t.
 
       c_shade_rec->normal->assignment_by_normal( _normal ).
