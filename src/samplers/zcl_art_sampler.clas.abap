@@ -240,27 +240,51 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD sample_hemisphere.
+    IF _count MOD _num_samples = 0. "Start of a new pixel
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+    ENDIF.
 
+    r_point = _hemisphere_samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples ] ].
+    ADD 1 TO _count.
   ENDMETHOD.
 
 
   METHOD sample_one_set.
+    "This is a specialised function called in LatticeNoise::init_vector_table
+    "It doesn't shuffle the indices
 
+    r_point = _samples[ _count MOD _num_samples ].
+    ADD 1 TO _count.
   ENDMETHOD.
 
 
   METHOD sample_sphere.
+    IF _count MOD _num_samples = 0. "Start of a new pixel
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+    ENDIF.
 
+    r_point = _sphere_samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples ] ].
+    ADD 1 TO _count.
   ENDMETHOD.
 
 
   METHOD sample_unit_disk.
+    IF _count MOD _num_samples = 0. "Start of a new pixel
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+    ENDIF.
 
+    r_point = _disk_samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples ] ].
+    ADD 1 TO _count.
   ENDMETHOD.
 
 
   METHOD sample_unit_square.
+    IF _count MOD _num_samples = 0. "Start of a new pixel
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+    ENDIF.
 
+    r_point = _samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples ] ].
+    ADD 1 TO _count.
   ENDMETHOD.
 
 
@@ -288,12 +312,48 @@ CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD shuffle_x_coordinates.
+    DATA:
+      p      TYPE int4,
+      q      TYPE int4,
+      target TYPE int4,
+      temp   TYPE decfloat16.
 
+    DATA(rand) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 ).
+
+    WHILE p < _num_sets.
+      q = 0.
+      WHILE q < _num_samples.
+        target = rand->get_next( ) MOD _num_samples + p * _num_samples.
+        temp = _samples[ q + p * _num_samples + 1 ]->x.
+        _samples[ q + p * _num_samples + 1 ]->x = _samples[ target ]->x.
+        _samples[ target ]->x = temp.
+        ADD 1 TO q.
+      ENDWHILE.
+      ADD 1 TO p.
+    ENDWHILE.
   ENDMETHOD.
 
 
   METHOD shuffle_y_coordinates.
+    DATA:
+      p      TYPE int4,
+      q      TYPE int4,
+      target TYPE int4,
+      temp   TYPE decfloat16.
 
+    DATA(rand) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 ).
+
+    WHILE p < _num_sets.
+      q = 0.
+      WHILE q < _num_samples.
+        target = rand->get_next( ) MOD _num_samples + p * _num_samples.
+        temp = _samples[ q + p * _num_samples + 1 ]->y.
+        _samples[ q + p * _num_samples + 1 ]->y = _samples[ target ]->y.
+        _samples[ target ]->y = temp.
+        ADD 1 TO q.
+      ENDWHILE.
+      ADD 1 TO p.
+    ENDWHILE.
   ENDMETHOD.
 
 
