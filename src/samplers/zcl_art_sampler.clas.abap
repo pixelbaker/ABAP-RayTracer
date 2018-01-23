@@ -324,7 +324,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
     WHILE p < _num_sets.
       q = 0.
       WHILE q < _num_samples.
-        target = rand->get_next( ) MOD _num_samples + p * _num_samples.
+        target = rand->get_next( ) MOD _num_samples + 1 + p * _num_samples.
         temp = _samples[ q + p * _num_samples + 1 ]->x.
         _samples[ q + p * _num_samples + 1 ]->x = _samples[ target ]->x.
         _samples[ target ]->x = temp.
@@ -347,7 +347,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
     WHILE p < _num_sets.
       q = 0.
       WHILE q < _num_samples.
-        target = rand->get_next( ) MOD _num_samples + p * _num_samples.
+        target = rand->get_next( ) MOD _num_samples + 1 + p * _num_samples.
         temp = _samples[ q + p * _num_samples + 1 ]->y.
         _samples[ q + p * _num_samples + 1 ]->y = _samples[ target ]->y.
         _samples[ target ]->y = temp.
