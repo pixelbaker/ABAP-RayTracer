@@ -24,8 +24,6 @@ CLASS zcl_art_regular DEFINITION
 
 
     METHODS:
-      generate_samples REDEFINITION,
-
       assigment_by_regular
         IMPORTING
           i_rhs            TYPE REF TO zcl_art_regular
@@ -34,6 +32,10 @@ CLASS zcl_art_regular DEFINITION
 
 
   PROTECTED SECTION.
+    METHODS:
+      generate_samples REDEFINITION.
+
+
   PRIVATE SECTION.
     METHODS:
       constructor
@@ -46,6 +48,8 @@ ENDCLASS.
 
 
 CLASS zcl_art_regular IMPLEMENTATION.
+
+
   METHOD assigment_by_regular.
     IF me = i_rhs.
       r_regular = me.
@@ -68,8 +72,7 @@ CLASS zcl_art_regular IMPLEMENTATION.
 
 
   METHOD generate_samples.
-    DATA n TYPE int4.
-    n = sqrt( CONV float( _num_samples ) ).
+    DATA(n) = CONV int4( sqrt( _num_samples ) ).
 
     DATA j TYPE int4.
     DATA p TYPE int4.

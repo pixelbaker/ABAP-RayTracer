@@ -24,9 +24,7 @@ CLASS zcl_art_random DEFINITION
 
 
     METHODS:
-      generate_samples REDEFINITION,
-
-      assigment_by_regular
+      assigment_by_random
         IMPORTING
           i_rhs           TYPE REF TO zcl_art_random
         RETURNING
@@ -34,6 +32,10 @@ CLASS zcl_art_random DEFINITION
 
 
   PROTECTED SECTION.
+    METHODS:
+      generate_samples REDEFINITION.
+
+
   PRIVATE SECTION.
     METHODS:
       constructor
@@ -45,10 +47,10 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_random IMPLEMENTATION.
+CLASS ZCL_ART_RANDOM IMPLEMENTATION.
 
 
-  METHOD assigment_by_regular.
+  METHOD assigment_by_random.
     IF me = i_rhs.
       r_random = me.
       RETURN.

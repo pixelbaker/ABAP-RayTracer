@@ -31,9 +31,7 @@ CLASS zcl_art_nrooks DEFINITION
 
 
     METHODS:
-      generate_samples REDEFINITION,
-
-      assigment_by_regular
+      assigment_by_nrooks
         IMPORTING
           i_rhs           TYPE REF TO zcl_art_nrooks
         RETURNING
@@ -41,6 +39,10 @@ CLASS zcl_art_nrooks DEFINITION
 
 
   PROTECTED SECTION.
+    METHODS:
+      generate_samples REDEFINITION.
+
+
   PRIVATE SECTION.
     METHODS:
       constructor
@@ -56,7 +58,7 @@ ENDCLASS.
 CLASS zcl_art_nrooks IMPLEMENTATION.
 
 
-  METHOD assigment_by_regular.
+  METHOD assigment_by_nrooks.
     IF me = i_rhs.
       r_nrooks = me.
       RETURN.
