@@ -94,8 +94,8 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD build.
-    build_single_sphere( ).
-*    build_multiple_objects( ).
+*    build_single_sphere( ).
+    build_multiple_objects( ).
 *    build_from_image_mask( ).
 *    build_sinusoid_function( ).
 
@@ -185,6 +185,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
   METHOD build_multiple_objects.
     me->viewplane->set_hres( 200 ).
     me->viewplane->set_vres( 200 ).
+    me->viewplane->set_num_samples( 16 ).
 
     me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
     _tracer = NEW zcl_art_multiple_objects( me ).

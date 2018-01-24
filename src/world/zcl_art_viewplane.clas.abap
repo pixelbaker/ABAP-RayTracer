@@ -81,7 +81,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_VIEWPLANE IMPLEMENTATION.
+CLASS zcl_art_viewplane IMPLEMENTATION.
 
 
   METHOD assignment.
@@ -154,7 +154,7 @@ CLASS ZCL_ART_VIEWPLANE IMPLEMENTATION.
     me->num_samples = i_num_samples.
 
     IF me->num_samples > 1.
-      me->sampler = zcl_art_regular=>new_by_num_samples( i_num_samples ).
+      me->sampler = zcl_art_multijittered=>new_by_num_samples( i_num_samples ).
     ELSE.
       me->sampler = zcl_art_regular=>new_by_num_samples( 1 ).
     ENDIF.
