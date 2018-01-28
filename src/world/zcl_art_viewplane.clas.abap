@@ -107,6 +107,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     me->gamma = i_gamma.
     me->inv_gamma = i_inv_gamma.
     me->show_out_of_gamut = i_show_out_of_gamut.
+    set_num_samples( 1 ).
   ENDMETHOD.
 
 
