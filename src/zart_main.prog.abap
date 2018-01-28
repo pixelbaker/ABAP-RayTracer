@@ -65,7 +65,7 @@ FORM render CHANGING c_bitmap_stream.
   c_bitmap_stream = world->bitmap->build( ).
 
   t_samples =  |{ world->viewplane->num_samples NUMBER = USER }|.
-  t_dimension = |{ world->bitmap->image_height_in_pixel }x{ world->bitmap->image_width_in_pixel } px|.
+  t_dimension = |{ world->bitmap->image_width_in_pixel }x{ world->bitmap->image_height_in_pixel } px|.
   t_resolution = |{ ( world->bitmap->image_height_in_pixel * world->bitmap->image_width_in_pixel ) NUMBER = USER } px|.
   t_objects = world->get_num_objects( ).
   t_rays = |{ world->num_rays NUMBER = USER }|.
