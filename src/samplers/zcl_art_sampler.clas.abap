@@ -1,3 +1,4 @@
+"! <p class="shorttext synchronized" lang="en">Sampler</p>
 CLASS zcl_art_sampler DEFINITION
   PUBLIC
   ABSTRACT
@@ -31,36 +32,63 @@ CLASS zcl_art_sampler DEFINITION
 
       setup_shuffled_indices,
 
+      "! Maps the 2D sample points in the square [-1,1] X [-1,1] to a unit disk,
+      "! using Peter Shirley's concentric map function.
       map_samples_to_unit_disk,
 
+
+      "! Maps the 2D sample points to 3D points on a unit hemisphere
+      "! with a cosine power density distribution in the polar angle
+      "!
+      "! @parameter i_exponent | <p class="shorttext synchronized" lang="en"></p>
       map_samples_to_hemisphere
         IMPORTING
           i_exponent TYPE decfloat16,
 
+
+      "! Maps the 2D sample points to 3D points on a unit sphere
+      "! with a uniform density distribution over the surface this is used for modeling a spherical light
       map_samples_to_sphere,
 
-      "Get next sample on unit square
+
+      "! <p class="shorttext synchronized" lang="en">Get next sample on unit square</p>
+      "!
+      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_unit_square
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d,
 
-      "Get next sample on unit disk
+
+      "! <p class="shorttext synchronized" lang="en">Get next sample on unit disk</p>
+      "!
+      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_unit_disk
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d,
 
-      "Get next sample on unit hemisphere
+
+      "! <p class="shorttext synchronized" lang="en">Get next sample on unit hemisphere</p>
+      "!
+      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_hemisphere
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point3d,
 
-      "Get next sample on unit sphere
+
+      "! <p class="shorttext synchronized" lang="en">Get next sample on unit sphere</p>
+      "!
+      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_sphere
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point3d,
 
-      "Only used to set up a vector noise table.
-      "This is not discussed in the book, but see the file LatticeNoise.cpp in Chapter 31.
+
+      "! Only used to set up a vector noise table.
+      "! This is not discussed in the book, but see the file LatticeNoise.cpp in Chapter 31.<br>
+      "! This is a specialized function called in LatticeNoise::init_vector_table
+      "! It doesn't shuffle the indices
+      "!
+      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_one_set
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d.
@@ -98,7 +126,7 @@ CLASS zcl_art_sampler DEFINITION
 
 
     METHODS:
-      "Generate sample patterns in a unit square
+      "! <p class="shorttext synchronized" lang="en">Generate sample patterns in a unit square</p>
       generate_samples ABSTRACT.
 
 
@@ -194,9 +222,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD map_samples_to_hemisphere.
-    "Maps the 2D sample points to 3D points on a unit hemisphere with a cosine power
-    "density distribution in the polar angle
-
     DO lines( _samples ) TIMES.
       DATA(cos_phi) = cos( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
       DATA(sin_phi) = sin( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
@@ -211,9 +236,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD map_samples_to_sphere.
-    "Maps the 2D sample points to 3D points on a unit sphere with a uniform density
-    "distribution over the surface this is used for modelling a spherical light
-
     DATA phi TYPE float.
     DATA r TYPE float.
 
@@ -233,10 +255,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD map_samples_to_unit_disk.
-    "Maps the 2D sample points in the square [-1,1] X [-1,1] to a unit disk, using Peter Shirley's
-    "concentric map function
-
-
     DATA(num_lines) = lines( _samples ).
 
     "polar coordinates
@@ -297,9 +315,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD sample_one_set.
-    "This is a specialized function called in LatticeNoise::init_vector_table
-    "It doesn't shuffle the indices
-
     r_point = _samples[ _count MOD _num_samples + 1 ].
     ADD 1 TO _count.
   ENDMETHOD.
@@ -307,7 +322,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
   METHOD sample_sphere.
     IF _count MOD _num_samples = 0. "Start of a new pixel
-      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( )  min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
     ENDIF.
 
     r_point = _sphere_samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples + 1 ] ].
@@ -317,7 +332,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
   METHOD sample_unit_disk.
     IF _count MOD _num_samples = 0. "Start of a new pixel
-      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( )  min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
     ENDIF.
 
     r_point = _disk_samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples + 1 ] ].
@@ -327,7 +342,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
   METHOD sample_unit_square.
     IF _count MOD _num_samples = 0. "Start of a new pixel
-      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
+      _jump = ( cl_abap_random_int=>create( seed = cl_abap_random=>seed( )  min = 0 )->get_next( ) MOD _num_sets ) * _num_samples.
     ENDIF.
 
     r_point = _samples[ _jump + _shuffeled_indices[ _jump + _count MOD _num_samples + 1 ] ].
