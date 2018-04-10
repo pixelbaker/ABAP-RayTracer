@@ -17,7 +17,9 @@ CLASS zcl_art_world DEFINITION
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
       viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
-      num_rays         TYPE int4 READ-ONLY.
+      num_rays         TYPE int4 READ-ONLY,
+      eye              TYPE decfloat16,
+      distance         TYPE decfloat16.
 
 
     METHODS:
@@ -30,6 +32,8 @@ CLASS zcl_art_world DEFINITION
       build,
 
       render_scene,
+
+      render_perspective,
 
       hit_bare_bones_objects
         IMPORTING
@@ -67,6 +71,11 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
+
+      "! Set color to red if any component is greater than one
+      "!
+      "! @parameter i_color | <p class="shorttext synchronized" lang="en"></p>
+      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       clamp_to_color
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
@@ -85,7 +94,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_WORLD IMPLEMENTATION.
+CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -106,15 +115,17 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD build_from_image_mask.
+    me->viewplane->set_num_samples( 16 ).
+
     cl_mime_repository_api=>get_api( )->get(
       EXPORTING
-*        i_url = `/SAP/PUBLIC/ZART/sap_logo_black_and_white.bmp`
-        i_url = `/SAP/PUBLIC/ZART/pixelbaker_logo_mask.bmp`
+        i_url = `/SAP/PUBLIC/ZART/sap_logo_black_and_white.bmp`
+*        i_url = `/SAP/PUBLIC/ZART/pixelbaker_logo_mask.bmp`
       IMPORTING
         e_content = DATA(img) ).
 
-    DATA factor TYPE decfloat16 VALUE '1.0'.
-    DATA density TYPE int4 VALUE 6.
+    DATA factor TYPE decfloat16 VALUE '2.0'.
+    DATA density TYPE int4 VALUE 2.
     DATA hres TYPE int4.
     DATA vres TYPE int4.
 
@@ -176,13 +187,15 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
         ADD 1 TO column.
       ENDWHILE.
 
-*      converter->skip_x( n = 3 ).
+      converter->skip_x( n = 3 ).
       ADD 1 TO row.
     ENDWHILE.
   ENDMETHOD.
 
 
   METHOD build_multiple_objects.
+    me->eye = 90.
+    me->distance = 6.
     me->viewplane->set_hres( 200 ).
     me->viewplane->set_vres( 200 ).
     me->viewplane->set_num_samples( 16 ).
@@ -217,7 +230,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     me->viewplane->set_vres( 200 ).
     me->viewplane->set_pixel_size( '1.0' ).
     me->viewplane->set_gamma( '2.2' ).
-    me->viewplane->set_num_samples( 16 ).
+    me->viewplane->set_num_samples( 1 ).
 
     me->background_color = zcl_art_rgb_color=>white.
     _tracer = NEW zcl_art_single_sphere( me ).
@@ -232,7 +245,8 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     me->viewplane->set_vres( 512 ).
     me->viewplane->set_pixel_size( '1.0' ).
     me->viewplane->set_gamma( '2.2' ).
-    me->viewplane->set_num_samples( 25 ).
+    me->viewplane->set_sampler( zcl_art_nrooks=>new_by_num_samples( 25 ) ).
+*    me->viewplane->set_num_samples( 25 ).
 
     _tracer = NEW zcl_art_function_tracer( me ).
 
@@ -241,8 +255,6 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD clamp_to_color.
-    "Set color to red if any component is greater than one
-
     r_color = zcl_art_rgb_color=>new_copy( i_color ).
 
     IF r_color->r > '1.0' OR
@@ -361,6 +373,41 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     ELSE.
       r_color = i_color.
     ENDIF.
+  ENDMETHOD.
+
+
+  METHOD render_perspective.
+    DATA(ray) = zcl_art_ray=>new_default( ).
+    ray->origin = zcl_art_point3d=>new_individual( i_x = 0  i_y = 0  i_z = me->eye ).
+
+    DATA(hres) = me->viewplane->hres.
+    DATA(vres) = me->viewplane->vres.
+    DATA(pixel_size) = me->viewplane->pixel_size.
+
+    DATA row TYPE int4.
+    DATA column TYPE int4.
+    WHILE row < vres.
+      column = 0.
+      WHILE column < hres.
+        ray->direction = zcl_art_vector3d=>new_individual(
+          i_x = pixel_size * ( column - '0.5' * ( hres - '1.0' ) )
+          i_y = pixel_size * ( row - '0.5' * ( vres - '1.0') )
+          i_z = -1 * me->distance ).
+
+        ray->direction->normalize( ).
+
+        DATA(pixel_color) = zcl_art_rgb_color=>new_copy( _tracer->trace_ray( ray ) ).
+
+        display_pixel(
+          i_row = row
+          i_column = column
+          i_pixel_color = pixel_color ).
+
+        ADD 1 TO column.
+      ENDWHILE.
+
+      ADD 1 TO row.
+    ENDWHILE.
   ENDMETHOD.
 
 

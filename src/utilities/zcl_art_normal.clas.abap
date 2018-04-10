@@ -43,6 +43,7 @@ CLASS zcl_art_normal DEFINITION
 
 
     METHODS:
+      "! Convert normal to a unit normal
       normalize,
 
       assignment_by_normal
@@ -139,8 +140,6 @@ CLASS zcl_art_normal IMPLEMENTATION.
 
 
   METHOD normalize.
-    "Convert normal to a unit normal
-
     DATA length TYPE decfloat16.
     length = sqrt( x * x + y * y + z * z ).
     x = x / length.

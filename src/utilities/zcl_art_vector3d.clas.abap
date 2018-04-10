@@ -84,7 +84,10 @@ CLASS zcl_art_vector3d DEFINITION
         IMPORTING
           i_value         TYPE decfloat16
         RETURNING
-          VALUE(r_vector) TYPE REF TO zcl_art_vector3d.
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
+      "! Convert vector to a unit vector
+      normalize.
 
 
   PRIVATE SECTION.
@@ -99,14 +102,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_vector3d IMPLEMENTATION.
-
-
-  METHOD constructor.
-    me->x = i_x.
-    me->y = i_y.
-    me->z = i_z.
-  ENDMETHOD.
+CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
 
 
   METHOD assignment_by_vector.
@@ -118,6 +114,13 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
     me->x = i_vector->x.
     me->y = i_vector->y.
     me->z = i_vector->z.
+  ENDMETHOD.
+
+
+  METHOD constructor.
+    me->x = i_x.
+    me->y = i_y.
+    me->z = i_z.
   ENDMETHOD.
 
 
@@ -197,5 +200,14 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
       i_x = i_value
       i_y = i_value
       i_z = i_value ).
+  ENDMETHOD.
+
+
+  METHOD normalize.
+    DATA length TYPE decfloat16.
+    length = sqrt( x * x + y * y + z * z ).
+    x = x / length.
+    y = y / length.
+    z = z / length.
   ENDMETHOD.
 ENDCLASS.
