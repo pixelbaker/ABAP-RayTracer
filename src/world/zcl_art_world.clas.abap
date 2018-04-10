@@ -65,6 +65,8 @@ CLASS zcl_art_world DEFINITION
 
       build_from_image_mask,
 
+      build_horizont,
+
       max_to_one
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
@@ -104,7 +106,8 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD build.
 *    build_single_sphere( ).
-    build_multiple_objects( ).
+*    build_multiple_objects( ).
+    build_horizont( ).
 *    build_from_image_mask( ).
 *    build_sinusoid_function( ).
 
@@ -462,4 +465,23 @@ CLASS zcl_art_world IMPLEMENTATION.
       ADD 1 TO row.
     ENDWHILE.
   ENDMETHOD.
+
+
+  METHOD build_horizont.
+    me->eye = 90.
+    me->distance = 6.
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+    me->viewplane->set_num_samples( 16 ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    _tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+      i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -100  i_Z = 0 )
+      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 0 ) ).
+    plane->set_color_by_components( i_r = 0 i_g = '1' i_b = 0 ).
+    add_objects( plane ).
+  ENDMETHOD.
+
 ENDCLASS.
