@@ -6,9 +6,9 @@ CLASS zcl_art_vector3d DEFINITION
 
   PUBLIC SECTION.
     DATA:
-      x TYPE decfloat16 READ-ONLY,
-      y TYPE decfloat16 READ-ONLY,
-      z TYPE decfloat16 READ-ONLY.
+      x TYPE decfloat16,
+      y TYPE decfloat16,
+      z TYPE decfloat16.
 
 
     CLASS-METHODS:
@@ -68,6 +68,15 @@ CLASS zcl_art_vector3d DEFINITION
         RETURNING
           VALUE(r_dot_product) TYPE decfloat16,
 
+      "! operator^
+      "! @parameter i_vector |
+      "! @parameter r_cross_product |
+      get_cross_product
+        IMPORTING
+          i_vector               TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_cross_product) TYPE REF TO zcl_art_vector3d,
+
       get_sum_by_vector
         IMPORTING
           i_vector        TYPE REF TO zcl_art_vector3d
@@ -102,7 +111,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
+CLASS zcl_art_vector3d IMPLEMENTATION.
 
 
   METHOD assignment_by_vector.
@@ -209,5 +218,13 @@ CLASS ZCL_ART_VECTOR3D IMPLEMENTATION.
     x = x / length.
     y = y / length.
     z = z / length.
+  ENDMETHOD.
+
+
+  METHOD get_cross_product.
+    r_cross_product = zcl_art_vector3d=>new_individual(
+      i_x = y * i_vector->z - z * i_vector->y
+      i_y = z * i_vector->x - x * i_vector->z
+      i_z = x * i_vector->y - y * i_vector->x ).
   ENDMETHOD.
 ENDCLASS.
