@@ -58,16 +58,18 @@ CLASS zcl_art_camera DEFINITION
 
   PROTECTED SECTION.
     DATA:
-      _eye           TYPE REF TO zcl_art_point3d, "eye point
-      _lookat        TYPE REF TO zcl_art_point3d, "lookat point
-      _roll_angle    TYPE decfloat16, "roll angle
+      _eye           TYPE REF TO zcl_art_point3d,
+      _lookat        TYPE REF TO zcl_art_point3d,
+
+      _roll_angle    TYPE decfloat16,
 
       "orthonormal basis vectors
       _u             TYPE REF TO zcl_art_vector3d,
       _v             TYPE REF TO zcl_art_vector3d,
       _w             TYPE REF TO zcl_art_vector3d,
 
-      _up            TYPE REF TO zcl_art_vector3d, "up vector
+      _up            TYPE REF TO zcl_art_vector3d,
+
       _exposure_time TYPE decfloat16.
 
 
