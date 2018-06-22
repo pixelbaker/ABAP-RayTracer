@@ -19,7 +19,8 @@ CLASS zcl_art_world DEFINITION
       viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
       num_rays         TYPE int4 READ-ONLY,
       eye              TYPE decfloat16,
-      distance         TYPE decfloat16.
+      distance         TYPE decfloat16,
+      tracer           TYPE REF TO zcl_art_tracer.
 
 
     METHODS:
@@ -43,7 +44,13 @@ CLASS zcl_art_world DEFINITION
 
       get_num_objects
         RETURNING
-          VALUE(r_num_objects) TYPE int4.
+          VALUE(r_num_objects) TYPE int4,
+
+      display_pixel
+        IMPORTING
+          i_row         TYPE int4
+          i_column      TYPE int4
+          i_pixel_color TYPE REF TO zcl_art_rgb_color.
 
 
   PRIVATE SECTION.
@@ -52,8 +59,7 @@ CLASS zcl_art_world DEFINITION
 
 
     DATA:
-      _objects TYPE _geometric_objects,
-      _tracer  TYPE REF TO zcl_art_tracer.
+      _objects TYPE _geometric_objects.
 
 
     METHODS:
@@ -84,19 +90,13 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-      display_pixel
-        IMPORTING
-          i_row         TYPE int4
-          i_column      TYPE int4
-          i_pixel_color TYPE REF TO zcl_art_rgb_color,
-
       build_sinusoid_function.
 
 ENDCLASS.
 
 
 
-CLASS zcl_art_world IMPLEMENTATION.
+CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD add_objects.
@@ -144,7 +144,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_vres( vres * factor ).
 
     me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    _tracer = NEW zcl_art_multiple_objects( me ).
+    tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA:
       sphere    TYPE REF TO zcl_art_sphere,
@@ -196,6 +196,24 @@ CLASS zcl_art_world IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD build_horizont.
+    me->eye = 90.
+    me->distance = 6.
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+    me->viewplane->set_num_samples( 16 ).
+
+    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+      i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -100  i_z = 0 )
+      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 0 ) ).
+    plane->set_color_by_components( i_r = 0 i_g = '1' i_b = 0 ).
+    add_objects( plane ).
+  ENDMETHOD.
+
+
   METHOD build_multiple_objects.
     me->eye = 90.
     me->distance = 6.
@@ -204,7 +222,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_num_samples( 16 ).
 
     me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    _tracer = NEW zcl_art_multiple_objects( me ).
+    tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA sphere TYPE REF TO zcl_art_sphere.
 
@@ -236,7 +254,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_num_samples( 1 ).
 
     me->background_color = zcl_art_rgb_color=>white.
-    _tracer = NEW zcl_art_single_sphere( me ).
+    tracer = NEW zcl_art_single_sphere( me ).
 
     me->sphere->set_center_by_value( '0.0' ).
     me->sphere->set_radius( '85.0' ).
@@ -251,7 +269,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_sampler( zcl_art_nrooks=>new_by_num_samples( 25 ) ).
 *    me->viewplane->set_num_samples( 25 ).
 
-    _tracer = NEW zcl_art_function_tracer( me ).
+    tracer = NEW zcl_art_function_tracer( me ).
 
     me->function = NEW zcl_art_sinusoid_function( ).
   ENDMETHOD.
@@ -399,7 +417,7 @@ CLASS zcl_art_world IMPLEMENTATION.
 
         ray->direction->normalize( ).
 
-        DATA(pixel_color) = zcl_art_rgb_color=>new_copy( _tracer->trace_ray( ray ) ).
+        DATA(pixel_color) = zcl_art_rgb_color=>new_copy( tracer->trace_ray( ray ) ).
 
         display_pixel(
           i_row = row
@@ -448,7 +466,7 @@ CLASS zcl_art_world IMPLEMENTATION.
             i_y = pixel_point->y
             i_z = zw ).
 
-          pixel_color->add_and_assign_by_color( _tracer->trace_ray( ray ) ).
+          pixel_color->add_and_assign_by_color( tracer->trace_ray( ray ) ).
           ADD 1 TO me->num_rays.
         ENDDO.
 
@@ -465,23 +483,4 @@ CLASS zcl_art_world IMPLEMENTATION.
       ADD 1 TO row.
     ENDWHILE.
   ENDMETHOD.
-
-
-  METHOD build_horizont.
-    me->eye = 90.
-    me->distance = 6.
-    me->viewplane->set_hres( 200 ).
-    me->viewplane->set_vres( 200 ).
-    me->viewplane->set_num_samples( 16 ).
-
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    _tracer = NEW zcl_art_multiple_objects( me ).
-
-    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
-      i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -100  i_Z = 0 )
-      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 0 ) ).
-    plane->set_color_by_components( i_r = 0 i_g = '1' i_b = 0 ).
-    add_objects( plane ).
-  ENDMETHOD.
-
 ENDCLASS.
