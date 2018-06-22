@@ -83,6 +83,12 @@ CLASS zcl_art_vector3d DEFINITION
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
+      get_difference_by_vector
+        IMPORTING
+          i_vector        TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
       get_product_by_decfloat
         IMPORTING
           i_value         TYPE decfloat16
@@ -226,5 +232,13 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
       i_x = y * i_vector->z - z * i_vector->y
       i_y = z * i_vector->x - x * i_vector->z
       i_z = x * i_vector->y - y * i_vector->x ).
+  ENDMETHOD.
+
+
+  METHOD get_difference_by_vector.
+    r_vector = new_individual(
+      i_x = x - i_vector->x
+      i_y = y - i_vector->y
+      i_z = z - i_vector->z ).
   ENDMETHOD.
 ENDCLASS.

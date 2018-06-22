@@ -57,12 +57,20 @@ CLASS zcl_art_rgb_color DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
+      "! operator/=
+      "!
+      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
+      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       divide_and_assign_by_float
         IMPORTING
           i_value        TYPE decfloat16
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
+      "! operator/
+      "!
+      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
+      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       get_quotient_by_decfloat
         IMPORTING
           i_value        TYPE decfloat16
@@ -72,6 +80,16 @@ CLASS zcl_art_rgb_color DEFINITION
       powc
         IMPORTING
           i_power        TYPE decfloat16
+        RETURNING
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
+      "! operator*=
+      "!
+      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
+      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
+      multiply_and_assign_by_float
+        IMPORTING
+          i_value        TYPE decfloat16
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
 
@@ -186,5 +204,14 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
       i_r = r ** i_power
       i_g = g ** i_power
       i_b = b ** i_power ).
+  ENDMETHOD.
+
+
+  METHOD multiply_and_assign_by_float.
+    MULTIPLY me->r BY i_value.
+    MULTIPLY me->g BY i_value.
+    MULTIPLY me->b BY i_value.
+
+    r_color = me.
   ENDMETHOD.
 ENDCLASS.
