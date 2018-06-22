@@ -135,14 +135,13 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
+CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD assignment_by_sampler.
-    IF me = i_rhs.
-      r_sampler = me.
-      RETURN.
-    ENDIF.
+    r_sampler = me.
+    ASSERT i_rhs IS BOUND.
+    CHECK me <> i_rhs.
 
     _num_samples = i_rhs->_num_samples.
     _num_sets = i_rhs->_num_sets.
@@ -173,15 +172,13 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
     _count = i_rhs->_count.
     _jump = i_rhs->_jump.
-
-    r_sampler = me.
   ENDMETHOD.
 
 
   METHOD constructor.
     "Copy Constructor
     IF i_sampler IS BOUND.
-      assignment_by_sampler(  i_sampler ).
+      assignment_by_sampler( i_sampler ).
       RETURN.
     ENDIF.
 
