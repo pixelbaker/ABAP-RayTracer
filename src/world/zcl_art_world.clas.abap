@@ -1,14 +1,15 @@
+"! <p class="shorttext synchronized" lang="en">World</p>
+"! The World class does not have a copy constructor or an assignment operator, for the following reasons:
+"!  1    There's no need to copy construct or assign the World
+"!  2    We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data
+"!  3    These operations wouldn't work because the world is self-referencing:
+"!       the Tracer base class contains a pointer to the world. If we wrote a correct copy constructor for the
+"!       Tracer class, the World copy constructor would call itself recursively until we ran out of memory.
 CLASS zcl_art_world DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC.
 
-  " The World class does not have a copy constructor or an assignment operator, for the following reasons:
-  " 1    There's no need to copy construct or assign the World
-  " 2    We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data
-  " 3    These operations wouldn't work because the world is self-referencing:
-  "      the Tracer base class contains a pointer to the world. If we wrote a correct copy constructor for the
-  "      Tracer class, the World copy constructor would call itself recursively until we ran out of memory.
 
   PUBLIC SECTION.
     DATA:
@@ -17,16 +18,17 @@ CLASS zcl_art_world DEFINITION
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
       viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
-      num_rays         TYPE int4 READ-ONLY,
+      num_rays         TYPE int4,
       eye              TYPE decfloat16,
       distance         TYPE decfloat16,
-      tracer           TYPE REF TO zcl_art_tracer.
+      tracer           TYPE REF TO zcl_art_tracer READ-ONLY,
+      camera           TYPE REF TO zcl_art_camera READ-ONLY.
 
 
     METHODS:
       constructor,
 
-      add_objects
+      add_object
         IMPORTING
           i_object TYPE REF TO zcl_art_geometric_object,
 
@@ -90,16 +92,22 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-      build_sinusoid_function.
+      build_sinusoid_function,
+
+      set_camera
+        IMPORTING
+          i_camera TYPE REF TO zcl_art_camera,
+
+      build_with_pinhole.
 
 ENDCLASS.
 
 
 
-CLASS ZCL_ART_WORLD IMPLEMENTATION.
+CLASS zcl_art_world IMPLEMENTATION.
 
 
-  METHOD add_objects.
+  METHOD add_object.
     INSERT i_object INTO TABLE _objects.
   ENDMETHOD.
 
@@ -107,9 +115,10 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
   METHOD build.
 *    build_single_sphere( ).
 *    build_multiple_objects( ).
-    build_horizont( ).
+*    build_horizont( ).
 *    build_from_image_mask( ).
 *    build_sinusoid_function( ).
+    build_with_pinhole( ).
 
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = me->viewplane->vres
@@ -184,7 +193,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
             sphere->set_color_by_components( i_r = rand->get_next( ) i_g = rand->get_next( ) i_b = rand->get_next( ) ).
             sphere->set_center_by_components( i_x = x i_y = y i_z = 0 ).
             sphere->set_radius( ( rand->get_next( ) * 2 ) ).
-            add_objects( sphere ).
+            add_object( sphere ).
           ENDIF.
         ENDIF.
         ADD 1 TO column.
@@ -210,7 +219,7 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
       i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -100  i_z = 0 )
       i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 0 ) ).
     plane->set_color_by_components( i_r = 0 i_g = '1' i_b = 0 ).
-    add_objects( plane ).
+    add_object( plane ).
   ENDMETHOD.
 
 
@@ -230,19 +239,19 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     sphere->set_center_by_components( i_x = 0 i_y = -25 i_z = 0 ).
     sphere->set_radius( '80.0' ).
     sphere->set_color_by_components( i_r = 1 i_g = 0 i_b = 0 ).
-    add_objects( sphere ).
+    add_object( sphere ).
 
     sphere = zcl_art_sphere=>new_by_center_and_radius(
       i_center = zcl_art_point3d=>new_individual( i_x = 0 i_y = 30 i_z = 0 )
       i_radius = 60 ).
     sphere->set_color_by_components( i_r = 1 i_g = 1 i_b = 0 ).
-    add_objects( sphere ).
+    add_object( sphere ).
 
     DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
       i_point = zcl_art_point3d=>new_default( )
       i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 1 ) ).
     plane->set_color_by_components( i_r = 0 i_g = '0.3' i_b = 0 ).
-    add_objects( plane ).
+    add_object( plane ).
   ENDMETHOD.
 
 
@@ -482,5 +491,47 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
       ADD 1 TO row.
     ENDWHILE.
+  ENDMETHOD.
+
+
+  METHOD set_camera.
+    ASSERT i_camera IS BOUND.
+    me->camera = i_camera.
+  ENDMETHOD.
+
+
+  METHOD build_with_pinhole.
+    me->viewplane->set_hres( 300 ).
+    me->viewplane->set_vres( 300 ).
+    me->viewplane->set_num_samples( 25 ).
+
+    me->tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA(pinhole) = NEW zcl_art_pinhole( ).
+
+    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
+    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = 0 ).
+    pinhole->set_view_plane_distance( 500 ).
+
+
+*    pinhole->set_eye_by_components( i_x = 300  i_y = 400  i_z = 500 ).
+*    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = -50 ).
+*    pinhole->set_view_plane_distance( '400' ).
+
+
+    pinhole->compute_uvw( ).
+    set_camera( pinhole ).
+
+    DATA(sphere) = zcl_art_sphere=>new_by_center_and_radius(
+                     i_center = zcl_art_point3d=>new_individual( i_x = -45  i_y = 45  i_z = 40 )
+                     i_radius = '50' ).
+    sphere->set_color_by_components( i_r = 1  i_g = 0  i_b = 0 ).
+    add_object( sphere ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+                    i_normal = zcl_art_normal=>new_individual( i_x = 0  i_y = 1  i_z = 0 )
+                    i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -101  i_z = 0 ) ).
+    plane->set_color_by_components( i_r = 0  i_g = 1  i_b = 0 ).
+    add_object( plane ).
   ENDMETHOD.
 ENDCLASS.
