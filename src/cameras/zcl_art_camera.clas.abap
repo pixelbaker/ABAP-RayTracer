@@ -1,6 +1,5 @@
 CLASS zcl_art_camera DEFINITION
   PUBLIC
-  FINAL
   CREATE PUBLIC
   ABSTRACT.
 
