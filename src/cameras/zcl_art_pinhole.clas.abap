@@ -60,11 +60,6 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
 
 
   METHOD render_scene.
-    DATA:
-      "! Sample point on a pixel
-      sample_point TYPE REF TO zcl_art_point2d,
-      depth        TYPE int4.
-
     DATA(viewplane) = zcl_art_viewplane=>new_copy( i_world->viewplane ).
 
     DATA num TYPE int4.
@@ -75,16 +70,20 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
     DATA(ray) = zcl_art_ray=>new_default( ).
     ray->origin = zcl_art_point3d=>new_copy( _eye ).
 
+    "Sample point on a pixel
+    DATA(sample_point) = NEW zcl_art_point2d( ).
+
     DATA:
       row              TYPE int4,
       column           TYPE int4,
       sub_pixel_row    TYPE int4,
-      sub_pixel_column TYPE int4.
+      sub_pixel_column TYPE int4,
+      depth            TYPE int4.
 
     WHILE row < viewplane->vres.
       column = 0.
       WHILE column < viewplane->hres.
-        "! Also called L, which is a symbol for radiance
+        "Also called L, which is a symbol for radiance
         DATA(radiance) = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
 
         sub_pixel_row = 0.
@@ -92,15 +91,17 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
           sub_pixel_column = 0.
           WHILE sub_pixel_column < num.
 
-            sample_point->x = viewplane->pixel_size * ( column - '0.5' * viewplane->hres + ( '0.5' + sub_pixel_column ) ).
-            sample_point->y = viewplane->pixel_size * ( row - '0.5' * viewplane->vres + ( '0,5' + sub_pixel_row  ) ).
+            sample_point->x = viewplane->pixel_size * ( column - '0.5' * viewplane->hres + ( sub_pixel_column + '0.5') ).
+            sample_point->y = viewplane->pixel_size * ( row - '0.5' * viewplane->vres + ( sub_pixel_row + '0.5' ) ).
 
             ray->direction = zcl_art_vector3d=>new_copy( get_direction( sample_point ) ).
 
             radiance->add_and_assign_by_color( i_world->tracer->trace_ray( i_ray = ray  i_depth = depth ) ).
-*            ADD 1 TO me->num_rays.
+            ADD 1 TO i_World->num_rays.
+
             ADD 1 TO sub_pixel_column.
           ENDWHILE.
+
           ADD 1 TO sub_pixel_row.
         ENDWHILE.
 
@@ -111,6 +112,7 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
           i_row = row
           i_column = column
           i_pixel_color = radiance ).
+
         ADD 1 TO column.
       ENDWHILE.
 
