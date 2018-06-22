@@ -72,6 +72,7 @@ CLASS zcl_art_viewplane DEFINITION
         IMPORTING
           i_hres              TYPE int4
           i_vres              TYPE int4
+          i_num_samples       TYPE int4
           i_pixel_size        TYPE decfloat16
           i_gamma             TYPE decfloat16
           i_inv_gamma         TYPE decfloat16
@@ -107,7 +108,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     me->gamma = i_gamma.
     me->inv_gamma = i_inv_gamma.
     me->show_out_of_gamut = i_show_out_of_gamut.
-    set_num_samples( 1 ).
+    set_num_samples( i_num_samples ).
   ENDMETHOD.
 
 
@@ -117,6 +118,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     r_instance = NEW #(
       i_hres = i_viewplane->hres
       i_vres = i_viewplane->vres
+      i_num_samples = i_viewplane->num_samples
       i_pixel_size = i_viewplane->pixel_size
       i_gamma = i_viewplane->gamma
       i_inv_gamma = i_viewplane->inv_gamma
@@ -128,6 +130,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     r_instance = NEW #(
       i_hres = 400
       i_vres = 400
+      i_num_samples = 1
       i_pixel_size = '1.0'
       i_gamma = '1.0'
       i_inv_gamma = '1.0'
