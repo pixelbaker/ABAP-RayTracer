@@ -12,6 +12,13 @@ CLASS zcl_art_vector3d DEFINITION
 
 
     CLASS-METHODS:
+      get_product_by_matrix
+        IMPORTING
+          i_matrix        TYPE REF TO zcl_art_matrix
+          i_vector        TYPE REF TO zcl_art_vector3d
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
       new_default
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_vector3d,
@@ -240,5 +247,19 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
       i_x = x - i_vector->x
       i_y = y - i_vector->y
       i_z = z - i_vector->z ).
+  ENDMETHOD.
+
+
+  METHOD get_product_by_matrix.
+    r_vector = zcl_art_vector3d=>new_individual(
+      i_x = i_matrix->matrix[ 1 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 1 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 1 ][ 3 ] * i_vector->z
+      i_y = i_matrix->matrix[ 2 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 2 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 2 ][ 3 ] * i_vector->z
+      i_z = i_matrix->matrix[ 3 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 3 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 3 ][ 3 ] * i_vector->z ).
   ENDMETHOD.
 ENDCLASS.
