@@ -111,6 +111,17 @@ CLASS zcl_art_camera IMPLEMENTATION.
     _u->normalize( ).
     _v = _w->get_cross_product( _u ).
 
+    DATA(transform) = zcl_art_math=>composite_inverse_transform(
+      i_rotate_around_line = _w
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _roll_angle ).
+
+    _u = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _u ).
+    _v = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _v ).
+    _w = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _w ).
+
     "Take care of the singularity by hardwiring in specific camera orientations
 
     "Camera looking vertically down
