@@ -104,7 +104,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_world IMPLEMENTATION.
+CLASS ZCL_ART_WORLD IMPLEMENTATION.
 
 
   METHOD add_object.
@@ -281,6 +281,42 @@ CLASS zcl_art_world IMPLEMENTATION.
     tracer = NEW zcl_art_function_tracer( me ).
 
     me->function = NEW zcl_art_sinusoid_function( ).
+  ENDMETHOD.
+
+
+  METHOD build_with_pinhole.
+    me->viewplane->set_hres( 300 ).
+    me->viewplane->set_vres( 300 ).
+    me->viewplane->set_num_samples( 1 ).
+
+    me->tracer = NEW zcl_art_multiple_objects( me ).
+
+    DATA(pinhole) = NEW zcl_art_pinhole( ).
+
+    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
+    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = 0 ).
+    pinhole->set_view_plane_distance( 500 ).
+    pinhole->set_roll( 1 ). "45 degree makes it crash
+
+*    pinhole->set_eye_by_components( i_x = 300  i_y = 400  i_z = 500 ).
+*    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = -50 ).
+*    pinhole->set_view_plane_distance( '400' ).
+
+
+    pinhole->compute_uvw( ).
+    set_camera( pinhole ).
+
+    DATA(sphere) = zcl_art_sphere=>new_by_center_and_radius(
+                     i_center = zcl_art_point3d=>new_individual( i_x = -45  i_y = 45  i_z = 40 )
+                     i_radius = '50' ).
+    sphere->set_color_by_components( i_r = 1  i_g = 0  i_b = 0 ).
+    add_object( sphere ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+                    i_normal = zcl_art_normal=>new_individual( i_x = 0  i_y = 1  i_z = 0 )
+                    i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -101  i_z = 0 ) ).
+    plane->set_color_by_components( i_r = 0  i_g = 1  i_b = 0 ).
+    add_object( plane ).
   ENDMETHOD.
 
 
@@ -497,41 +533,5 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD set_camera.
     ASSERT i_camera IS BOUND.
     me->camera = i_camera.
-  ENDMETHOD.
-
-
-  METHOD build_with_pinhole.
-    me->viewplane->set_hres( 300 ).
-    me->viewplane->set_vres( 300 ).
-    me->viewplane->set_num_samples( 25 ).
-
-    me->tracer = NEW zcl_art_multiple_objects( me ).
-
-    DATA(pinhole) = NEW zcl_art_pinhole( ).
-
-    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
-    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = 0 ).
-    pinhole->set_view_plane_distance( 500 ).
-
-
-*    pinhole->set_eye_by_components( i_x = 300  i_y = 400  i_z = 500 ).
-*    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = -50 ).
-*    pinhole->set_view_plane_distance( '400' ).
-
-
-    pinhole->compute_uvw( ).
-    set_camera( pinhole ).
-
-    DATA(sphere) = zcl_art_sphere=>new_by_center_and_radius(
-                     i_center = zcl_art_point3d=>new_individual( i_x = -45  i_y = 45  i_z = 40 )
-                     i_radius = '50' ).
-    sphere->set_color_by_components( i_r = 1  i_g = 0  i_b = 0 ).
-    add_object( sphere ).
-
-    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
-                    i_normal = zcl_art_normal=>new_individual( i_x = 0  i_y = 1  i_z = 0 )
-                    i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -101  i_z = 0 ) ).
-    plane->set_color_by_components( i_r = 0  i_g = 1  i_b = 0 ).
-    add_object( plane ).
   ENDMETHOD.
 ENDCLASS.
