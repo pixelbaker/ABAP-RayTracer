@@ -89,16 +89,20 @@ CLASS zcl_art_matrix IMPLEMENTATION.
 
   METHOD get_product_by_matrix.
     r_matrix = NEW #( ).
+    DATA thesum TYPE decfloat16.
 
     DO 4 TIMES.
       DATA(y) = sy-index.
       DO 4 TIMES.
         DATA(x) = sy-index.
+        thesum = '0.0'.
 
-        r_matrix->matrix[ x ][ y ] = REDUCE #(
-          INIT thesum = 0
-          FOR j = 1 UNTIL j > 4
-          NEXT thesum = thesum + ( me->matrix[ x ][ j ] * i_matrix->matrix[ j ][ y ] ) ).
+        DO 4 TIMES.
+          DATA(j) = sy-index.
+          thesum = thesum + me->matrix[ x ][ j ] * i_matrix->matrix[ j ][ y ].
+        ENDDO.
+
+        r_matrix->matrix[ x ][ y ] = thesum.
       ENDDO.
     ENDDO.
   ENDMETHOD.
