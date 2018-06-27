@@ -104,7 +104,7 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_WORLD IMPLEMENTATION.
+CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD add_object.
@@ -296,7 +296,11 @@ CLASS ZCL_ART_WORLD IMPLEMENTATION.
     pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
     pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = 0 ).
     pinhole->set_view_plane_distance( 500 ).
-    pinhole->set_roll( 1 ). "45 degree makes it crash
+
+    pinhole->set_roll( 5 ).
+    pinhole->set_yaw( -5 ).
+    pinhole->set_pitch( -5 ).
+
 
 *    pinhole->set_eye_by_components( i_x = 300  i_y = 400  i_z = 500 ).
 *    pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = -50 ).

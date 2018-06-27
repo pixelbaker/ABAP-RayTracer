@@ -47,6 +47,14 @@ CLASS zcl_art_camera DEFINITION
         IMPORTING
           i_roll_angle TYPE decfloat16,
 
+      set_yaw
+        IMPORTING
+          i_yaw_angle TYPE decfloat16,
+
+      set_pitch
+        IMPORTING
+          i_pitch_angle TYPE decfloat16,
+
       set_exposure_time
         IMPORTING
           i_exposure_time TYPE decfloat16,
@@ -61,6 +69,8 @@ CLASS zcl_art_camera DEFINITION
       _lookat        TYPE REF TO zcl_art_point3d,
 
       _roll_angle    TYPE decfloat16,
+      _yaw_angle     TYPE decfloat16,
+      _pitch_angle   TYPE decfloat16,
 
       "orthonormal basis vectors
       _u             TYPE REF TO zcl_art_vector3d,
@@ -81,6 +91,17 @@ CLASS zcl_art_camera DEFINITION
 
 
   PRIVATE SECTION.
+    METHODS:
+      rotate_around_axis
+        IMPORTING
+          i_transform TYPE REF TO zcl_art_matrix,
+
+      apply_roll,
+
+      apply_yaw,
+
+      apply_pitch.
+
 ENDCLASS.
 
 
@@ -96,6 +117,8 @@ CLASS zcl_art_camera IMPLEMENTATION.
     _eye            = zcl_art_point3d=>new_copy( i_camera->_eye ).
     _lookat         = zcl_art_point3d=>new_copy( i_camera->_lookat ).
     _roll_angle     = i_camera->_roll_angle.
+    _yaw_angle      = i_camera->_yaw_angle.
+    _pitch_angle    = i_camera->_pitch_angle.
     _exposure_time  = i_camera->_exposure_time.
     _up             = zcl_art_vector3d=>new_copy( i_camera->_up ).
     _u              = zcl_art_vector3d=>new_copy( i_camera->_u ).
@@ -111,16 +134,9 @@ CLASS zcl_art_camera IMPLEMENTATION.
     _u->normalize( ).
     _v = _w->get_cross_product( _u ).
 
-    DATA(transform) = zcl_art_math=>composite_inverse_transform(
-      i_rotate_around_line = _w
-      i_u = _u
-      i_v = _v
-      i_w = _w
-      i_angle = _roll_angle ).
-
-    _u = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _u ).
-    _v = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _v ).
-    _w = zcl_art_vector3d=>get_product_by_matrix( i_matrix = transform  i_vector = _w ).
+    apply_roll( ).
+    apply_yaw( ).
+    apply_pitch( ).
 
     "Take care of the singularity by hardwiring in specific camera orientations
 
@@ -144,6 +160,46 @@ CLASS zcl_art_camera IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD apply_roll.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_z(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _roll_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
+
+
+  METHOD apply_yaw.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_y(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _yaw_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
+
+
+  METHOD apply_pitch.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_x(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _pitch_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
+
+
+  METHOD rotate_around_axis.
+    _u = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _u ).
+    _v = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _v ).
+    _w = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _w ).
+  ENDMETHOD.
+
+
   METHOD constructor.
     "Copy Constructor
     IF i_camera IS BOUND.
@@ -155,6 +211,8 @@ CLASS zcl_art_camera IMPLEMENTATION.
     _eye            = zcl_art_point3d=>new_individual( i_x = 0  i_y = 0  i_z = 500 ).
     _lookat         = zcl_art_point3d=>new_default( ).
     _roll_angle     = '0'.
+    _yaw_angle      = '0'.
+    _pitch_angle    = '0'.
     _exposure_time  = '1'.
     _up             = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
     _u              = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ).
@@ -207,4 +265,15 @@ CLASS zcl_art_camera IMPLEMENTATION.
   METHOD set_up_vector_by_vector.
     _up->assignment_by_vector( i_up ).
   ENDMETHOD.
+
+
+  METHOD set_pitch.
+    _pitch_angle = i_pitch_angle.
+  ENDMETHOD.
+
+
+  METHOD set_yaw.
+    _yaw_angle = i_yaw_angle.
+  ENDMETHOD.
+
 ENDCLASS.
