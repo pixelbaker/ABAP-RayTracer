@@ -68,7 +68,18 @@ CLASS zcl_art_plane IMPLEMENTATION.
     DATA(difference_vector) = _point->get_difference_from_point( i_ray->origin ).
     DATA(dot_product1) = difference_vector->get_dot_product_by_normal( _normal ).
     DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( _normal ).
-    t = dot_product1 / dot_product2.
+
+    "ABAPs float and decfloat types aren't conforming to the IEEE floating-point standard.
+    "Division by zero will not return +/- infinity, that's why we need to handle that by ourselves.
+    IF dot_product2 <> 0.
+      t = dot_product1 / dot_product2.
+    ELSE.
+      IF dot_product2 > 0.
+        t = cl_abap_math=>max_decfloat16.
+      ELSE.
+        t = cl_abap_math=>min_decfloat16.
+      ENDIF.
+    ENDIF.
 
     IF t > zcl_art_constants=>k_epsilon.
       e_tmin = t.
