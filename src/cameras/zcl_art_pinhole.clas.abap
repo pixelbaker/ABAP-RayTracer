@@ -91,7 +91,7 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
           sub_pixel_column = 0.
           WHILE sub_pixel_column < num.
 
-            sample_point->x = viewplane->pixel_size * ( column - '0.5' * viewplane->hres + ( sub_pixel_column + '0.5') ).
+            sample_point->x = viewplane->pixel_size * ( column - '0.5' * viewplane->hres + ( sub_pixel_column + '0.5' ) ).
             sample_point->y = viewplane->pixel_size * ( row - '0.5' * viewplane->vres + ( sub_pixel_row + '0.5' ) ).
 
             ray->direction = zcl_art_vector3d=>new_copy( get_direction( sample_point ) ).
