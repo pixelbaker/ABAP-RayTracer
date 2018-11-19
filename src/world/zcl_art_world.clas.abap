@@ -461,7 +461,7 @@ CLASS zcl_art_world IMPLEMENTATION.
       WHILE column < hres.
         ray->direction = zcl_art_vector3d=>new_individual(
           i_x = pixel_size * ( column - '0.5' * ( hres - '1.0' ) )
-          i_y = pixel_size * ( row - '0.5' * ( vres - '1.0') )
+          i_y = pixel_size * ( row - '0.5' * ( vres - '1.0' ) )
           i_z = -1 * me->distance ).
 
         ray->direction->normalize( ).

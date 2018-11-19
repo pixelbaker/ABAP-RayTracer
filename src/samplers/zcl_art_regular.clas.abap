@@ -83,7 +83,7 @@ CLASS zcl_art_regular IMPLEMENTATION.
       WHILE p < n.
         q = 0.
         WHILE q < n.
-          APPEND NEW zcl_art_point2d( i_x = ( q + '0.5') / n
+          APPEND NEW zcl_art_point2d( i_x = ( q + '0.5' ) / n
                                       i_y = ( p + '0.5' ) / n ) TO _samples.
 
           ADD 1 TO q.
