@@ -222,7 +222,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
     DO lines( _samples ) TIMES.
       DATA(cos_phi) = cos( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
       DATA(sin_phi) = sin( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
-      DATA(cos_theta) = ( '1.0' - _samples[ sy-index ]->y ) ** ( '1.0' / ( i_exponent + '1.0') ).
+      DATA(cos_theta) = ( '1.0' - _samples[ sy-index ]->y ) ** ( '1.0' / ( i_exponent + '1.0' ) ).
       DATA(sin_theta) = sqrt( '1.0' - cos_theta * cos_theta ).
       DATA(pu) = sin_theta * cos_phi.
       DATA(pv) = sin_theta * sin_phi.
