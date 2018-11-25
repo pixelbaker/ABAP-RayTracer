@@ -16,6 +16,11 @@ CLASS zcl_art_plane DEFINITION
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_plane,
 
+      "! Constructs a plane by a point through which the plane passes and the orientation expressed by a normal.
+      "!
+      "! @parameter i_normal | Normal to the plane
+      "! @parameter i_point | Point through which plane passes
+      "! @parameter r_instance | A freshly initialized instance
       new_by_normal_and_point
         IMPORTING
           i_normal          TYPE REF TO zcl_art_normal
@@ -24,17 +29,17 @@ CLASS zcl_art_plane DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_plane.
 
 
+    DATA:
+      point  TYPE REF TO zcl_art_point3d READ-ONLY, "point through which plane passes
+      normal TYPE REF TO zcl_art_normal READ-ONLY. "normal to the plane
+
+
     METHODS:
       hit REDEFINITION.
 
 
   PROTECTED SECTION.
   PRIVATE SECTION.
-    DATA:
-      _point  TYPE REF TO zcl_art_point3d, "point through which plane passes
-      _normal TYPE REF TO zcl_art_normal. "normal to the plane
-
-
     METHODS:
       constructor
         IMPORTING
@@ -54,8 +59,8 @@ CLASS zcl_art_plane IMPLEMENTATION.
 
     super->constructor( ).
 
-    _point = i_point.
-    _normal = i_normal.
+    me->point = i_point.
+    me->normal = i_normal.
   ENDMETHOD.
 
 
@@ -65,9 +70,9 @@ CLASS zcl_art_plane IMPLEMENTATION.
     DATA t TYPE decfloat16.
 
     "t = (p - ray.o) * n / ( ray.d * n)
-    DATA(difference_vector) = _point->get_difference_from_point( i_ray->origin ).
-    DATA(dot_product1) = difference_vector->get_dot_product_by_normal( _normal ).
-    DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( _normal ).
+    DATA(difference_vector) = me->point->get_difference_from_point( i_ray->origin ).
+    DATA(dot_product1) = difference_vector->get_dot_product_by_normal( me->normal ).
+    DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( me->normal ).
 
     "ABAPs float and decfloat types aren't conforming to the IEEE floating-point standard.
     "Division by zero will not return +/- infinity, that's why we need to handle that by ourselves.
@@ -86,7 +91,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
     IF t > zcl_art_constants=>k_epsilon.
       e_tmin = t.
 
-      c_shade_rec->normal->assignment_by_normal( _normal ).
+      c_shade_rec->normal->assignment_by_normal( me->normal ).
 
       "shadeRec = ray.o + t * ray.d
       DATA(product_vector) = i_ray->direction->get_product_by_decfloat( t ).
@@ -103,14 +108,14 @@ CLASS zcl_art_plane IMPLEMENTATION.
     r_instance = NEW #(
       i_point = zcl_art_point3d=>new_copy( i_point )
       i_normal = zcl_art_normal=>new_copy( i_normal ) ).
-    r_instance->_normal->normalize( ).
+    r_instance->normal->normalize( ).
   ENDMETHOD.
 
 
   METHOD new_copy.
     r_instance = NEW #(
-      i_point = zcl_art_point3d=>new_copy( i_plane->_point )
-      i_normal = zcl_art_normal=>new_copy( i_plane->_normal ) ).
+      i_point = zcl_art_point3d=>new_copy( i_plane->point )
+      i_normal = zcl_art_normal=>new_copy( i_plane->normal ) ).
     r_instance->set_color_by_color( zcl_art_rgb_color=>new_copy( i_plane->_color ) ).
   ENDMETHOD.
 
