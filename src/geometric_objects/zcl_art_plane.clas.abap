@@ -71,13 +71,15 @@ CLASS zcl_art_plane IMPLEMENTATION.
 
     "ABAPs float and decfloat types aren't conforming to the IEEE floating-point standard.
     "Division by zero will not return +/- infinity, that's why we need to handle that by ourselves.
+    "In IEEE754 the sign if infinity changes when divided by -0, but that doesn't exist in ABAP DECFLOAT16.
+    "I am curious if thats going to bite my ass some day.
     IF dot_product2 <> 0.
       t = dot_product1 / dot_product2.
     ELSE.
-      IF dot_product2 > 0.
-        t = cl_abap_math=>max_decfloat16.
-      ELSE.
+      IF dot_product1 < 0.
         t = cl_abap_math=>min_decfloat16.
+      ELSE.
+        t = cl_abap_math=>max_decfloat16.
       ENDIF.
     ENDIF.
 
