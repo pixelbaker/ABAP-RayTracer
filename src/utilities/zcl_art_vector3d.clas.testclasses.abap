@@ -17,7 +17,10 @@ CLASS ucl_art_vector3d DEFINITION
       get_dot_product_by_normal1 FOR TESTING,
       get_dot_product_by_normal2 FOR TESTING,
       get_dot_product_by_normal3 FOR TESTING,
-      get_dot_product_by_normal4 FOR TESTING.
+      get_dot_product_by_normal4 FOR TESTING,
+
+      normalize1 FOR TESTING,
+      normalize2 FOR TESTING.
 
 ENDCLASS.
 
@@ -193,4 +196,37 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 1 ).
   ENDMETHOD.
+
+
+  METHOD normalize1.
+    "Normalize a zero vector
+
+    "Given
+    DATA(cut) = zcl_art_vector3d=>new_unified( 0 ).
+
+    "When
+    cut->normalize( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 0 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 0 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 0 ).
+  ENDMETHOD.
+
+
+  METHOD normalize2.
+    "Normalize a vector
+
+    "Given
+    DATA(cut) = zcl_art_vector3d=>new_unified( 1 ).
+
+    "When
+    cut->normalize( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '0.5773502691896259' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '0.5773502691896259' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '0.5773502691896259' ).
+  ENDMETHOD.
+
 ENDCLASS.
