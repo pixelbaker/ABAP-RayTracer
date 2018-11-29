@@ -7,6 +7,9 @@ CLASS ucl_art_vector3d DEFINITION
 
   PRIVATE SECTION.
     METHODS:
+      assignment_by_vector1 FOR TESTING,
+      assignment_by_vector2 FOR TESTING,
+
       new_copy FOR TESTING,
       new_default FOR TESTING,
       new_from_normal FOR TESTING,
@@ -229,4 +232,39 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '0.5773502691896259' ).
   ENDMETHOD.
 
+
+  METHOD assignment_by_vector1.
+    "Assign the same vector to itself.
+
+    "Given
+    DATA(vector) = zcl_art_vector3d=>new_unified( 1 ).
+
+    "When
+    DATA(cut) = vector->assignment_by_vector( vector ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut  exp = vector ).
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '1' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '1' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '1' ).
+  ENDMETHOD.
+
+
+  METHOD assignment_by_vector2.
+    "Assign a different vector
+
+    "Given
+    DATA(vector) = zcl_art_vector3d=>new_unified( 2 ).
+    DATA(cut) = zcl_art_vector3d=>new_unified( 1 ).
+
+    "When
+    data(result) = cut->assignment_by_vector( vector ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( act = COND #( WHEN vector <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '2' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '2' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '2' ).
+  ENDMETHOD.
 ENDCLASS.
