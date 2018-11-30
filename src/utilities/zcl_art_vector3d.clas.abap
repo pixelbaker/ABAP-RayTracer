@@ -12,6 +12,7 @@ CLASS zcl_art_vector3d DEFINITION
 
 
     CLASS-METHODS:
+      "! operator*
       get_product_by_matrix
         IMPORTING
           i_matrix        TYPE REF TO zcl_art_matrix
@@ -57,18 +58,21 @@ CLASS zcl_art_vector3d DEFINITION
 
 
     METHODS:
+      "! operator=
       assignment_by_vector
         IMPORTING
           i_vector        TYPE REF TO zcl_art_vector3d
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
+      "! operator*
       get_dot_product_by_normal
         IMPORTING
           i_normal             TYPE REF TO zcl_art_normal
         RETURNING
           VALUE(r_dot_product) TYPE decfloat16,
 
+      "! operator*
       get_dot_product_by_vector
         IMPORTING
           i_vector             TYPE REF TO zcl_art_vector3d
@@ -76,37 +80,41 @@ CLASS zcl_art_vector3d DEFINITION
           VALUE(r_dot_product) TYPE decfloat16,
 
       "! operator^
-      "! @parameter i_vector |
-      "! @parameter r_cross_product |
       get_cross_product
         IMPORTING
           i_vector               TYPE REF TO zcl_art_vector3d
         RETURNING
           VALUE(r_cross_product) TYPE REF TO zcl_art_vector3d,
 
+      "! operator+
       get_sum_by_vector
         IMPORTING
           i_vector        TYPE REF TO zcl_art_vector3d
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
+      "! operator-
       get_difference_by_vector
         IMPORTING
           i_vector        TYPE REF TO zcl_art_vector3d
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
+      "! operator*
       get_product_by_decfloat
         IMPORTING
           i_value         TYPE decfloat16
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
+      "! operator/
       get_quotient_by_decfloat
         IMPORTING
           i_value         TYPE decfloat16
         RETURNING
-          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d
+        RAISING
+          cx_sy_zerodivide,
 
       "! Convert vector to a unit vector
       normalize.
@@ -146,6 +154,22 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_cross_product.
+    r_cross_product = zcl_art_vector3d=>new_individual(
+      i_x = y * i_vector->z - z * i_vector->y
+      i_y = z * i_vector->x - x * i_vector->z
+      i_z = x * i_vector->y - y * i_vector->x ).
+  ENDMETHOD.
+
+
+  METHOD get_difference_by_vector.
+    r_vector = new_individual(
+      i_x = x - i_vector->x
+      i_y = y - i_vector->y
+      i_z = z - i_vector->z ).
+  ENDMETHOD.
+
+
   METHOD get_dot_product_by_normal.
     r_dot_product = x * i_normal->x + y * i_normal->y + z * i_normal->z.
   ENDMETHOD.
@@ -161,6 +185,20 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
       i_x = x * i_value
       i_y = y * i_value
       i_z = z * i_value ).
+  ENDMETHOD.
+
+
+  METHOD get_product_by_matrix.
+    r_vector = zcl_art_vector3d=>new_individual(
+      i_x = i_matrix->matrix[ 1 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 1 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 1 ][ 3 ] * i_vector->z
+      i_y = i_matrix->matrix[ 2 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 2 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 2 ][ 3 ] * i_vector->z
+      i_z = i_matrix->matrix[ 3 ][ 1 ] * i_vector->x +
+            i_matrix->matrix[ 3 ][ 2 ] * i_vector->y +
+            i_matrix->matrix[ 3 ][ 3 ] * i_vector->z ).
   ENDMETHOD.
 
 
@@ -231,35 +269,5 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
     x = x / length.
     y = y / length.
     z = z / length.
-  ENDMETHOD.
-
-
-  METHOD get_cross_product.
-    r_cross_product = zcl_art_vector3d=>new_individual(
-      i_x = y * i_vector->z - z * i_vector->y
-      i_y = z * i_vector->x - x * i_vector->z
-      i_z = x * i_vector->y - y * i_vector->x ).
-  ENDMETHOD.
-
-
-  METHOD get_difference_by_vector.
-    r_vector = new_individual(
-      i_x = x - i_vector->x
-      i_y = y - i_vector->y
-      i_z = z - i_vector->z ).
-  ENDMETHOD.
-
-
-  METHOD get_product_by_matrix.
-    r_vector = zcl_art_vector3d=>new_individual(
-      i_x = i_matrix->matrix[ 1 ][ 1 ] * i_vector->x +
-            i_matrix->matrix[ 1 ][ 2 ] * i_vector->y +
-            i_matrix->matrix[ 1 ][ 3 ] * i_vector->z
-      i_y = i_matrix->matrix[ 2 ][ 1 ] * i_vector->x +
-            i_matrix->matrix[ 2 ][ 2 ] * i_vector->y +
-            i_matrix->matrix[ 2 ][ 3 ] * i_vector->z
-      i_z = i_matrix->matrix[ 3 ][ 1 ] * i_vector->x +
-            i_matrix->matrix[ 3 ][ 2 ] * i_vector->y +
-            i_matrix->matrix[ 3 ][ 3 ] * i_vector->z ).
   ENDMETHOD.
 ENDCLASS.
