@@ -5,6 +5,7 @@ CLASS zcl_art_time_formater DEFINITION
 
   PUBLIC SECTION.
     METHODS:
+      "! Formats seconds into a string with the format h:MM:SS (e.g. 1:24:59)
       make_human_readable_time_code
         IMPORTING
           i_seconds       TYPE int8
