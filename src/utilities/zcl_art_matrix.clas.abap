@@ -19,9 +19,6 @@ CLASS zcl_art_matrix DEFINITION
           i_matrix TYPE REF TO zcl_art_matrix OPTIONAL, "Copy Constructor
 
       "! operator=
-      "!
-      "! @parameter i_matrix | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_matrix | <p class="shorttext synchronized" lang="en"></p>
       assignment
         IMPORTING
           i_matrix        TYPE REF TO zcl_art_matrix
@@ -30,9 +27,6 @@ CLASS zcl_art_matrix DEFINITION
 
       "! operator*
       "! Multiplication of two matrices
-      "!
-      "! @parameter i_matrix | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_matrix | <p class="shorttext synchronized" lang="en"></p>
       get_product_by_matrix
         IMPORTING
           i_matrix        TYPE REF TO zcl_art_matrix
