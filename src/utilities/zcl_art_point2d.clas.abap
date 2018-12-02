@@ -19,6 +19,8 @@ ENDCLASS.
 
 
 CLASS zcl_art_point2d IMPLEMENTATION.
+
+
   METHOD constructor.
     me->x = i_x.
     me->y = i_y.

@@ -1,13 +1,13 @@
+"! There is no default constructor as the World reference always has to be initialized.
+"! There is also no assignment operator as we don't want to assign the world.
+"! The copy constructor only copies the world reference.
+"! The ray tracer is written so that new ShadeRec objects are always constructed
+"! using the first constructor or the copy constructor
 CLASS zcl_art_shade_rec DEFINITION
   PUBLIC
   FINAL
   CREATE PRIVATE.
 
-  " there is no default constructor as the World reference always has to be initialized
-  " there is also no assignment operator as we don't want to assign the world
-  " the copy constructor only copies the world reference
-  " the ray tracer is written so that new ShadeRec objects are always constructed
-  " using the first constructor or the copy constructor
 
   PUBLIC SECTION.
     DATA:
@@ -45,7 +45,6 @@ CLASS zcl_art_shade_rec DEFINITION
 ENDCLASS.
 
 
-
 CLASS zcl_art_shade_rec IMPLEMENTATION.
 
 
@@ -67,10 +66,10 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
     ASSERT i_shade_rec IS BOUND.
 
     r_instance = NEW #(
-      i_world           = i_shade_rec->world
-      i_hit_an_object   = i_shade_rec->hit_an_object
-      i_normal          = zcl_art_normal=>new_copy( i_shade_rec->normal )
-      i_color           = zcl_art_rgb_color=>new_copy( i_shade_rec->color )
+      i_world = i_shade_rec->world
+      i_hit_an_object = i_shade_rec->hit_an_object
+      i_normal = zcl_art_normal=>new_copy( i_shade_rec->normal )
+      i_color = zcl_art_rgb_color=>new_copy( i_shade_rec->color )
       i_local_hit_point = zcl_art_point3d=>new_copy( i_shade_rec->local_hit_point ) ).
   ENDMETHOD.
 
@@ -79,10 +78,10 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
     ASSERT i_world IS BOUND.
 
     r_instance = NEW #(
-      i_world           = i_world
-      i_hit_an_object   = abap_false
-      i_normal          = zcl_art_normal=>new_default( )
+      i_world = i_world
+      i_hit_an_object = abap_false
+      i_normal = zcl_art_normal=>new_default( )
       i_local_hit_point = zcl_art_point3d=>new_default( )
-      i_color           = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ) ).
+      i_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ) ).
   ENDMETHOD.
 ENDCLASS.
