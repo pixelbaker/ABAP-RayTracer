@@ -29,6 +29,7 @@ CLASS zcl_art_ray DEFINITION
 
 
     METHODS:
+      "! operator=
       assignment
         IMPORTING
           i_rhs        TYPE REF TO zcl_art_ray
@@ -47,7 +48,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_ray IMPLEMENTATION.
+CLASS ZCL_ART_RAY IMPLEMENTATION.
 
 
   METHOD assignment.
