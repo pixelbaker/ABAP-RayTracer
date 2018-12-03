@@ -595,9 +595,9 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
 
     "Then
     cl_abap_unit_assert=>assert_equals( act = cut  exp = vector ).
-    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '1' ).
-    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '1' ).
-    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '1' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 1 ).
   ENDMETHOD.
 
 
@@ -614,8 +614,8 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     "Then
     cl_abap_unit_assert=>assert_true( act = COND #( WHEN vector <> cut THEN abap_true ) ).
     cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
-    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '2' ).
-    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '2' ).
-    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '2' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 2 ).
   ENDMETHOD.
 ENDCLASS.
