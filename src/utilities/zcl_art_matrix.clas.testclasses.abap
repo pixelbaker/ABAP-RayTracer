@@ -191,13 +191,13 @@ CLASS cl_unittest IMPLEMENTATION.
   METHOD get_quotient_by_decfloat1.
     "Check that dividing (operator/) works
 
-    "When
+    "Given
     _cut = get_matrix_with_uniform_value( '4' ).
 
-    "Then
+    "When
     DATA(result) = _cut->get_quotient_by_decfloat( '2' ).
 
-    "Given
+    "Then
     IF _cut = result. cl_abap_unit_assert=>fail( ). ENDIF.
     assert_uniform_value( i_matrix = result  i_value = '2' ).
     assert_uniform_value( i_matrix = _cut  i_value = '2' ).
