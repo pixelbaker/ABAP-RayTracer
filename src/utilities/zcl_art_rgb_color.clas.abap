@@ -45,12 +45,14 @@ CLASS zcl_art_rgb_color DEFINITION
 
 
     METHODS:
+      "! operator+=
       add_and_assign_by_color
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
+      "! operator=
       assign_by_color
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
@@ -58,9 +60,6 @@ CLASS zcl_art_rgb_color DEFINITION
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       "! operator/=
-      "!
-      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       divide_and_assign_by_float
         IMPORTING
           i_value        TYPE decfloat16
@@ -68,9 +67,6 @@ CLASS zcl_art_rgb_color DEFINITION
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       "! operator/
-      "!
-      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       get_quotient_by_decfloat
         IMPORTING
           i_value        TYPE decfloat16
@@ -84,9 +80,6 @@ CLASS zcl_art_rgb_color DEFINITION
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       "! operator*=
-      "!
-      "! @parameter i_value | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       multiply_and_assign_by_float
         IMPORTING
           i_value        TYPE decfloat16
@@ -110,7 +103,6 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
 
 
   METHOD add_and_assign_by_color.
-    "operator+=
     ADD i_color->r TO me->r.
     ADD i_color->g TO me->g.
     ADD i_color->b TO me->b.
@@ -120,7 +112,6 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
 
 
   METHOD assign_by_color.
-    "operator=
     IF me <> i_color.
       me->r = i_color->r.
       me->g = i_color->g.
@@ -151,7 +142,6 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
 
 
   METHOD divide_and_assign_by_float.
-    "operator/=
     DIVIDE me->r BY i_value.
     DIVIDE me->g BY i_value.
     DIVIDE me->b BY i_value.
