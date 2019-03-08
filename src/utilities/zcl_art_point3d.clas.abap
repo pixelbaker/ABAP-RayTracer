@@ -37,13 +37,14 @@ CLASS zcl_art_point3d DEFINITION
 
 
     METHODS:
-      get_difference_from_point
+      "! Vector joining two points
+      get_difference_by_point
         IMPORTING
           i_point         TYPE REF TO zcl_art_point3d
         RETURNING
           VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
 
-      get_difference_from_vector
+      get_difference_by_vector
         IMPORTING
           i_vector       TYPE REF TO zcl_art_vector3d
         RETURNING
@@ -95,9 +96,7 @@ CLASS zcl_art_point3d IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_difference_from_point.
-    "vector joining two points
-
+  METHOD get_difference_by_point.
     r_vector = zcl_art_vector3d=>new_individual(
       i_x = x - i_point->x
       i_y = y - i_point->y
@@ -105,7 +104,7 @@ CLASS zcl_art_point3d IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_difference_from_vector.
+  METHOD get_difference_by_vector.
     r_point = new_individual(
       i_x = x - i_vector->x
       i_y = y - i_vector->y

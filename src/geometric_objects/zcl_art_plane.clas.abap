@@ -70,7 +70,7 @@ CLASS zcl_art_plane IMPLEMENTATION.
     DATA t TYPE decfloat16.
 
     "t = (p - ray.o) * n / ( ray.d * n)
-    DATA(difference_vector) = me->point->get_difference_from_point( i_ray->origin ).
+    DATA(difference_vector) = me->point->get_difference_by_point( i_ray->origin ).
     DATA(dot_product1) = difference_vector->get_dot_product_by_normal( me->normal ).
     DATA(dot_product2) = i_ray->direction->get_dot_product_by_normal( me->normal ).
 

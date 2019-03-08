@@ -94,7 +94,7 @@ CLASS zcl_art_sphere IMPLEMENTATION.
       c            TYPE decfloat16,
       discriminant TYPE decfloat16.
 
-    temp = i_ray->origin->get_difference_from_point( _center ).
+    temp = i_ray->origin->get_difference_by_point( _center ).
     a = i_ray->direction->get_dot_product_by_vector( i_ray->direction ).
     b = 2 * temp->get_dot_product_by_vector( i_ray->direction ).
     c = temp->get_dot_product_by_vector( temp ) - _radius * _radius.

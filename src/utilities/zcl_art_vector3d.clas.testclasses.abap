@@ -535,7 +535,6 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 3 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 4 ).
-
   ENDMETHOD.
 
 

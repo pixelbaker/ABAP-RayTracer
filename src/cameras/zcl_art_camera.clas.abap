@@ -128,7 +128,7 @@ CLASS zcl_art_camera IMPLEMENTATION.
 
 
   METHOD compute_uvw.
-    _w = _eye->get_difference_from_point( _lookat ).
+    _w = _eye->get_difference_by_point( _lookat ).
     _w->normalize( ).
     _u = _up->get_cross_product( _w ).
     _u->normalize( ).
