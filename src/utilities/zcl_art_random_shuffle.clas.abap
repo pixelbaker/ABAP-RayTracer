@@ -9,7 +9,7 @@ CLASS zcl_art_random_shuffle DEFINITION
         CHANGING
           c_itab TYPE STANDARD TABLE,
 
-      "! Swaps the the position of the item behind index1 with the item behind index2.
+      "! Swaps two items in an internal table by exchanging the item behind index1 with the item behind index2.
       "! Out of range indices will raise an uncatchable exception.
       "! Swapping the same index will leave the table untouched.
       "!
