@@ -1,7 +1,7 @@
 CLASS zcl_art_random_shuffle DEFINITION
   PUBLIC
   FINAL
-  CREATE PUBLIC .
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
     METHODS:
@@ -9,6 +9,13 @@ CLASS zcl_art_random_shuffle DEFINITION
         CHANGING
           c_itab TYPE STANDARD TABLE,
 
+      "! Swaps the the position of the item behind index1 with the item behind index2.
+      "! Out of range indices will raise an uncatchable exception.
+      "! Swapping the same index will leave the table untouched.
+      "!
+      "! @parameter i_index1 | Index of the first item
+      "! @parameter i_index2 | Index of the second item
+      "! @parameter c_itab | table in which the items should be swapped
       swap
         IMPORTING
           i_index1 TYPE int4
@@ -16,9 +23,6 @@ CLASS zcl_art_random_shuffle DEFINITION
         CHANGING
           c_itab   TYPE STANDARD TABLE.
 
-
-  PROTECTED SECTION.
-  PRIVATE SECTION.
 ENDCLASS.
 
 
