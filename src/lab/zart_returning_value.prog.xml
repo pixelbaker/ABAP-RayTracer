@@ -4,8 +4,6 @@
   <asx:values>
    <PROGDIR>
     <NAME>ZART_RETURNING_VALUE</NAME>
-    <STATE>A</STATE>
-    <VARCL>X</VARCL>
     <DBAPL>S</DBAPL>
     <SUBC>1</SUBC>
     <FIXPT>X</FIXPT>
