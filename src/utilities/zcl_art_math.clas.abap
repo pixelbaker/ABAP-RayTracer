@@ -7,40 +7,30 @@ CLASS zcl_art_math DEFINITION
     CLASS-METHODS:
       rotate_about_line_in_x
         IMPORTING
-          i_u                 TYPE REF TO zcl_art_vector3d
-          i_v                 TYPE REF TO zcl_art_vector3d
-          i_w                 TYPE REF TO zcl_art_vector3d
-          i_angle             TYPE decfloat16
+          i_u             TYPE REF TO zcl_art_vector3d
+          i_v             TYPE REF TO zcl_art_vector3d
+          i_w             TYPE REF TO zcl_art_vector3d
+          i_angle         TYPE decfloat16
         RETURNING
-          VALUE(r_matrix)     TYPE REF TO zcl_art_matrix,
+          VALUE(r_matrix) TYPE REF TO zcl_art_matrix,
 
       rotate_about_line_in_y
         IMPORTING
-          i_u                 TYPE REF TO zcl_art_vector3d
-          i_v                 TYPE REF TO zcl_art_vector3d
-          i_w                 TYPE REF TO zcl_art_vector3d
-          i_angle             TYPE decfloat16
+          i_u             TYPE REF TO zcl_art_vector3d
+          i_v             TYPE REF TO zcl_art_vector3d
+          i_w             TYPE REF TO zcl_art_vector3d
+          i_angle         TYPE decfloat16
         RETURNING
-          VALUE(r_matrix)     TYPE REF TO zcl_art_matrix,
+          VALUE(r_matrix) TYPE REF TO zcl_art_matrix,
 
       rotate_about_line_in_z
         IMPORTING
-          i_u                 TYPE REF TO zcl_art_vector3d
-          i_v                 TYPE REF TO zcl_art_vector3d
-          i_w                 TYPE REF TO zcl_art_vector3d
-          i_angle             TYPE decfloat16
+          i_u             TYPE REF TO zcl_art_vector3d
+          i_v             TYPE REF TO zcl_art_vector3d
+          i_w             TYPE REF TO zcl_art_vector3d
+          i_angle         TYPE decfloat16
         RETURNING
-          VALUE(r_matrix)     TYPE REF TO zcl_art_matrix,
-
-      rotate_about_line
-        IMPORTING
-          i_rotate_about_line TYPE REF TO zcl_art_vector3d
-          i_u                 TYPE REF TO zcl_art_vector3d
-          i_v                 TYPE REF TO zcl_art_vector3d
-          i_w                 TYPE REF TO zcl_art_vector3d
-          i_rotation          TYPE REF TO zcl_art_matrix
-        RETURNING
-          VALUE(r_matrix)     TYPE REF TO zcl_art_matrix,
+          VALUE(r_matrix) TYPE REF TO zcl_art_matrix,
 
       inverse_rotate_x
         IMPORTING
@@ -59,6 +49,19 @@ CLASS zcl_art_math DEFINITION
           i_angle     TYPE decfloat16
         RETURNING
           VALUE(r_rz) TYPE REF TO zcl_art_matrix.
+
+
+  PRIVATE SECTION.
+    CLASS-METHODS:
+      rotate_about_line
+        IMPORTING
+          i_rotate_about_line TYPE REF TO zcl_art_vector3d
+          i_u                 TYPE REF TO zcl_art_vector3d
+          i_v                 TYPE REF TO zcl_art_vector3d
+          i_w                 TYPE REF TO zcl_art_vector3d
+          i_rotation          TYPE REF TO zcl_art_matrix
+        RETURNING
+          VALUE(r_matrix)     TYPE REF TO zcl_art_matrix.
 
 ENDCLASS.
 
