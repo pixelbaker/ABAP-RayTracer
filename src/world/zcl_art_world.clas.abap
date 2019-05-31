@@ -56,7 +56,7 @@ CLASS zcl_art_world DEFINITION
 
   PRIVATE SECTION.
     TYPES:
-      _geometric_objects TYPE TABLE OF REF TO zcl_art_geometric_object WITH DEFAULT KEY.
+      _geometric_objects TYPE STANDARD TABLE OF REF TO zcl_art_geometric_object WITH EMPTY KEY.
 
 
     DATA:
