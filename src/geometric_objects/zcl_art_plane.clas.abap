@@ -30,8 +30,11 @@ CLASS zcl_art_plane DEFINITION
 
 
     DATA:
-      point  TYPE REF TO zcl_art_point3d READ-ONLY, "point through which plane passes
-      normal TYPE REF TO zcl_art_normal READ-ONLY. "normal to the plane
+      "! Point through which plane passes
+      point TYPE REF TO zcl_art_point3d READ-ONLY,
+
+      "! Normal to the plane
+      normal TYPE REF TO zcl_art_normal READ-ONLY.
 
 
     METHODS:

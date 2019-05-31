@@ -1,4 +1,3 @@
-"! <p class="shorttext synchronized" lang="en">World</p>
 "! The World class does not have a copy constructor or an assignment operator, for the following reasons:
 "!  1    There's no need to copy construct or assign the World
 "!  2    We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data

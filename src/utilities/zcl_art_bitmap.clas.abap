@@ -1,40 +1,52 @@
+"! This class generates an image with the bitmap file format specs.
+"! The specs can be found here: https://en.wikipedia.org/wiki/BMP_file_format
 CLASS zcl_art_bitmap DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC.
 
   PUBLIC SECTION.
+
     TYPES:
       BEGIN OF pixel,
-        x TYPE int4,
-        y TYPE int4,
-        r TYPE int4,
-        g TYPE int4,
-        b TYPE int4,
-      END OF pixel.
-
+        x TYPE int4, "X Position
+        y TYPE int4, "Y Position
+        r TYPE int4, "Red
+        g TYPE int4, "Green
+        b TYPE int4, "Blue
+      END OF pixel .
 
     DATA:
       image_height_in_pixel TYPE int4 READ-ONLY,
       image_width_in_pixel  TYPE int4 READ-ONLY.
 
-
     METHODS:
+      "! Creates an instance of a bitmap class representation
+      "!
+      "! @parameter i_image_height_in_pixel | Height of the bitmap in pixels. Must be greater zero.
+      "!   Positive for bottom to top pixel order.
+      "! @parameter i_image_width_in_pixel | Width of the bitmap in pixels. Must be greater zero.
       constructor
         IMPORTING
-          i_image_height_in_pixel TYPE int4 "Height of the bitmap in pixels. Positive for bottom to top pixel order.
+          i_image_height_in_pixel TYPE int4
           i_image_width_in_pixel  TYPE int4,
 
       add_pixel
         IMPORTING
           i_pixel TYPE pixel,
 
+      "! Generates and assembles the header and pixel information into a valid bitmap format.
+      "!
+      "! @parameter r_bitmap | A binary representation of a bitmap.
+      "!
+      "! @raising zcx_art_bitmap | Gets raised, if not all pixels have been added before calling this method.
       build
         RETURNING
-          VALUE(r_bitmap) TYPE xstring.
+          VALUE(r_bitmap) TYPE xstring
+        RAISING
+          zcx_art_bitmap.
 
 
-  PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS:
       _co_bi_rgb_compression      TYPE x LENGTH 4 VALUE '00000000',
@@ -64,7 +76,8 @@ CLASS zcl_art_bitmap DEFINITION
         RETURNING
           VALUE(r_row_size_in_byte) TYPE int4,
 
-      get_array_size
+      "! Gives you the byte size of all the pixels, but without the header information
+      get_pixel_array_size
         RETURNING
           VALUE(r_array_size_in_byte) TYPE int4,
 
@@ -72,13 +85,17 @@ CLASS zcl_art_bitmap DEFINITION
         RETURNING
           VALUE(r_bmp_file_size_in_byte) TYPE int4,
 
-      precalc_empty_remaining_bytes.
+      precalc_empty_remaining_bytes,
+
+      validate_all_pixels_added
+        raising
+          zcx_art_bitmap.
 
 ENDCLASS.
 
 
 
-CLASS zcl_art_bitmap IMPLEMENTATION.
+CLASS ZCL_ART_BITMAP IMPLEMENTATION.
 
 
   METHOD add_pixel.
@@ -101,6 +118,7 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
 
   METHOD build.
+    validate_all_pixels_added( ).
     CLEAR _header.
     build_header( ).
     CONCATENATE _header _data INTO r_bitmap IN BYTE MODE.
@@ -162,6 +180,9 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
 
 
   METHOD constructor.
+    ASSERT i_image_height_in_pixel > 0 AND
+           i_image_width_in_pixel > 0.
+
     me->image_height_in_pixel = i_image_height_in_pixel.
     me->image_width_in_pixel = i_image_width_in_pixel.
 
@@ -171,14 +192,14 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_array_size.
-    DATA(row_size) = get_row_size( ).
-    r_array_size_in_byte = row_size * abs( me->image_height_in_pixel ).
+  METHOD get_bmp_file_size.
+    r_bmp_file_size_in_byte = _co_header_size_in_byte + get_pixel_array_size( ).
   ENDMETHOD.
 
 
-  METHOD get_bmp_file_size.
-    r_bmp_file_size_in_byte = _co_header_size_in_byte + get_array_size( ).
+  METHOD get_pixel_array_size.
+    DATA(row_size) = get_row_size( ).
+    r_array_size_in_byte = row_size * abs( me->image_height_in_pixel ).
   ENDMETHOD.
 
 
@@ -197,6 +218,15 @@ CLASS zcl_art_bitmap IMPLEMENTATION.
       DO num_remaining_bytes TIMES.
         CONCATENATE _remaining_bytes _co_empty_byte INTO _remaining_bytes IN BYTE MODE.
       ENDDO.
+    ENDIF.
+  ENDMETHOD.
+
+
+  METHOD validate_all_pixels_added.
+    IF get_pixel_array_size( ) > xstrlen( _data ).
+      RAISE EXCEPTION TYPE zcx_art_bitmap
+        EXPORTING
+          i_textid = zcx_art_bitmap=>more_pixels_than_added.
     ENDIF.
   ENDMETHOD.
 ENDCLASS.
