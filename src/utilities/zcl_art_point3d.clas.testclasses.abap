@@ -33,7 +33,7 @@ CLASS ucl_art_point3d IMPLEMENTATION.
     DATA(cut) = zcl_art_point3d=>new_copy( point ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN point <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( point <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 5 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 6 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 7 ).
@@ -93,7 +93,7 @@ CLASS ucl_art_point3d IMPLEMENTATION.
     DATA(result) = cut->get_sum_by_vector( vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 2 ).
@@ -182,7 +182,7 @@ CLASS ucl_art_point3d IMPLEMENTATION.
     DATA(result) = cut->assignment( point ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN point <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( point <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 2 ).

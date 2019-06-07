@@ -161,19 +161,19 @@ CLASS ucl_art_plane IMPLEMENTATION.
     DATA(cut) = zcl_art_plane=>new_copy( plane ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN plane <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( plane <> cut ) ).
 
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN plane->point <> cut->point THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( plane->point <> cut->point ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->point->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->point->y  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->point->z  exp = 2 ).
 
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN plane->normal <> cut->normal THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( plane->normal <> cut->normal ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->normal->x  exp = '0.5773502691896259' ).
     cl_abap_unit_assert=>assert_equals( act = cut->normal->y  exp = '0.5773502691896259' ).
     cl_abap_unit_assert=>assert_equals( act = cut->normal->z  exp = '0.5773502691896259' ).
 
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN plane->get_color( ) <> cut->get_color( ) THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( plane->get_color( ) <> cut->get_color( ) ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->get_color( )->r  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = cut->get_color( )->g  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->get_color( )->b  exp = 3 ).

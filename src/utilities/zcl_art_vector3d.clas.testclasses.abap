@@ -63,8 +63,8 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_cross_product( vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> vector THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> vector ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 0 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 0 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 0 ).
@@ -267,7 +267,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_product_by_decfloat( 0 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 0 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 0 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 0 ).
@@ -288,7 +288,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_product_by_decfloat( 2 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 2 ).
@@ -309,7 +309,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_product_by_decfloat( -1 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = -1 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = -1 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = -1 ).
@@ -333,7 +333,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
       i_vector = vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> vector THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> vector ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 3 ).
@@ -361,7 +361,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
       i_vector = vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> vector THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> vector ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 4 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 6 ).
@@ -397,7 +397,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_quotient_by_decfloat( 2 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 1 ).
@@ -418,7 +418,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_quotient_by_decfloat( -2 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = -1 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = -1 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = -1 ).
@@ -440,7 +440,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->get_sum_by_vector( vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->y  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = result->z  exp = 2 ).
@@ -464,7 +464,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(cut) = zcl_art_vector3d=>new_copy( vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN vector <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( vector <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 5 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 6 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 7 ).
@@ -611,7 +611,7 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     DATA(result) = cut->assignment_by_vector( vector ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN vector <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( vector <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 2 ).

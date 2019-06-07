@@ -56,7 +56,7 @@ CLASS ucl_art_random_shuffle IMPLEMENTATION.
     _cut->random_shuffle( CHANGING c_itab = itab ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( COND #( WHEN itab <> not_exp_itab THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( itab <> not_exp_itab ) ).
     cl_abap_unit_assert=>assert_equals(
       exp = lines( not_exp_itab )
       act = lines( itab ) ).

@@ -1,7 +1,6 @@
 CLASS zcl_art_geometric_object DEFINITION
   PUBLIC
-  ABSTRACT
-  CREATE PUBLIC.
+  ABSTRACT.
 
   PUBLIC SECTION.
     METHODS:

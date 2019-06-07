@@ -36,7 +36,7 @@ CLASS ucl_art_normal IMPLEMENTATION.
     DATA(cut) = zcl_art_normal=>new_copy( normal ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN normal <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( normal <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 5 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 6 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 7 ).
@@ -132,7 +132,7 @@ CLASS ucl_art_normal IMPLEMENTATION.
     DATA(result) = cut->assignment_by_normal( normal ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN normal <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( normal <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 2 ).

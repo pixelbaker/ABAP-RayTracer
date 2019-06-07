@@ -51,9 +51,9 @@ CLASS ucl_art_ray IMPLEMENTATION.
     cl_abap_unit_assert=>assert_bound( cut->direction ).
     cl_abap_unit_assert=>assert_bound( cut->origin ).
 
-    cl_abap_unit_assert=>assert_true( COND #( WHEN cut <> ray THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN cut->origin <> ray->origin THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN cut->direction <> ray->direction THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut <> ray ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->origin <> ray->origin ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->direction <> ray->direction ) ).
 
     cl_abap_unit_assert=>assert_equals( exp = 1  act = cut->direction->x ).
     cl_abap_unit_assert=>assert_equals( exp = 2  act = cut->direction->y ).
@@ -81,8 +81,8 @@ CLASS ucl_art_ray IMPLEMENTATION.
     cl_abap_unit_assert=>assert_bound( cut->direction ).
     cl_abap_unit_assert=>assert_bound( cut->origin ).
 
-    cl_abap_unit_assert=>assert_true( COND #( WHEN cut->origin <> origin THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN cut->direction <> direction THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->origin <> origin ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->direction <> direction ) ).
 
     cl_abap_unit_assert=>assert_equals( exp = 1  act = cut->direction->x ).
     cl_abap_unit_assert=>assert_equals( exp = 2  act = cut->direction->y ).
@@ -122,7 +122,7 @@ CLASS ucl_art_ray IMPLEMENTATION.
     DATA(result) = cut->assignment( ray ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN ray <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( ray <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut  exp = result ).
     cl_abap_unit_assert=>assert_equals( act = cut->direction->x  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = cut->direction->y  exp = 1 ).

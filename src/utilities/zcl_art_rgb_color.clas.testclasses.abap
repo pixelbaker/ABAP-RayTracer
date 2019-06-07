@@ -39,7 +39,7 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     DATA(cut) = zcl_art_rgb_color=>new_copy( color ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN color <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( color <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = cut->r  exp = 5 ).
     cl_abap_unit_assert=>assert_equals( act = cut->g  exp = 6 ).
     cl_abap_unit_assert=>assert_equals( act = cut->b  exp = 7 ).
@@ -98,7 +98,7 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     DATA(result) = cut->powc( 2 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->r  exp = 4 ).
     cl_abap_unit_assert=>assert_equals( act = result->g  exp = 4 ).
     cl_abap_unit_assert=>assert_equals( act = result->b  exp = 4 ).
@@ -201,7 +201,7 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     DATA(result) = cut->get_quotient_by_decfloat( 2 ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( act = COND #( WHEN result <> cut THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->r  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->g  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->b  exp = 1 ).

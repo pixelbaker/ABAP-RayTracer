@@ -29,10 +29,10 @@ CLASS ucl_art_shade_rec IMPLEMENTATION.
     DATA(result) = zcl_art_shade_rec=>new_copy( shade_rec ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( COND #( WHEN result <> shade_rec THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN result->color <> shade_rec->color THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN result->local_hit_point <> shade_rec->local_hit_point THEN abap_true ) ).
-    cl_abap_unit_assert=>assert_true( COND #( WHEN result->normal <> shade_rec->normal THEN abap_true ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> shade_rec ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result->color <> shade_rec->color ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result->local_hit_point <> shade_rec->local_hit_point ) ).
+    cl_abap_unit_assert=>assert_true( xsdbool( result->normal <> shade_rec->normal ) ).
 
     cl_abap_unit_assert=>assert_equals(
       exp = world
