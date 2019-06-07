@@ -32,7 +32,9 @@ CLASS ucl_art_geometric_object DEFINITION
       constructor2 FOR TESTING,
 
       set_color_by_color1 FOR TESTING,
-      set_color_by_components1 FOR TESTING.
+      set_color_by_components1 FOR TESTING,
+
+      hit1 FOR TESTING.
 
 ENDCLASS.
 
@@ -102,5 +104,18 @@ CLASS ucl_art_geometric_object IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( exp = '.25'  act = result->r ).
     cl_abap_unit_assert=>assert_equals( exp = '.50'  act = result->g ).
     cl_abap_unit_assert=>assert_equals( exp = '.75'  act = result->b ).
+  ENDMETHOD.
+
+
+  METHOD hit1.
+    "Just to make the Code Coverage show 100% :)
+
+    DATA shading_record TYPE REF TO zcl_art_shade_rec.
+
+    NEW lcl_dummy( )->hit(
+      EXPORTING
+        i_ray = zcl_art_ray=>new_default( )
+      CHANGING
+        c_shade_rec = shading_record ).
   ENDMETHOD.
 ENDCLASS.
