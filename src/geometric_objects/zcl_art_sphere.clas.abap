@@ -44,7 +44,15 @@ CLASS zcl_art_sphere DEFINITION
 
       set_radius
         IMPORTING
-          i_radius TYPE decfloat16.
+          i_radius TYPE decfloat16,
+
+      get_radius
+        RETURNING
+          VALUE(r_radius) TYPE decfloat16,
+
+      get_center
+        RETURNING
+          VALUE(r_center) TYPE REF TO zcl_art_point3d.
 
 
   PROTECTED SECTION.
@@ -205,5 +213,15 @@ CLASS zcl_art_sphere IMPLEMENTATION.
 
   METHOD set_radius.
     _radius = i_radius.
+  ENDMETHOD.
+
+
+  METHOD get_center.
+    r_center = _center.
+  ENDMETHOD.
+
+
+  METHOD get_radius.
+    r_radius = _radius.
   ENDMETHOD.
 ENDCLASS.
