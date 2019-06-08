@@ -58,14 +58,10 @@ CLASS zcl_art_hammersley IMPLEMENTATION.
 
 
   METHOD assigment_by_hammersley.
-    IF me = i_rhs.
-      r_hammersley = me.
-      RETURN.
-    ENDIF.
-
-    assignment_by_sampler( i_rhs ).
-
+    ASSERT i_rhs IS BOUND.
     r_hammersley = me.
+    CHECK me <> i_rhs.
+    assignment_by_sampler( i_rhs ).
   ENDMETHOD.
 
 

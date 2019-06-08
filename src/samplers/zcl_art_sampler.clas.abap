@@ -1,10 +1,17 @@
-"! Sampler
+"! Sampler Base Class. All samples must inherit from this beauty
 CLASS zcl_art_sampler DEFINITION
   PUBLIC
   ABSTRACT.
 
   PUBLIC SECTION.
     METHODS:
+      "! Supports the following constructors:
+      "! <ul>
+      "! <li>Copy Constructor</li>
+      "! <li>Default Constructor</li>
+      "! <li>Constructor with num_samples/num_sets</li>
+      "! <li>Constructor with num_samples</li>
+      "! </ul>
       constructor
         IMPORTING
           i_num_samples TYPE int4 OPTIONAL
@@ -119,16 +126,18 @@ ENDCLASS.
 
 
 
-CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
+CLASS zcl_art_sampler IMPLEMENTATION.
 
 
   METHOD assignment_by_sampler.
-    r_sampler = me.
     ASSERT i_rhs IS BOUND.
+    r_sampler = me.
     CHECK me <> i_rhs.
 
     _num_samples = i_rhs->_num_samples.
     _num_sets = i_rhs->_num_sets.
+    _count = i_rhs->_count.
+    _jump = i_rhs->_jump.
 
     LOOP AT i_rhs->_shuffeled_indices INTO DATA(shuffled_index).
       APPEND shuffled_index TO _shuffeled_indices.
@@ -153,9 +162,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
       SYSTEM-CALL OBJMGR CLONE sphere_sample TO sphere_sample.
       APPEND sphere_sample TO _sphere_samples.
     ENDLOOP.
-
-    _count = i_rhs->_count.
-    _jump = i_rhs->_jump.
   ENDMETHOD.
 
 
@@ -167,6 +173,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
     ENDIF.
 
 
+    "num_samples/num_set Constructor
     IF i_num_samples > 0 AND
        i_num_sets > 0.
       _num_samples = i_num_samples.
@@ -178,6 +185,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
     ENDIF.
 
 
+    "num_samples Constructor
     IF i_num_samples > 0.
       _num_samples = i_num_samples.
       _num_sets = 83.
@@ -203,15 +211,21 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD map_samples_to_hemisphere.
+    CLEAR _hemisphere_samples.
+
+    DATA(exponent) = 1 / ( i_exponent + 1 ).
+
     DO lines( _samples ) TIMES.
       DATA(cos_phi) = cos( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
       DATA(sin_phi) = sin( CONV float( zcl_art_constants=>two_pi * _samples[ sy-index ]->x ) ).
-      DATA(cos_theta) = ( '1.0' - _samples[ sy-index ]->y ) ** ( '1.0' / ( i_exponent + '1.0' ) ).
-      DATA(sin_theta) = sqrt( '1.0' - cos_theta * cos_theta ).
+      DATA(cos_theta) = ( 1 - _samples[ sy-index ]->y ) ** exponent.
+      DATA(sin_theta) = sqrt( 1 - cos_theta * cos_theta ).
       DATA(pu) = sin_theta * cos_phi.
       DATA(pv) = sin_theta * sin_phi.
       DATA(pw) = cos_theta.
-      APPEND zcl_art_point3d=>new_individual( i_x = pu i_y = pv i_z = pw ) TO _hemisphere_samples.
+      APPEND zcl_art_point3d=>new_individual( i_x = pu
+                                              i_y = pv
+                                              i_z = pw ) TO _hemisphere_samples.
     ENDDO.
   ENDMETHOD.
 
@@ -236,8 +250,6 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD map_samples_to_unit_disk.
-    DATA(num_lines) = lines( _samples ).
-
     "polar coordinates
     DATA r TYPE float.
     DATA phi TYPE float.
@@ -245,7 +257,7 @@ CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
     "Sample point on unit disk
     DATA(sp) = NEW zcl_art_point2d( ).
 
-    DO num_lines TIMES.
+    DO lines( _samples ) TIMES.
       "map sample point to [-1, 1] X [-1,1]
       sp->x = '2.0' * _samples[ sy-index ]->x - '1.0'.
       sp->y = '2.0' * _samples[ sy-index ]->y - '1.0'.
