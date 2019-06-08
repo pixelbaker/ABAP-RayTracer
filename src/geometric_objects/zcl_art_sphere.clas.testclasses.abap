@@ -19,7 +19,15 @@ CLASS ucl_art_sphere DEFINITION
       set_center_by_components FOR TESTING,
       set_center_by_point FOR TESTING,
       set_center_by_value FOR TESTING,
-      set_radius FOR TESTING.
+      set_radius FOR TESTING,
+
+      hit1 FOR TESTING,
+      hit2 FOR TESTING,
+      hit3 FOR TESTING,
+      hit4 FOR TESTING,
+      hit5 FOR TESTING,
+      hit6 FOR TESTING,
+      hit7 FOR TESTING.
 
 ENDCLASS.
 
@@ -164,5 +172,179 @@ CLASS ucl_art_sphere IMPLEMENTATION.
 
     "Then
     cl_abap_unit_assert=>assert_equals( act = cut->get_radius( )  exp = 3 ).
+  ENDMETHOD.
+
+
+  METHOD hit1.
+    "Test, that a ray can miss the sphere when being above
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_unified( 2 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_false( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 0 ).
+  ENDMETHOD.
+
+
+  METHOD hit2.
+    "Test, that a ray can hit the sphere twice (front and back)
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = -2  i_y = 0  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 1 ).
+  ENDMETHOD.
+
+
+  METHOD hit3.
+    "Test, that a ray can hits the sphere once (just the shell)
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = -1  i_y = 1  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 1 ).
+  ENDMETHOD.
+
+
+  METHOD hit4.
+    "Test, that a ray can miss the sphere when being behind
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = 2  i_y = 0  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_false( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 0 ).
+  ENDMETHOD.
+
+  METHOD hit5.
+    "Test, that no hit gets counted when a ray is being cast on the spheres shell traveling outward
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_false( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 0 ).
+  ENDMETHOD.
+
+
+  METHOD hit6.
+    "Test, that a ray can hit the sphere from the inside
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = 0  i_y = 0  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 1 ).
+  ENDMETHOD.
+
+
+  METHOD hit7.
+    "Test, that a ray can hit the sphere twice when originating on the sphere shell facing inward
+
+    "Given
+    DATA tmin TYPE decfloat16.
+    DATA(cut) = zcl_art_sphere=>new_default( ).
+    DATA(ray) = zcl_art_ray=>new_from_point_and_vector(
+      i_direction = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 )
+      i_origin = zcl_art_point3d=>new_individual( i_x = -1  i_y = 0  i_z = 0 ) ).
+
+    "When
+    DATA(hit) = cut->hit(
+      EXPORTING
+        i_ray = ray
+      IMPORTING
+        e_tmin = tmin
+      CHANGING
+        c_shade_rec = _shade_rec ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( hit ).
+    cl_abap_unit_assert=>assert_equals( act = tmin  exp = 2 ).
   ENDMETHOD.
 ENDCLASS.
