@@ -1,8 +1,7 @@
-"! <p class="shorttext synchronized" lang="en">Sampler</p>
+"! Sampler
 CLASS zcl_art_sampler DEFINITION
   PUBLIC
-  ABSTRACT
-  CREATE PUBLIC.
+  ABSTRACT.
 
   PUBLIC SECTION.
     METHODS:
@@ -39,8 +38,6 @@ CLASS zcl_art_sampler DEFINITION
 
       "! Maps the 2D sample points to 3D points on a unit hemisphere
       "! with a cosine power density distribution in the polar angle
-      "!
-      "! @parameter i_exponent | <p class="shorttext synchronized" lang="en"></p>
       map_samples_to_hemisphere
         IMPORTING
           i_exponent TYPE decfloat16,
@@ -51,48 +48,37 @@ CLASS zcl_art_sampler DEFINITION
       map_samples_to_sphere,
 
 
-      "! <p class="shorttext synchronized" lang="en">Get next sample on unit square</p>
-      "!
-      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
+      "! Get next sample on unit square
       sample_unit_square
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d,
 
 
-      "! <p class="shorttext synchronized" lang="en">Get next sample on unit disk</p>
-      "!
-      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
+      "! Get next sample on unit disk
       sample_unit_disk
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d,
 
 
-      "! <p class="shorttext synchronized" lang="en">Get next sample on unit hemisphere</p>
-      "!
-      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
+      "! Get next sample on unit hemisphere
       sample_hemisphere
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point3d,
 
 
-      "! <p class="shorttext synchronized" lang="en">Get next sample on unit sphere</p>
-      "!
-      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
+      "! Get next sample on unit sphere
       sample_sphere
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point3d,
 
 
       "! Only used to set up a vector noise table.
-      "! This is not discussed in the book, but see the file LatticeNoise.cpp in Chapter 31.<br>
+      "! This is not discussed in the book, but see the file LatticeNoise.cpp in Chapter 31.<br/>
       "! This is a specialized function called in LatticeNoise::init_vector_table
       "! It doesn't shuffle the indices
-      "!
-      "! @parameter r_point | <p class="shorttext synchronized" lang="en"></p>
       sample_one_set
         RETURNING
           VALUE(r_point) TYPE REF TO zcl_art_point2d.
-
 
 
   PROTECTED SECTION.
@@ -126,16 +112,14 @@ CLASS zcl_art_sampler DEFINITION
 
 
     METHODS:
-      "! <p class="shorttext synchronized" lang="en">Generate sample patterns in a unit square</p>
+      "! Generate sample patterns in a unit square
       generate_samples ABSTRACT.
 
-
-  PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS zcl_art_sampler IMPLEMENTATION.
+CLASS ZCL_ART_SAMPLER IMPLEMENTATION.
 
 
   METHOD assignment_by_sampler.
