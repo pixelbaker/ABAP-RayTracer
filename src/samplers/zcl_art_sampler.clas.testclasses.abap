@@ -9,7 +9,12 @@ CLASS lcl_dummy DEFINITION
         IMPORTING
           i_num_samples TYPE int4 OPTIONAL
           i_num_sets    TYPE int4 OPTIONAL
-          i_sampler     TYPE REF TO zcl_art_sampler OPTIONAL.
+          i_sampler     TYPE REF TO zcl_art_sampler OPTIONAL,
+
+      prepare_copy_constructor_test,
+
+      prepare_map_samples2unit_disk.
+
 
   PROTECTED SECTION.
     METHODS:
@@ -19,13 +24,49 @@ ENDCLASS.
 
 CLASS lcl_dummy IMPLEMENTATION.
   METHOD generate_samples.
+    DO _num_sets * _num_samples TIMES.
+      APPEND NEW zcl_art_point2d( i_x = ( '1' / sy-index )
+                                  i_y = ( '1' / sy-index ) ) TO _samples.
+    ENDDO.
+  ENDMETHOD.
+
+
+  METHOD constructor.
+    super->constructor(
+      i_num_samples = i_num_samples
+      i_num_sets    = i_num_sets
+      i_sampler     = i_sampler ).
+
+    generate_samples( ).
+  ENDMETHOD.
+
+
+  METHOD prepare_map_samples2unit_disk.
+    CLEAR _samples.
+
+    APPEND NEW zcl_art_point2d( i_x = 1
+                                i_y = 1 ) TO _samples.
+
+    APPEND NEW zcl_art_point2d( i_x = 0
+                                i_y = 0 ) TO _samples.
+
+    APPEND NEW zcl_art_point2d( i_x = 0
+                                i_y = 1 ) TO _samples.
+
+    APPEND NEW zcl_art_point2d( i_x = 1
+                                i_y = '.5' ) TO _samples.
+
+    APPEND NEW zcl_art_point2d( i_x = '.5'
+                                i_y = '.5' ) TO _samples.
+
+  ENDMETHOD.
+
+
+  METHOD prepare_copy_constructor_test.
     "We fill the various attributes,
     "so the copy constructor has something to do later on inside the copy constructor test
 
     DO _num_sets * _num_samples TIMES.
-      APPEND NEW zcl_art_point2d( i_x = CONV #( '1.0' / sy-index )
-                                  i_y = CONV #( '1.0' / sy-index ) ) TO _samples.
-
       APPEND NEW zcl_art_point2d( i_x = CONV #( '1.0' / sy-index )
                                   i_y = CONV #( '1.0' / sy-index ) ) TO _disk_samples.
 
@@ -37,58 +78,6 @@ CLASS lcl_dummy IMPLEMENTATION.
                                               i_y = CONV #( '1.0' / sy-index )
                                               i_z = CONV #( '1.0' / sy-index ) ) TO _hemisphere_samples.
     ENDDO.
-  ENDMETHOD.
-
-
-  METHOD constructor.
-    super->constructor(
-      i_num_samples = i_num_samples
-      i_num_sets    = i_num_sets
-      i_sampler     = i_sampler ).
-
-    generate_samples( ).
-  ENDMETHOD.
-ENDCLASS.
-
-
-CLASS lcl_dummy_for_hemisphere_Test DEFINITION
-  INHERITING FROM zcl_art_sampler
-  FINAL
-  CREATE PUBLIC.
-
-  PUBLIC SECTION.
-    METHODS:
-      constructor
-        IMPORTING
-          i_num_samples TYPE int4 OPTIONAL
-          i_num_sets    TYPE int4 OPTIONAL
-          i_sampler     TYPE REF TO zcl_art_sampler OPTIONAL.
-
-  PROTECTED SECTION.
-    METHODS:
-      generate_samples REDEFINITION.
-
-ENDCLASS.
-
-CLASS lcl_dummy_for_hemisphere_Test IMPLEMENTATION.
-  METHOD generate_samples.
-    "We fill the various attributes,
-    "so the copy constructor has something to do later on inside the copy constructor test
-
-    DO _num_sets * _num_samples TIMES.
-      APPEND NEW zcl_art_point2d( i_x = CONV #( '1.0' / sy-index )
-                                  i_y = CONV #( '1.0' / sy-index ) ) TO _samples.
-    ENDDO.
-  ENDMETHOD.
-
-
-  METHOD constructor.
-    super->constructor(
-      i_num_samples = i_num_samples
-      i_num_sets    = i_num_sets
-      i_sampler     = i_sampler ).
-
-    generate_samples( ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -120,7 +109,12 @@ CLASS ucl_art_sampler DEFINITION
       sample_one_set FOR TESTING,
       sample_hemisphere FOR TESTING,
 
-      map_samples_to_hemisphere FOR TESTING.
+      map_samples_to_hemisphere FOR TESTING,
+      map_samples_to_sphere FOR TESTING,
+      map_samples_to_unit_disk FOR TESTING,
+
+      shuffle_x_coordinates for testing,
+      shuffle_y_coordinates for testing.
 
 ENDCLASS.
 
@@ -146,6 +140,7 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
     "Given
     DATA(sampler) = NEW lcl_dummy( i_num_samples = 42 ).
+    sampler->prepare_copy_constructor_test( ).
 
     "When
     DATA(cut) = NEW lcl_dummy( i_sampler = sampler ).
@@ -184,8 +179,8 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
     "Given
     DATA(cut) = NEW lcl_dummy(
-      i_num_samples = 2
-      i_num_sets = 2 ).
+      i_num_samples = 1
+      i_num_sets = 1 ).
 
     "When
     DATA(sample_point) = cut->sample_unit_square( ).
@@ -200,8 +195,9 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
     "Given
     DATA(cut) = NEW lcl_dummy(
-      i_num_samples = 2
-      i_num_sets = 2 ).
+      i_num_samples = 1
+      i_num_sets = 1 ).
+    cut->map_samples_to_unit_disk( ).
 
     "When
     DATA(sample_point) = cut->sample_unit_disk( ).
@@ -218,6 +214,7 @@ CLASS ucl_art_sampler IMPLEMENTATION.
     DATA(cut) = NEW lcl_dummy(
       i_num_samples = 2
       i_num_sets = 2 ).
+    cut->map_samples_to_sphere( ).
 
     "When
     DATA(sample_point) = cut->sample_sphere( ).
@@ -232,15 +229,14 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
     "Given
     DATA(cut) = NEW lcl_dummy(
-      i_num_samples = 2
-      i_num_sets = 2 ).
+      i_num_samples = 1
+      i_num_sets = 1 ).
 
     "When
     DATA(sample_point) = cut->sample_one_set( ).
 
     "Then
     cl_abap_unit_assert=>assert_bound( sample_point ).
-    cl_abap_unit_assert=>assert_equals( exp = 1   act = sample_point->x ).
   ENDMETHOD.
 
 
@@ -249,8 +245,9 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
     "Given
     DATA(cut) = NEW lcl_dummy(
-      i_num_samples = 2
-      i_num_sets = 2 ).
+      i_num_samples = 1
+      i_num_sets = 1 ).
+    cut->map_samples_to_hemisphere( i_exponent = 1 ).
 
     "When
     DATA(sample_point) = cut->sample_hemisphere( ).
@@ -261,18 +258,82 @@ CLASS ucl_art_sampler IMPLEMENTATION.
 
 
   METHOD map_samples_to_hemisphere.
-    "
+    "Test, that the the unit square sample points are being mapped to a hemisphere
 
     "Given
-    DATA(cut) = NEW lcl_dummy_for_hemisphere_Test(
-      i_num_samples = 2
+    DATA(cut) = NEW lcl_dummy(
+      i_num_samples = 1
       i_num_sets = 1 ).
 
     "When
     cut->map_samples_to_hemisphere( i_exponent = 1 ).
-    DATA(sample_point) = cut->sample_hemisphere( ).
 
     "Then
-    cl_abap_unit_assert=>assert_bound( sample_point ).
+    cl_abap_unit_assert=>assert_bound( cut->sample_hemisphere( ) ).
+  ENDMETHOD.
+
+
+  METHOD map_samples_to_sphere.
+    "Test, that the the unit square sample points are being mapped to a sphere
+
+    "Given
+    DATA(cut) = NEW lcl_dummy(
+      i_num_samples = 1
+      i_num_sets = 1 ).
+
+    "When
+    cut->map_samples_to_sphere( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_bound( cut->sample_sphere( ) ).
+  ENDMETHOD.
+
+
+  METHOD map_samples_to_unit_disk.
+    "Test, that the the unit square sample points are being mapped to a unit disk
+
+    "Given
+    DATA(cut) = NEW lcl_dummy(
+      i_num_samples = 1
+      i_num_sets = 1 ).
+    cut->prepare_map_samples2unit_disk( ).
+
+    "When
+    cut->map_samples_to_unit_disk( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_bound( cut->sample_unit_disk( ) ).
+  ENDMETHOD.
+
+
+  METHOD shuffle_x_coordinates.
+    "Test, that shuffling the x values around works
+
+    "Given
+    DATA(cut) = NEW lcl_dummy(
+      i_num_samples = 1000
+      i_num_sets = 1 ).
+
+    "When
+    cut->shuffle_x_coordinates( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->sample_one_set( )->x <> 1 ) ).
+  ENDMETHOD.
+
+
+  METHOD shuffle_y_coordinates.
+    "Test, that shuffling the y values around works
+
+    "Given
+    DATA(cut) = NEW lcl_dummy(
+      i_num_samples = 1000
+      i_num_sets = 1 ).
+
+    "When
+    cut->shuffle_y_coordinates( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->sample_one_set( )->y <> 1 ) ).
   ENDMETHOD.
 ENDCLASS.

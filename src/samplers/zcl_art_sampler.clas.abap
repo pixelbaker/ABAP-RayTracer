@@ -24,10 +24,6 @@ CLASS zcl_art_sampler DEFINITION
         RETURNING
           VALUE(r_sampler) TYPE REF TO zcl_art_sampler,
 
-      set_num_sets
-        IMPORTING
-          i_num_sets TYPE int4,
-
       get_num_samples
         RETURNING
           VALUE(r_num_samples) TYPE int4,
@@ -96,7 +92,7 @@ CLASS zcl_art_sampler DEFINITION
       "The number of sample sets
       _num_sets           TYPE int4,
 
-      "Shuffled samples array indices
+      "Shuffled samples array indices for faster access
       _shuffeled_indices  TYPE STANDARD TABLE OF int2,
 
       "Sample points on a unit square
@@ -119,7 +115,7 @@ CLASS zcl_art_sampler DEFINITION
 
 
     METHODS:
-      "! Generate sample patterns in a unit square
+      "! Generate sample patterns in a unit square [0..1]x[0..1](x[0..1])
       generate_samples ABSTRACT.
 
 ENDCLASS.
@@ -358,11 +354,6 @@ CLASS zcl_art_sampler IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_num_sets.
-    _num_sets = i_num_sets.
-  ENDMETHOD.
-
-
   METHOD shuffle_x_coordinates.
     DATA:
       p      TYPE int4,
@@ -370,7 +361,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
       target TYPE int4,
       temp   TYPE decfloat16.
 
-    DATA(rand) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( ) min = 0 ).
+    DATA(rand) = cl_abap_random_int=>create( seed = cl_abap_random=>seed( )  min = 0 ).
 
     WHILE p < _num_sets.
       q = 0.
