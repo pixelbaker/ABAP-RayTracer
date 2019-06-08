@@ -23,14 +23,6 @@ CLASS zcl_art_hammersley DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_hammersley.
 
 
-    METHODS:
-      assigment_by_hammersley
-        IMPORTING
-          i_rhs               TYPE REF TO zcl_art_hammersley
-        RETURNING
-          VALUE(r_hammersley) TYPE REF TO zcl_art_hammersley.
-
-
   PROTECTED SECTION.
     METHODS:
       generate_samples REDEFINITION.
@@ -55,16 +47,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_hammersley IMPLEMENTATION.
-
-
-  METHOD assigment_by_hammersley.
-    ASSERT i_rhs IS BOUND.
-    r_hammersley = me.
-    CHECK me <> i_rhs.
-    assignment_by_sampler( i_rhs ).
-  ENDMETHOD.
-
-
   METHOD constructor.
     super->constructor(
       i_num_samples = i_num_samples

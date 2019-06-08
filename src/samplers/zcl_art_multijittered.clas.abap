@@ -30,14 +30,6 @@ CLASS zcl_art_multijittered DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_multijittered.
 
 
-    METHODS:
-      assigment_by_multijittered
-        IMPORTING
-          i_rhs                  TYPE REF TO zcl_art_multijittered
-        RETURNING
-          VALUE(r_multijittered) TYPE REF TO zcl_art_multijittered.
-
-
   PROTECTED SECTION.
     METHODS:
       generate_samples REDEFINITION.
@@ -68,20 +60,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_multijittered IMPLEMENTATION.
-
-
-  METHOD assigment_by_multijittered.
-    IF me = i_rhs.
-      r_multijittered = me.
-      RETURN.
-    ENDIF.
-
-    assignment_by_sampler( i_rhs ).
-
-    r_multijittered = me.
-  ENDMETHOD.
-
-
   METHOD constructor.
     super->constructor(
       i_num_samples = i_num_samples

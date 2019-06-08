@@ -18,7 +18,7 @@ CLASS zcl_art_sampler DEFINITION
           i_num_sets    TYPE int4 OPTIONAL
           i_sampler     TYPE REF TO zcl_art_sampler OPTIONAL, "Copy Constructor
 
-      assignment_by_sampler
+      assignment
         IMPORTING
           i_rhs            TYPE REF TO zcl_art_sampler
         RETURNING
@@ -96,16 +96,16 @@ CLASS zcl_art_sampler DEFINITION
       _shuffeled_indices  TYPE STANDARD TABLE OF int2,
 
       "Sample points on a unit square
-      _samples            TYPE STANDARD TABLE OF REF TO zcl_art_point2d,
+      _samples            TYPE STANDARD TABLE OF REF TO zcl_art_point2d WITH EMPTY KEY,
 
       "Sample points on a unit disk
-      _disk_samples       TYPE STANDARD TABLE OF REF TO zcl_art_point2d,
+      _disk_samples       TYPE STANDARD TABLE OF REF TO zcl_art_point2d WITH EMPTY KEY,
 
       "Sample points on a unit sphere
-      _sphere_samples     TYPE STANDARD TABLE OF REF TO zcl_art_point3d,
+      _sphere_samples     TYPE STANDARD TABLE OF REF TO zcl_art_point3d WITH EMPTY KEY,
 
       "Sample points on a unit hemisphere
-      _hemisphere_samples TYPE STANDARD TABLE OF REF TO zcl_art_point3d,
+      _hemisphere_samples TYPE STANDARD TABLE OF REF TO zcl_art_point3d WITH EMPTY KEY,
 
       "The current number of sample points used
       _count              TYPE int8,
@@ -125,7 +125,7 @@ ENDCLASS.
 CLASS zcl_art_sampler IMPLEMENTATION.
 
 
-  METHOD assignment_by_sampler.
+  METHOD assignment.
     ASSERT i_rhs IS BOUND.
     r_sampler = me.
     CHECK me <> i_rhs.
@@ -134,6 +134,13 @@ CLASS zcl_art_sampler IMPLEMENTATION.
     _num_sets = i_rhs->_num_sets.
     _count = i_rhs->_count.
     _jump = i_rhs->_jump.
+
+    CLEAR:
+      _shuffeled_indices,
+      _samples,
+      _disk_samples,
+      _hemisphere_samples,
+      _sphere_samples.
 
     LOOP AT i_rhs->_shuffeled_indices INTO DATA(shuffled_index).
       APPEND shuffled_index TO _shuffeled_indices.
@@ -164,7 +171,7 @@ CLASS zcl_art_sampler IMPLEMENTATION.
   METHOD constructor.
     "Copy Constructor
     IF i_sampler IS BOUND.
-      assignment_by_sampler( i_sampler ).
+      assignment( i_sampler ).
       RETURN.
     ENDIF.
 

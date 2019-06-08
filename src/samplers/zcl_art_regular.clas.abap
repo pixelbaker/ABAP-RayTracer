@@ -23,14 +23,6 @@ CLASS zcl_art_regular DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_regular.
 
 
-    METHODS:
-      assigment_by_regular
-        IMPORTING
-          i_rhs            TYPE REF TO zcl_art_regular
-        RETURNING
-          VALUE(r_regular) TYPE REF TO zcl_art_regular.
-
-
   PROTECTED SECTION.
     METHODS:
       generate_samples REDEFINITION.
@@ -48,14 +40,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_regular IMPLEMENTATION.
-
-
-  METHOD assigment_by_regular.
-    ASSERT i_rhs IS BOUND.
-    r_regular = me.
-    CHECK me <> i_rhs.
-    assignment_by_sampler( i_rhs ).
-  ENDMETHOD.
 
 
   METHOD constructor.
@@ -78,7 +62,7 @@ CLASS zcl_art_regular IMPLEMENTATION.
       p = 0.
       WHILE p < n.
         q = 0.
-        WHILE q < n.
+        WHILE q <= n.
           APPEND NEW zcl_art_point2d( i_x = ( q + '0.5' ) / n
                                       i_y = ( p + '0.5' ) / n ) TO _samples.
 

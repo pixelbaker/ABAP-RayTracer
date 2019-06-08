@@ -64,7 +64,7 @@ CLASS zcl_art_nrooks IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    assignment_by_sampler( i_rhs ).
+    assignment( i_rhs ).
 
     r_nrooks = me.
   ENDMETHOD.

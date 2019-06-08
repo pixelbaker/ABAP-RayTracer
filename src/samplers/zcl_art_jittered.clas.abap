@@ -30,14 +30,6 @@ CLASS zcl_art_jittered DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_jittered.
 
 
-    METHODS:
-      assigment_by_jittered
-        IMPORTING
-          i_rhs             TYPE REF TO zcl_art_jittered
-        RETURNING
-          VALUE(r_jittered) TYPE REF TO zcl_art_jittered.
-
-
   PROTECTED SECTION.
     METHODS:
       generate_samples REDEFINITION.
@@ -56,20 +48,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_jittered IMPLEMENTATION.
-
-
-  METHOD assigment_by_jittered.
-    IF me = i_rhs.
-      r_jittered = me.
-      RETURN.
-    ENDIF.
-
-    assignment_by_sampler( i_rhs ).
-
-    r_jittered = me.
-  ENDMETHOD.
-
-
   METHOD constructor.
     super->constructor(
       i_num_samples = i_num_samples

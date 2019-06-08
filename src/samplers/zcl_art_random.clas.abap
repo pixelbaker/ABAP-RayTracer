@@ -23,14 +23,6 @@ CLASS zcl_art_random DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_random.
 
 
-    METHODS:
-      assigment_by_random
-        IMPORTING
-          i_rhs           TYPE REF TO zcl_art_random
-        RETURNING
-          VALUE(r_random) TYPE REF TO zcl_art_random.
-
-
   PROTECTED SECTION.
     METHODS:
       generate_samples REDEFINITION.
@@ -48,20 +40,6 @@ ENDCLASS.
 
 
 CLASS ZCL_ART_RANDOM IMPLEMENTATION.
-
-
-  METHOD assigment_by_random.
-    IF me = i_rhs.
-      r_random = me.
-      RETURN.
-    ENDIF.
-
-    assignment_by_sampler( i_rhs ).
-
-    r_random = me.
-  ENDMETHOD.
-
-
   METHOD constructor.
     super->constructor(
       i_num_samples = i_num_samples
