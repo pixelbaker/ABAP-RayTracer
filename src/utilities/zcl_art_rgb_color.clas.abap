@@ -4,12 +4,6 @@ CLASS zcl_art_rgb_color DEFINITION
   CREATE PRIVATE.
 
   PUBLIC SECTION.
-    CLASS-DATA:
-      black TYPE REF TO zcl_art_rgb_color, "todo: should go into a constants class
-      red   TYPE REF TO zcl_art_rgb_color, "todo: should go into a constants class
-      white TYPE REF TO zcl_art_rgb_color. "todo: should go into a constants class
-
-
     DATA:
       r TYPE decfloat16,
       g TYPE decfloat16,
@@ -17,8 +11,6 @@ CLASS zcl_art_rgb_color DEFINITION
 
 
     CLASS-METHODS:
-      class_constructor,
-
       new_default
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_rgb_color,
@@ -41,7 +33,23 @@ CLASS zcl_art_rgb_color DEFINITION
         IMPORTING
           REFERENCE(i_color) TYPE REF TO zcl_art_rgb_color
         RETURNING
+          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color,
+
+      "! Gives you a new instance with the color red.
+      new_red
+        RETURNING
+          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color,
+
+      "! Gives you a new instance with the color white.
+      new_white
+        RETURNING
+          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color,
+
+      "! Gives you a new instance with the color black.
+      new_black
+        RETURNING
           VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color.
+
 
 
     METHODS:
@@ -100,8 +108,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_rgb_color IMPLEMENTATION.
-
-
   METHOD add_and_assign_by_color.
     ADD i_color->r TO me->r.
     ADD i_color->g TO me->g.
@@ -119,18 +125,6 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
     ENDIF.
 
     r_color = me.
-  ENDMETHOD.
-
-
-  METHOD class_constructor.
-    white = zcl_art_rgb_color=>new_unified( 1 ).
-
-    black = zcl_art_rgb_color=>new_unified( 0 ).
-
-    red = zcl_art_rgb_color=>new_individual(
-      i_r = 1
-      i_g = 0
-      i_b = 0 ).
   ENDMETHOD.
 
 
@@ -189,6 +183,21 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD new_black.
+    r_instance = zcl_art_rgb_color=>new_unified( 0 ).
+  ENDMETHOD.
+
+
+  METHOD new_red.
+    r_instance = zcl_art_rgb_color=>new_individual( i_r = 1  i_g = 0  i_b = 0 ).
+  ENDMETHOD.
+
+
+  METHOD new_white.
+    r_instance = zcl_art_rgb_color=>new_unified( 1 ).
+  ENDMETHOD.
+
+
   METHOD powc.
     r_color = zcl_art_rgb_color=>new_individual(
       i_r = r ** i_power
@@ -204,4 +213,5 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
 
     r_color = me.
   ENDMETHOD.
+
 ENDCLASS.

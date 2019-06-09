@@ -80,11 +80,7 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-
       "! Set color to red if any component is greater than one
-      "!
-      "! @parameter i_color | <p class="shorttext synchronized" lang="en"></p>
-      "! @parameter r_color | <p class="shorttext synchronized" lang="en"></p>
       clamp_to_color
         IMPORTING
           i_color        TYPE REF TO zcl_art_rgb_color
@@ -151,7 +147,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_hres( hres * factor ).
     me->viewplane->set_vres( vres * factor ).
 
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    me->background_color = zcl_art_rgb_color=>new_black( ).
     tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA:
@@ -211,12 +207,12 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_vres( 200 ).
     me->viewplane->set_num_samples( 16 ).
 
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    tracer = NEW zcl_art_multiple_objects( me ).
+    me->background_color = zcl_art_rgb_color=>new_black( ).
+    me->tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
       i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -100  i_z = 0 )
-      i_normal = zcl_art_normal=>new_individual( i_x = 0 i_y = 1 i_z = 0 ) ).
+      i_normal = zcl_art_normal=>new_individual( i_x = 0  i_y = 1     i_z = 0 ) ).
     plane->set_color_by_components( i_r = 0 i_g = '1' i_b = 0 ).
     add_object( plane ).
   ENDMETHOD.
@@ -229,8 +225,8 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_vres( 200 ).
     me->viewplane->set_num_samples( 16 ).
 
-    me->background_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    tracer = NEW zcl_art_multiple_objects( me ).
+    me->background_color = zcl_art_rgb_color=>new_black( ).
+    me->tracer = NEW zcl_art_multiple_objects( me ).
 
     DATA sphere TYPE REF TO zcl_art_sphere.
 
@@ -261,8 +257,8 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_gamma( '2.2' ).
     me->viewplane->set_num_samples( 1 ).
 
-    me->background_color = zcl_art_rgb_color=>white.
-    tracer = NEW zcl_art_single_sphere( me ).
+    me->background_color = zcl_art_rgb_color=>new_white( ).
+    me->tracer = NEW zcl_art_single_sphere( me ).
 
     me->sphere->set_center_by_value( '0.0' ).
     me->sphere->set_radius( '85.0' ).
@@ -277,7 +273,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_sampler( zcl_art_nrooks=>new_by_num_samples( 25 ) ).
 *    me->viewplane->set_num_samples( 25 ).
 
-    tracer = NEW zcl_art_function_tracer( me ).
+    me->tracer = NEW zcl_art_function_tracer( me ).
 
     me->function = NEW zcl_art_sinusoid_function( ).
   ENDMETHOD.
@@ -339,7 +335,7 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD constructor.
     me->viewplane = zcl_art_viewplane=>new_default( ).
-    me->background_color = zcl_art_rgb_color=>black.
+    me->background_color = zcl_art_rgb_color=>new_black( ).
     me->sphere = zcl_art_sphere=>new_default( ).
   ENDMETHOD.
 
@@ -502,7 +498,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     WHILE row < vres.
       column = 0.
       WHILE column < hres.
-        DATA(pixel_color) = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+        DATA(pixel_color) = zcl_art_rgb_color=>new_black( ).
 
         DO me->viewplane->num_samples TIMES.
           sample_point = me->viewplane->sampler->sample_unit_square( ).

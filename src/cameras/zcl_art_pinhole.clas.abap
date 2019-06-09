@@ -84,7 +84,7 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
       column = 0.
       WHILE column < viewplane->hres.
         "Also called L, which is a symbol for radiance
-        DATA(radiance) = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+        DATA(radiance) = zcl_art_rgb_color=>new_black( ).
 
         sub_pixel_row = 0.
         WHILE sub_pixel_row < num.

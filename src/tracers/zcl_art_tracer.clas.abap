@@ -28,7 +28,7 @@ ENDCLASS.
 
 CLASS zcl_art_tracer IMPLEMENTATION.
   METHOD trace_ray.
-    r_color = zcl_art_rgb_color=>black.
+    r_color = zcl_art_rgb_color=>new_black( ).
   ENDMETHOD.
 
 

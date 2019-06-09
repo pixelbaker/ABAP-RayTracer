@@ -82,6 +82,6 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
       i_hit_an_object = abap_false
       i_normal = zcl_art_normal=>new_default( )
       i_local_hit_point = zcl_art_point3d=>new_default( )
-      i_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ) ).
+      i_color = zcl_art_rgb_color=>new_black( ) ).
   ENDMETHOD.
 ENDCLASS.

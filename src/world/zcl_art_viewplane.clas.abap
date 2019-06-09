@@ -9,8 +9,9 @@ CLASS zcl_art_viewplane DEFINITION
       vres              TYPE int4 READ-ONLY,
       pixel_size        TYPE decfloat16 READ-ONLY,
 
+      "! The inverse of the gamma correction factor
+      inv_gamma         TYPE decfloat16 READ-ONLY,
       gamma             TYPE decfloat16 READ-ONLY,
-      inv_gamma         TYPE decfloat16 READ-ONLY, "the inverse of the gamma correction factor
 
       show_out_of_gamut TYPE abap_bool READ-ONLY,
 
@@ -155,10 +156,12 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
 
 
   METHOD set_num_samples.
+    ASSERT i_num_samples > 0.
+
     me->num_samples = i_num_samples.
 
     IF me->num_samples > 1.
-      me->sampler = zcl_art_multijittered=>new_by_num_samples( i_num_samples ).
+      me->sampler = zcl_art_multijittered=>new_by_num_samples( me->num_samples ).
     ELSE.
       me->sampler = zcl_art_regular=>new_by_num_samples( 1 ).
     ENDIF.

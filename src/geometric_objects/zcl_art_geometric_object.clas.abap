@@ -56,7 +56,7 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
     ENDIF.
 
     "Default Constructor
-    _color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
+    _color = zcl_art_rgb_color=>new_black( ).
   ENDMETHOD.
 
 

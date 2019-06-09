@@ -37,11 +37,8 @@ CLASS zcl_art_single_sphere IMPLEMENTATION.
       CHANGING
         c_shade_rec = shade_rec ).
 
-    IF hit = abap_true.
-      r_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>red ).
-    ELSE.
-      r_color = zcl_art_rgb_color=>new_copy( zcl_art_rgb_color=>black ).
-    ENDIF.
+    r_color = COND #( WHEN hit = abap_true
+                      THEN zcl_art_rgb_color=>new_red( )
+                      ELSE zcl_art_rgb_color=>new_black( ) ).
   ENDMETHOD.
-
 ENDCLASS.
