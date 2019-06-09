@@ -30,13 +30,6 @@ CLASS zcl_art_nrooks DEFINITION
           VALUE(r_instance) TYPE REF TO zcl_art_nrooks.
 
 
-    METHODS:
-      assigment_by_nrooks
-        IMPORTING
-          i_rhs           TYPE REF TO zcl_art_nrooks
-        RETURNING
-          VALUE(r_nrooks) TYPE REF TO zcl_art_nrooks.
-
 
   PROTECTED SECTION.
     METHODS:
@@ -56,20 +49,6 @@ ENDCLASS.
 
 
 CLASS zcl_art_nrooks IMPLEMENTATION.
-
-
-  METHOD assigment_by_nrooks.
-    IF me = i_rhs.
-      r_nrooks = me.
-      RETURN.
-    ENDIF.
-
-    assignment( i_rhs ).
-
-    r_nrooks = me.
-  ENDMETHOD.
-
-
   METHOD constructor.
     super->constructor(
       i_num_samples = i_num_samples

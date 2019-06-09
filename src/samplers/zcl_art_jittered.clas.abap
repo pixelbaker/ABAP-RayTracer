@@ -75,7 +75,7 @@ CLASS zcl_art_jittered IMPLEMENTATION.
       WHILE j < n.
         k = 0.
 
-        WHILE k < n.
+        WHILE k <= n.
           APPEND NEW zcl_art_point2d(
                        i_x = ( k + rand->get_next( ) ) / n
                        i_y = ( j + rand->get_next( ) ) / n ) TO _samples.
