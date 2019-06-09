@@ -10,6 +10,9 @@ CLASS ucl_art_rgb_color DEFINITION
       new_default FOR TESTING,
       new_individual FOR TESTING,
       new_unified FOR TESTING,
+      new_black FOR TESTING,
+      new_red FOR TESTING,
+      new_white FOR TESTING,
 
       powc FOR TESTING,
 
@@ -20,7 +23,7 @@ CLASS ucl_art_rgb_color DEFINITION
       assign_by_color1 FOR TESTING,
       assign_by_color2 FOR TESTING,
 
-      get_quotient_by_decfloat for testing.
+      get_quotient_by_decfloat FOR TESTING.
 
 ENDCLASS.
 
@@ -205,5 +208,44 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = result->r  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->g  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = result->b  exp = 1 ).
+  ENDMETHOD.
+
+
+  METHOD new_black.
+    "Test, that a new instance of black gets returned
+
+    "When
+    DATA(cut) = zcl_art_rgb_color=>new_black( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut->r  exp = 0 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->g  exp = 0 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->b  exp = 0 ).
+  ENDMETHOD.
+
+
+  METHOD new_red.
+    "Test, that a new instance of red gets returned
+
+    "When
+    DATA(cut) = zcl_art_rgb_color=>new_red( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut->r  exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->g  exp = 0 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->b  exp = 0 ).
+  ENDMETHOD.
+
+
+  METHOD new_white.
+    "Test, that a new instance of white gets returned
+
+    "When
+    DATA(cut) = zcl_art_rgb_color=>new_white( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_equals( act = cut->r  exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->g  exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = cut->b  exp = 1 ).
   ENDMETHOD.
 ENDCLASS.

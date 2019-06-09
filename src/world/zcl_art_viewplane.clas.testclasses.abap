@@ -21,19 +21,24 @@ CLASS ucl_art_viewplane IMPLEMENTATION.
 
     "Then
     cl_abap_unit_assert=>assert_bound( cut ).
+    cl_abap_unit_assert=>assert_bound( cut->sampler ).
   ENDMETHOD.
 
 
-  METHOD new_Copy.
+  METHOD new_copy.
     "Test, that the copy constructor works.
 
     "Given
     DATA(viewplane) = zcl_art_viewplane=>new_default( ).
+    DATA(sampler) = zcl_art_nrooks=>new_default( ).
+    viewplane->set_sampler( sampler ).
 
     "When
     DATA(cut) = zcl_art_viewplane=>new_copy( viewplane ).
 
     "Then
     cl_abap_unit_assert=>assert_bound( cut ).
+    cl_abap_unit_assert=>assert_bound( cut->Sampler ).
+    cl_abap_unit_assert=>assert_true( xsdbool( cut->sampler <> sampler ) ).
   ENDMETHOD.
 ENDCLASS.

@@ -24,6 +24,8 @@ CLASS zcl_art_viewplane DEFINITION
         RETURNING
           VALUE(r_instance) TYPE REF TO zcl_art_viewplane,
 
+      "! Note! The Sampler won't be copied at the moment.
+      "! It will be either multi-jittered or regular depending on your number of samples.
       new_copy
         IMPORTING
           i_viewplane       TYPE REF TO zcl_art_viewplane
@@ -58,6 +60,11 @@ CLASS zcl_art_viewplane DEFINITION
         IMPORTING
           i_show TYPE abap_bool,
 
+      "! This one carries a side effect.
+      "! If you already set a sampler for your viewport and it's not the regular or multi-jittered sampler,
+      "! you will lose your previously set sampler. It will be replaced with the before mentioned ones.
+      "!
+      "! @parameter i_num_samples | Should be larger than zero.
       set_num_samples
         IMPORTING
           i_num_samples LIKE num_samples,
@@ -87,11 +94,9 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
 
 
   METHOD assignment.
+    ASSERT i_rhs IS BOUND.
     r_viewplane = me.
-
-    IF me = i_rhs.
-      RETURN.
-    ENDIF.
+    CHECK me <> i_rhs.
 
     me->hres = i_rhs->hres.
     me->vres = i_rhs->vres.
@@ -99,6 +104,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     me->gamma = i_rhs->gamma.
     me->inv_gamma = i_rhs->inv_gamma.
     me->show_out_of_gamut = i_rhs->show_out_of_gamut.
+    set_num_samples( i_rhs->num_samples ).
   ENDMETHOD.
 
 
@@ -174,6 +180,7 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
 
 
   METHOD set_sampler.
+    ASSERT i_sampler IS BOUND.
     me->num_samples = i_sampler->get_num_samples( ).
     me->sampler = i_sampler.
   ENDMETHOD.
