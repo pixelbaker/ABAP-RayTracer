@@ -346,7 +346,7 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD display_pixel.
-    " raw_color is the pixel color computed by the ray tracer
+    " i_pixel_color is the pixel color computed by the ray tracer
     " its RGB floating point components can be arbitrarily large
     " mapped_color has all components in the range [0, 1], but still floating point
     " display color has integer components for computer display
