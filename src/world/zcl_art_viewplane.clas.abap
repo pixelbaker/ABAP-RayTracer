@@ -78,13 +78,7 @@ CLASS zcl_art_viewplane DEFINITION
     METHODS:
       constructor
         IMPORTING
-          i_hres              TYPE int4
-          i_vres              TYPE int4
-          i_num_samples       TYPE int4
-          i_pixel_size        TYPE decfloat16
-          i_gamma             TYPE decfloat16
-          i_inv_gamma         TYPE decfloat16
-          i_show_out_of_gamut TYPE abap_bool.
+          i_viewplane TYPE REF TO zcl_art_viewplane OPTIONAL. "Copy Constructor
 
 ENDCLASS.
 
@@ -104,44 +98,39 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     me->gamma = i_rhs->gamma.
     me->inv_gamma = i_rhs->inv_gamma.
     me->show_out_of_gamut = i_rhs->show_out_of_gamut.
+
     set_num_samples( i_rhs->num_samples ).
   ENDMETHOD.
 
 
   METHOD constructor.
-    me->hres = i_hres.
-    me->vres = i_vres.
-    me->pixel_size = i_pixel_size.
-    me->gamma = i_gamma.
-    me->inv_gamma = i_inv_gamma.
-    me->show_out_of_gamut = i_show_out_of_gamut.
-    set_num_samples( i_num_samples ).
+    "Copy Constructor
+    IF i_viewplane IS BOUND.
+      assignment( i_viewplane ).
+      RETURN.
+    ENDIF.
+
+    "Default Constructor
+    me->hres = 400.
+    me->vres = 400.
+    me->pixel_size = '1.0'.
+    me->gamma = '1.0'.
+    me->inv_gamma = '1.0'.
+    me->show_out_of_gamut = abap_false.
+
+    set_num_samples( 1 ).
   ENDMETHOD.
 
 
   METHOD new_copy.
     ASSERT i_viewplane IS BOUND.
 
-    r_instance = NEW #(
-      i_hres = i_viewplane->hres
-      i_vres = i_viewplane->vres
-      i_num_samples = i_viewplane->num_samples
-      i_pixel_size = i_viewplane->pixel_size
-      i_gamma = i_viewplane->gamma
-      i_inv_gamma = i_viewplane->inv_gamma
-      i_show_out_of_gamut = i_viewplane->show_out_of_gamut ).
+    r_instance = NEW #( i_viewplane = i_viewplane ).
   ENDMETHOD.
 
 
   METHOD new_default.
-    r_instance = NEW #(
-      i_hres = 400
-      i_vres = 400
-      i_num_samples = 1
-      i_pixel_size = '1.0'
-      i_gamma = '1.0'
-      i_inv_gamma = '1.0'
-      i_show_out_of_gamut = abap_false ).
+    r_instance = NEW #( ).
   ENDMETHOD.
 
 
@@ -190,3 +179,4 @@ CLASS zcl_art_viewplane IMPLEMENTATION.
     me->vres = i_vres.
   ENDMETHOD.
 ENDCLASS.
+
