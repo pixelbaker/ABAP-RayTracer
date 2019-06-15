@@ -10,8 +10,8 @@ CLASS zcl_art_tracer DEFINITION
 
       trace_ray
         IMPORTING
-          i_ray           TYPE REF TO zcl_art_ray
-          i_depth         TYPE int4 OPTIONAL
+          i_ray          TYPE REF TO zcl_art_ray
+          i_depth        TYPE int4 OPTIONAL
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
 
@@ -20,8 +20,6 @@ CLASS zcl_art_tracer DEFINITION
     DATA:
       _world TYPE REF TO zcl_art_world.
 
-
-  PRIVATE SECTION.
 ENDCLASS.
 
 

@@ -65,11 +65,15 @@ FORM render CHANGING c_bitmap_stream.
 *  world->render_perspective( ).
 *  world->render_scene( ).
 
-  c_bitmap_stream = world->bitmap->build( ).
+  DATA(bmp) = world->bitmap.
+  DATA(image_width) = bmp->image_width_in_pixel.
+  DATA(image_height) = bmp->image_height_in_pixel.
 
-  t_samples =  |{ world->viewplane->num_samples NUMBER = USER }|.
-  t_dimension = |{ world->bitmap->image_width_in_pixel }x{ world->bitmap->image_height_in_pixel } px|.
-  t_resolution = |{ ( world->bitmap->image_height_in_pixel * world->bitmap->image_width_in_pixel ) NUMBER = USER } px|.
+  c_bitmap_stream = bmp->build( ).
+
+  t_samples = |{ world->viewplane->num_samples NUMBER = USER }|.
+  t_dimension = |{ image_width }x{ image_height } px|.
+  t_resolution = |{ ( image_height * image_width ) NUMBER = USER } px|.
   t_objects = world->get_num_objects( ).
   t_rays = |{ world->num_rays NUMBER = USER }|.
 ENDFORM.

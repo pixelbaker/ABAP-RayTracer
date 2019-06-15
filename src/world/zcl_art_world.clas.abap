@@ -47,6 +47,10 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_num_objects) TYPE int4,
 
+      set_bitmap
+        IMPORTING
+          i_bitmap TYPE REF TO zcl_art_bitmap,
+
       display_pixel
         IMPORTING
           i_row         TYPE int4
@@ -64,8 +68,6 @@ CLASS zcl_art_world DEFINITION
 
 
     METHODS:
-      delete_objects,
-
       build_single_sphere,
 
       build_multiple_objects,
@@ -337,12 +339,14 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane = zcl_art_viewplane=>new_default( ).
     me->background_color = zcl_art_rgb_color=>new_black( ).
     me->sphere = zcl_art_sphere=>new_default( ).
+    me->bitmap = NEW zcl_art_bitmap(
+      i_image_height_in_pixel = me->viewplane->vres
+      i_image_width_in_pixel = me->viewplane->hres ).
+    me->tracer = NEW zcl_art_multiple_objects( me ).
   ENDMETHOD.
 
 
-  METHOD delete_objects.
 
-  ENDMETHOD.
 
 
   METHOD display_pixel.
@@ -418,7 +422,8 @@ CLASS zcl_art_world IMPLEMENTATION.
         CHANGING
           c_shade_rec = r_shade_rec ).
 
-      IF hit = abap_true AND ( t < tmin ).
+      IF hit = abap_true AND
+         t < tmin.
         r_shade_rec->hit_an_object = abap_true.
         tmin = t.
         r_shade_rec->color = <object>->get_color( ).
@@ -491,7 +496,7 @@ CLASS zcl_art_world IMPLEMENTATION.
     DATA(rand) = cl_abap_random_decfloat16=>create( ).
 
     DATA(ray) = zcl_art_ray=>new_default( ).
-    ray->direction = zcl_art_vector3d=>new_individual( i_x = 0 i_y = 0 i_z = -1 ).
+    ray->direction = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 0  i_z = -1 ).
 
     DATA row TYPE int4.
     DATA column TYPE int4.
@@ -532,5 +537,11 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD set_camera.
     ASSERT i_camera IS BOUND.
     me->camera = i_camera.
+  ENDMETHOD.
+
+
+  METHOD set_bitmap.
+    ASSERT i_bitmap IS BOUND.
+    me->bitmap = i_bitmap.
   ENDMETHOD.
 ENDCLASS.
