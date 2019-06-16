@@ -5,10 +5,6 @@ CLASS ucl_art_multiple_objects DEFINITION
   RISK LEVEL HARMLESS.
 
   PRIVATE SECTION.
-    DATA:
-      _cut TYPE REF TO zcl_art_multiple_objects.
-
-
     METHODS:
       trace_ray1 FOR TESTING,
       trace_ray2 FOR TESTING.

@@ -58,7 +58,11 @@ CLASS zcl_art_world DEFINITION
         IMPORTING
           i_row         TYPE int4
           i_column      TYPE int4
-          i_pixel_color TYPE REF TO zcl_art_rgb_color.
+          i_pixel_color TYPE REF TO zcl_art_rgb_color,
+
+      set_function
+        IMPORTING
+          i_function TYPE REF TO zcl_art_function_definition.
 
 
   PRIVATE SECTION.
@@ -279,11 +283,10 @@ CLASS zcl_art_world IMPLEMENTATION.
     me->viewplane->set_pixel_size( '1.0' ).
     me->viewplane->set_gamma( '2.2' ).
     me->viewplane->set_sampler( zcl_art_nrooks=>new_by_num_samples( 25 ) ).
-*    me->viewplane->set_num_samples( 25 ).
 
     me->tracer = NEW zcl_art_function_tracer( me ).
 
-    me->function = NEW zcl_art_sinusoid_function( ).
+    set_function( NEW zcl_art_sinusoid_function( ) ).
   ENDMETHOD.
 
 
@@ -559,5 +562,11 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD set_camera.
     ASSERT i_camera IS BOUND.
     me->camera = i_camera.
+  ENDMETHOD.
+
+
+  METHOD set_function.
+    ASSERT i_function IS BOUND.
+    me->function = i_function.
   ENDMETHOD.
 ENDCLASS.
