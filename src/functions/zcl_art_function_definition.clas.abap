@@ -1,7 +1,6 @@
 CLASS zcl_art_function_definition DEFINITION
   PUBLIC
-  ABSTRACT
-  CREATE PUBLIC.
+  ABSTRACT.
 
   PUBLIC SECTION.
     METHODS:
@@ -12,10 +11,7 @@ CLASS zcl_art_function_definition DEFINITION
         RETURNING
           VALUE(r_value) TYPE decfloat16.
 
-  PROTECTED SECTION.
-  PRIVATE SECTION.
 ENDCLASS.
-
 
 
 CLASS zcl_art_function_definition IMPLEMENTATION.
