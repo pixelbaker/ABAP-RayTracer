@@ -520,7 +520,7 @@ CLASS zcl_art_world IMPLEMENTATION.
         ENDDO.
 
         "Average the color
-        pixel_color->divide_and_assign_by_float( CONV #( me->viewplane->num_samples ) ).
+        pixel_color->divide_and_assign_by_decfloat( CONV #( me->viewplane->num_samples ) ).
 
         display_pixel(
           i_row = row

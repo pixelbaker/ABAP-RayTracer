@@ -59,7 +59,7 @@ CLASS zcl_art_camera DEFINITION
         IMPORTING
           i_exposure_time TYPE decfloat16,
 
-      "! This computes an orthornormal basis given the view point, lookat point, and up vector
+      "! This computes an orthonormal basis given the view point, lookat point, and up vector
       compute_uvw.
 
 
@@ -85,7 +85,7 @@ CLASS zcl_art_camera DEFINITION
     METHODS:
       assignment_by_camera
         IMPORTING
-          i_camera        TYPE REF TO zcl_art_camera
+          i_rhs           TYPE REF TO zcl_art_camera
         RETURNING
           VALUE(r_camera) TYPE REF TO zcl_art_camera.
 
@@ -110,20 +110,23 @@ CLASS zcl_art_camera IMPLEMENTATION.
 
 
   METHOD assignment_by_camera.
-    ASSERT i_camera IS BOUND.
+    ASSERT i_rhs IS BOUND.
     r_camera = me.
-    CHECK me <> i_camera.
+    CHECK me <> i_rhs.
 
-    _eye            = zcl_art_point3d=>new_copy( i_camera->_eye ).
-    _lookat         = zcl_art_point3d=>new_copy( i_camera->_lookat ).
-    _roll_angle     = i_camera->_roll_angle.
-    _yaw_angle      = i_camera->_yaw_angle.
-    _pitch_angle    = i_camera->_pitch_angle.
-    _exposure_time  = i_camera->_exposure_time.
-    _up             = zcl_art_vector3d=>new_copy( i_camera->_up ).
-    _u              = zcl_art_vector3d=>new_copy( i_camera->_u ).
-    _v              = zcl_art_vector3d=>new_copy( i_camera->_v ).
-    _w              = zcl_art_vector3d=>new_copy( i_camera->_w ).
+    _eye = zcl_art_point3d=>new_copy( i_rhs->_eye ).
+    _lookat = zcl_art_point3d=>new_copy( i_rhs->_lookat ).
+    _up = zcl_art_vector3d=>new_copy( i_rhs->_up ).
+
+    set_roll( i_rhs->_roll_angle ).
+    set_yaw( i_rhs->_yaw_angle ).
+    set_pitch( i_rhs->_pitch_angle ).
+
+    set_exposure_time( i_rhs->_exposure_time ).
+
+    _u = zcl_art_vector3d=>new_copy( i_rhs->_u ).
+    _v = zcl_art_vector3d=>new_copy( i_rhs->_v ).
+    _w = zcl_art_vector3d=>new_copy( i_rhs->_w ).
   ENDMETHOD.
 
 
@@ -153,8 +156,8 @@ CLASS zcl_art_camera IMPLEMENTATION.
     IF _eye->x = _lookat->x AND
        _eye->z = _lookat->z AND
        _eye->y < _lookat->y.
-      _u = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ).
-      _v = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 0  i_z = 1 ).
+      _u = zcl_art_vector3d=>new_individual( i_x = 1  i_y =  0  i_z = 0 ).
+      _v = zcl_art_vector3d=>new_individual( i_x = 0  i_y =  0  i_z = 1 ).
       _w = zcl_art_vector3d=>new_individual( i_x = 0  i_y = -1  i_z = 0 ).
     ENDIF.
   ENDMETHOD.
@@ -207,17 +210,21 @@ CLASS zcl_art_camera IMPLEMENTATION.
       RETURN.
     ENDIF.
 
+
     "Default Constructor
-    _eye            = zcl_art_point3d=>new_individual( i_x = 0  i_y = 0  i_z = 500 ).
-    _lookat         = zcl_art_point3d=>new_default( ).
-    _roll_angle     = '0'.
-    _yaw_angle      = '0'.
-    _pitch_angle    = '0'.
-    _exposure_time  = '1'.
-    _up             = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
-    _u              = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ).
-    _v              = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
-    _w              = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 0  i_z = 1 ).
+    _eye = zcl_art_point3d=>new_individual( i_x = 0  i_y = 0  i_z = 500 ).
+    _lookat = zcl_art_point3d=>new_default( ).
+    _up = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
+
+    set_roll( 0 ).
+    set_yaw( 0 ).
+    set_pitch( 0 ).
+
+    set_exposure_time( 1 ).
+
+    _u = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ).
+    _v = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
+    _w = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 0  i_z = 1 ).
   ENDMETHOD.
 
 

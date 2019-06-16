@@ -14,7 +14,7 @@ CLASS zcl_art_pinhole DEFINITION
 
       assignment_by_pinhole
         IMPORTING
-          i_pinhole        TYPE REF TO zcl_art_pinhole
+          i_rhs            TYPE REF TO zcl_art_pinhole
         RETURNING
           VALUE(r_pinhole) TYPE REF TO zcl_art_pinhole,
 
@@ -42,7 +42,21 @@ ENDCLASS.
 
 
 
-CLASS zcl_art_pinhole IMPLEMENTATION.
+CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
+
+
+  METHOD assignment_by_pinhole.
+    ASSERT i_rhs IS BOUND.
+    r_pinhole = me.
+    CHECK me <> i_rhs.
+
+    assignment_by_camera( i_rhs ).
+
+    set_view_plane_distance( i_rhs->_view_plane_distance ).
+    set_zoom_factor( i_rhs->_zoom_factor ).
+  ENDMETHOD.
+
+
   METHOD constructor.
     super->constructor( ).
 
@@ -56,6 +70,17 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
     "Default Constructor.
     _view_plane_distance = '500'.
     _zoom_factor = '1'.
+  ENDMETHOD.
+
+
+  METHOD get_direction.
+    DATA(u) = _u->get_product_by_decfloat( i_point->x ).
+    DATA(v) = _v->get_product_by_decfloat( i_point->y ).
+    DATA(w) = _w->get_product_by_decfloat( _view_plane_distance ).
+
+    r_direction = u->get_sum_by_vector( v )->get_difference_by_vector( w ).
+
+    r_direction->normalize( ).
   ENDMETHOD.
 
 
@@ -97,7 +122,7 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
             ray->direction = zcl_art_vector3d=>new_copy( get_direction( sample_point ) ).
 
             radiance->add_and_assign_by_color( i_world->tracer->trace_ray( i_ray = ray  i_depth = depth ) ).
-            ADD 1 TO i_World->num_rays.
+            ADD 1 TO i_world->num_rays.
 
             ADD 1 TO sub_pixel_column.
           ENDWHILE.
@@ -105,8 +130,8 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
           ADD 1 TO sub_pixel_row.
         ENDWHILE.
 
-        radiance->divide_and_assign_by_float( CONV #( viewplane->num_samples ) ).
-        radiance->multiply_and_assign_by_float( CONV #( _exposure_time ) ).
+        radiance->divide_and_assign_by_decfloat( CONV #( viewplane->num_samples ) ).
+        radiance->multiply_and_assign_by_decflt( _exposure_time ).
 
         i_world->display_pixel(
           i_row = row
@@ -118,35 +143,6 @@ CLASS zcl_art_pinhole IMPLEMENTATION.
 
       ADD 1 TO row.
     ENDWHILE.
-  ENDMETHOD.
-
-
-  METHOD assignment_by_pinhole.
-    ASSERT i_pinhole IS BOUND.
-    r_pinhole = me.
-    CHECK me <> i_pinhole.
-
-    assignment_by_camera( i_pinhole ).
-
-    _view_plane_distance = i_pinhole->_view_plane_distance.
-    _zoom_factor = i_pinhole->_zoom_factor.
-  ENDMETHOD.
-
-
-  METHOD get_direction.
-    DATA:
-      u TYPE REF TO zcl_art_vector3d,
-      v TYPE REF TO zcl_art_vector3d,
-      w TYPE REF TO zcl_art_vector3d.
-
-    u = _u->get_product_by_decfloat( i_point->x ).
-    v = _v->get_product_by_decfloat( i_point->y ).
-    w = _w->get_product_by_decfloat( _view_plane_distance ).
-
-    r_direction = zcl_art_vector3d=>new_copy(
-      u->get_sum_by_vector( v )->get_difference_by_vector( w ) ).
-
-    r_direction->normalize( ).
   ENDMETHOD.
 
 

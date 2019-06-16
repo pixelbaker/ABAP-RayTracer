@@ -68,7 +68,7 @@ CLASS zcl_art_rgb_color DEFINITION
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       "! operator/=
-      divide_and_assign_by_float
+      divide_and_assign_by_decfloat
         IMPORTING
           i_value        TYPE decfloat16
         RETURNING
@@ -88,7 +88,7 @@ CLASS zcl_art_rgb_color DEFINITION
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
       "! operator*=
-      multiply_and_assign_by_float
+      multiply_and_assign_by_decflt
         IMPORTING
           i_value        TYPE decfloat16
         RETURNING
@@ -135,7 +135,7 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD divide_and_assign_by_float.
+  METHOD divide_and_assign_by_decfloat.
     DIVIDE me->r BY i_value.
     DIVIDE me->g BY i_value.
     DIVIDE me->b BY i_value.
@@ -206,7 +206,7 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD multiply_and_assign_by_float.
+  METHOD multiply_and_assign_by_decflt.
     MULTIPLY me->r BY i_value.
     MULTIPLY me->g BY i_value.
     MULTIPLY me->b BY i_value.

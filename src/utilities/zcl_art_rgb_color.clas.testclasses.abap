@@ -132,7 +132,7 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     DATA(cut) = zcl_art_rgb_color=>new_unified( 2 ).
 
     "When
-    DATA(result) = cut->divide_and_assign_by_float( 2 ).
+    DATA(result) = cut->divide_and_assign_by_decfloat( 2 ).
 
     "Then
     cl_abap_unit_assert=>assert_equals( act = result  exp = cut ).
@@ -149,7 +149,7 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
     DATA(cut) = zcl_art_rgb_color=>new_unified( 2 ).
 
     "When
-    DATA(result) = cut->multiply_and_assign_by_float( 2 ).
+    DATA(result) = cut->multiply_and_assign_by_decflt( 2 ).
 
     "Then
     cl_abap_unit_assert=>assert_equals( act = result  exp = cut ).
