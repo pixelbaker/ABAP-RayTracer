@@ -13,15 +13,11 @@ CLASS zcl_art_sinusoid_function DEFINITION
     METHODS:
       solve REDEFINITION.
 
-
-  PRIVATE SECTION.
 ENDCLASS.
 
 
 
 CLASS ZCL_ART_SINUSOID_FUNCTION IMPLEMENTATION.
-
-
   METHOD solve.
     DATA(xx) = ( i_x * co_range ) ** 2.
     DATA(yy) = ( i_y * co_range ) ** 2.
