@@ -1,6 +1,6 @@
 CLASS zcl_art_tracer DEFINITION
   PUBLIC
-  CREATE PUBLIC.
+  ABSTRACT.
 
   PUBLIC SECTION.
     METHODS:
@@ -8,7 +8,7 @@ CLASS zcl_art_tracer DEFINITION
         IMPORTING
           i_world TYPE REF TO zcl_art_world,
 
-      trace_ray
+      trace_ray ABSTRACT
         IMPORTING
           i_ray          TYPE REF TO zcl_art_ray
           i_depth        TYPE int4 OPTIONAL
@@ -25,14 +25,8 @@ ENDCLASS.
 
 
 CLASS zcl_art_tracer IMPLEMENTATION.
-  METHOD trace_ray.
-    r_color = zcl_art_rgb_color=>new_black( ).
-  ENDMETHOD.
-
-
   METHOD constructor.
     ASSERT i_world IS BOUND.
     _world = i_world.
   ENDMETHOD.
-
 ENDCLASS.

@@ -1,6 +1,5 @@
 CLASS zcl_art_camera DEFINITION
   PUBLIC
-  CREATE PUBLIC
   ABSTRACT.
 
   PUBLIC SECTION.
@@ -107,6 +106,37 @@ ENDCLASS.
 
 
 CLASS zcl_art_camera IMPLEMENTATION.
+  METHOD apply_pitch.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_x(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _pitch_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
+
+
+  METHOD apply_roll.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_z(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _roll_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
+
+
+  METHOD apply_yaw.
+    DATA(transform) = zcl_art_math=>rotate_about_line_in_y(
+      i_u = _u
+      i_v = _v
+      i_w = _w
+      i_angle = _yaw_angle ).
+
+    rotate_around_axis( transform ).
+  ENDMETHOD.
 
 
   METHOD assignment_by_camera.
@@ -163,46 +193,6 @@ CLASS zcl_art_camera IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD apply_roll.
-    DATA(transform) = zcl_art_math=>rotate_about_line_in_z(
-      i_u = _u
-      i_v = _v
-      i_w = _w
-      i_angle = _roll_angle ).
-
-    rotate_around_axis( transform ).
-  ENDMETHOD.
-
-
-  METHOD apply_yaw.
-    DATA(transform) = zcl_art_math=>rotate_about_line_in_y(
-      i_u = _u
-      i_v = _v
-      i_w = _w
-      i_angle = _yaw_angle ).
-
-    rotate_around_axis( transform ).
-  ENDMETHOD.
-
-
-  METHOD apply_pitch.
-    DATA(transform) = zcl_art_math=>rotate_about_line_in_x(
-      i_u = _u
-      i_v = _v
-      i_w = _w
-      i_angle = _pitch_angle ).
-
-    rotate_around_axis( transform ).
-  ENDMETHOD.
-
-
-  METHOD rotate_around_axis.
-    _u = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _u ).
-    _v = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _v ).
-    _w = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _w ).
-  ENDMETHOD.
-
-
   METHOD constructor.
     "Copy Constructor
     IF i_camera IS BOUND.
@@ -225,6 +215,13 @@ CLASS zcl_art_camera IMPLEMENTATION.
     _u = zcl_art_vector3d=>new_individual( i_x = 1  i_y = 0  i_z = 0 ).
     _v = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 1  i_z = 0 ).
     _w = zcl_art_vector3d=>new_individual( i_x = 0  i_y = 0  i_z = 1 ).
+  ENDMETHOD.
+
+
+  METHOD rotate_around_axis.
+    _u = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _u ).
+    _v = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _v ).
+    _w = zcl_art_vector3d=>get_product_by_matrix( i_matrix = i_transform  i_vector = _w ).
   ENDMETHOD.
 
 
@@ -257,6 +254,11 @@ CLASS zcl_art_camera IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD set_pitch.
+    _pitch_angle = i_pitch_angle.
+  ENDMETHOD.
+
+
   METHOD set_roll.
     _roll_angle = i_roll_angle.
   ENDMETHOD.
@@ -274,13 +276,7 @@ CLASS zcl_art_camera IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_pitch.
-    _pitch_angle = i_pitch_angle.
-  ENDMETHOD.
-
-
   METHOD set_yaw.
     _yaw_angle = i_yaw_angle.
   ENDMETHOD.
-
 ENDCLASS.

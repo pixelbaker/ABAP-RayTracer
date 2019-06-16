@@ -6,25 +6,13 @@ CLASS zcl_art_single_sphere DEFINITION
 
   PUBLIC SECTION.
     METHODS:
-      constructor
-        IMPORTING
-          i_world TYPE REF TO zcl_art_world,
-
       trace_ray REDEFINITION.
 
-
-  PROTECTED SECTION.
-  PRIVATE SECTION.
 ENDCLASS.
 
 
 
 CLASS zcl_art_single_sphere IMPLEMENTATION.
-  METHOD constructor.
-    super->constructor( i_world = i_world ).
-  ENDMETHOD.
-
-
   METHOD trace_ray.
     DATA(shade_rec) = zcl_art_shade_rec=>new_from_world( _world ).
     DATA t TYPE decfloat16.

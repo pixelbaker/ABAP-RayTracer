@@ -8,8 +8,6 @@ CLASS zcl_art_function_tracer DEFINITION
     METHODS:
       trace_ray REDEFINITION.
 
-  PROTECTED SECTION.
-  PRIVATE SECTION.
 ENDCLASS.
 
 

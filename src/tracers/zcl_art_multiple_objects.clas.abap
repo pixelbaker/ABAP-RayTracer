@@ -6,24 +6,13 @@ CLASS zcl_art_multiple_objects DEFINITION
 
   PUBLIC SECTION.
     METHODS:
-      constructor
-        IMPORTING
-          i_world TYPE REF TO zcl_art_world,
-
       trace_ray REDEFINITION.
 
-
-  PRIVATE SECTION.
 ENDCLASS.
 
 
 
 CLASS zcl_art_multiple_objects IMPLEMENTATION.
-  METHOD constructor.
-    super->constructor( i_world ).
-  ENDMETHOD.
-
-
   METHOD trace_ray.
     DATA(shade_rec) = _world->hit_bare_bones_objects( i_ray ).
 
