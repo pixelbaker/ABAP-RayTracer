@@ -61,7 +61,7 @@ ENDMODULE.
 FORM render CHANGING c_bitmap_stream.
   DATA(world) = NEW zcl_art_world( ).
   world->build( ).
-  world->camera->render_scene( world ).
+  world->camera->render_scene( CHANGING c_world = world ).
 *  world->render_perspective( ).
 *  world->render_scene( ).
 

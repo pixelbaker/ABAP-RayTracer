@@ -2,14 +2,22 @@ CLASS zcl_art_pinhole DEFINITION
   PUBLIC
   INHERITING FROM zcl_art_camera
   FINAL
-  CREATE PUBLIC.
+  CREATE PRIVATE.
 
   PUBLIC SECTION.
-    METHODS:
-      constructor
+    CLASS-METHODS:
+      new_copy
         IMPORTING
-          i_pinhole TYPE REF TO zcl_art_pinhole OPTIONAL, "Copy constructor
+          i_pinhole         TYPE REF TO zcl_art_pinhole
+        RETURNING
+          VALUE(r_instance) TYPE REF TO zcl_art_pinhole,
 
+      new_default
+        RETURNING
+          VALUE(r_instance) TYPE REF TO zcl_art_pinhole.
+
+
+    METHODS:
       render_scene REDEFINITION,
 
       assignment_by_pinhole
@@ -26,6 +34,14 @@ CLASS zcl_art_pinhole DEFINITION
         IMPORTING
           i_zoom_factor TYPE decfloat16,
 
+      get_view_plane_distance
+        RETURNING
+          VALUE(r_view_plane_distance) TYPE decfloat16,
+
+      get_zoom_factor
+        RETURNING
+          VALUE(r_zoom_factor) TYPE decfloat16,
+
       get_direction
         IMPORTING
           i_point            TYPE REF TO zcl_art_point2d
@@ -38,11 +54,17 @@ CLASS zcl_art_pinhole DEFINITION
       _view_plane_distance TYPE decfloat16,
       _zoom_factor         TYPE decfloat16.
 
+
+    METHODS:
+      constructor
+        IMPORTING
+          i_pinhole TYPE REF TO zcl_art_pinhole OPTIONAL. "Copy constructor
+
 ENDCLASS.
 
 
 
-CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
+CLASS zcl_art_pinhole IMPLEMENTATION.
 
 
   METHOD assignment_by_pinhole.
@@ -85,7 +107,9 @@ CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
 
 
   METHOD render_scene.
-    DATA(viewplane) = zcl_art_viewplane=>new_copy( i_world->viewplane ).
+    c_world->num_rays = 0.
+    DATA(viewplane) = c_world->viewplane.
+    DATA(tracer) = c_world->tracer.
 
     DATA num TYPE int4.
     num = sqrt( viewplane->num_samples ).
@@ -121,8 +145,8 @@ CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
 
             ray->direction = zcl_art_vector3d=>new_copy( get_direction( sample_point ) ).
 
-            radiance->add_and_assign_by_color( i_world->tracer->trace_ray( i_ray = ray  i_depth = depth ) ).
-            ADD 1 TO i_world->num_rays.
+            radiance->add_and_assign_by_color( tracer->trace_ray( i_ray = ray  i_depth = depth ) ).
+            ADD 1 TO c_world->num_rays.
 
             ADD 1 TO sub_pixel_column.
           ENDWHILE.
@@ -133,7 +157,7 @@ CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
         radiance->divide_and_assign_by_decfloat( CONV #( viewplane->num_samples ) ).
         radiance->multiply_and_assign_by_decflt( _exposure_time ).
 
-        i_world->display_pixel(
+        c_world->display_pixel(
           i_row = row
           i_column = column
           i_pixel_color = radiance ).
@@ -153,5 +177,26 @@ CLASS ZCL_ART_PINHOLE IMPLEMENTATION.
 
   METHOD set_zoom_factor.
     _zoom_factor = i_zoom_factor.
+  ENDMETHOD.
+
+
+  METHOD new_copy.
+    ASSERT i_pinhole IS BOUND.
+    r_instance = NEW #( i_pinhole = i_pinhole ).
+  ENDMETHOD.
+
+
+  METHOD new_default.
+    r_instance = NEW #( ).
+  ENDMETHOD.
+
+
+  METHOD get_view_plane_distance.
+    r_view_plane_distance = _view_plane_distance.
+  ENDMETHOD.
+
+
+  METHOD get_zoom_factor.
+    r_zoom_factor = _zoom_factor.
   ENDMETHOD.
 ENDCLASS.

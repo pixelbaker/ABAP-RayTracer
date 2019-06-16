@@ -30,7 +30,10 @@ ENDCLASS.
 
 CLASS ucl_art_world IMPLEMENTATION.
   METHOD setup.
-    _cut = NEW #( ).
+    "To speed some of the test up, we make the viewport height and width very small
+    _cut = NEW #(
+      i_image_height_in_pixel = 1
+      i_image_width_in_pixel = 1 ).
   ENDMETHOD.
 
 
@@ -50,9 +53,6 @@ CLASS ucl_art_world IMPLEMENTATION.
 
   METHOD render_scene1.
     "Test, that a fresh world being rendered isn't crashing
-
-    "Given
-
 
     "When
     _cut->render_scene( ).

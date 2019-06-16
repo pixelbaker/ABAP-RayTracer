@@ -25,7 +25,10 @@ CLASS zcl_art_world DEFINITION
 
 
     METHODS:
-      constructor,
+      constructor
+        IMPORTING
+          i_image_height_in_pixel TYPE int4 OPTIONAL
+          i_image_width_in_pixel  TYPE int4 OPTIONAL,
 
       add_object
         IMPORTING
@@ -291,7 +294,7 @@ CLASS zcl_art_world IMPLEMENTATION.
 
     me->tracer = NEW zcl_art_multiple_objects( me ).
 
-    DATA(pinhole) = NEW zcl_art_pinhole( ).
+    DATA(pinhole) = zcl_art_pinhole=>new_default( ).
 
     pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
     pinhole->set_lookat_by_components( i_x = 0  i_y = 0  i_z = 0 ).
@@ -340,6 +343,17 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD constructor.
     me->viewplane = zcl_art_viewplane=>new_default( ).
+
+    IF i_image_height_in_pixel IS SUPPLIED.
+      ASSERT i_image_height_in_pixel > 0.
+      me->viewplane->set_hres( i_image_height_in_pixel ).
+    ENDIF.
+
+    IF i_image_width_in_pixel IS SUPPLIED.
+      ASSERT i_image_width_in_pixel > 0.
+      me->viewplane->set_hres( i_image_width_in_pixel ).
+    ENDIF.
+
     me->background_color = zcl_art_rgb_color=>new_black( ).
     me->sphere = zcl_art_sphere=>new_default( ).
     me->bitmap = NEW zcl_art_bitmap(
@@ -482,6 +496,8 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD render_scene.
+    me->num_rays = 0.
+
     DATA zw TYPE decfloat16 VALUE '100.0'. "hard wired in
 
     DATA(hres) = me->viewplane->hres.
@@ -534,14 +550,14 @@ CLASS zcl_art_world IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_camera.
-    ASSERT i_camera IS BOUND.
-    me->camera = i_camera.
-  ENDMETHOD.
-
-
   METHOD set_bitmap.
     ASSERT i_bitmap IS BOUND.
     me->bitmap = i_bitmap.
+  ENDMETHOD.
+
+
+  METHOD set_camera.
+    ASSERT i_camera IS BOUND.
+    me->camera = i_camera.
   ENDMETHOD.
 ENDCLASS.

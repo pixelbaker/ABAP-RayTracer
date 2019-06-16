@@ -10,8 +10,8 @@ CLASS zcl_art_camera DEFINITION
           i_camera TYPE REF TO zcl_art_camera OPTIONAL, "Copy Constructor
 
       render_scene ABSTRACT
-        IMPORTING
-          i_world TYPE REF TO zcl_art_world,
+        CHANGING
+          c_world TYPE REF TO zcl_art_world,
 
       set_eye_by_components
         IMPORTING

@@ -290,6 +290,6 @@ CLASS ucl_art_camera IMPLEMENTATION.
     "Just to get the 100% code coverage :)
 
     DATA world TYPE REF TO zcl_art_world.
-    _cut->render_scene( world ).
+    _cut->render_scene( CHANGING c_world = world ).
   ENDMETHOD.
 ENDCLASS.
