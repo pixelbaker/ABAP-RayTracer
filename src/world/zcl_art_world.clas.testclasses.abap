@@ -105,13 +105,15 @@ CLASS ucl_art_world IMPLEMENTATION.
 
 
   METHOD build.
-    "Test, that at least one object gets added to the world
+    "Test, that at least one object or a function gets added to the world
 
     "When
     _cut->build( ).
 
     "Then
-    cl_abap_unit_assert=>assert_true( xsdbool( _cut->get_num_objects( ) > 0 ) ).
+    cl_abap_unit_assert=>assert_true(
+      xsdbool( _cut->get_num_objects( ) > 0 OR
+               _cut->function IS BOUND ) ).
   ENDMETHOD.
 
 

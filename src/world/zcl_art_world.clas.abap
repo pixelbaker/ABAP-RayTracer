@@ -117,6 +117,9 @@ CLASS zcl_art_world IMPLEMENTATION.
 *    build_sinusoid_function( ).
     build_with_pinhole( ).
 
+    ASSERT me->tracer IS BOUND.
+    ASSERT me->viewplane IS BOUND.
+
     me->bitmap = NEW zcl_art_bitmap(
       i_image_height_in_pixel = me->viewplane->vres
       i_image_width_in_pixel = me->viewplane->hres ).
@@ -344,9 +347,6 @@ CLASS zcl_art_world IMPLEMENTATION.
       i_image_width_in_pixel = me->viewplane->hres ).
     me->tracer = NEW zcl_art_multiple_objects( me ).
   ENDMETHOD.
-
-
-
 
 
   METHOD display_pixel.
