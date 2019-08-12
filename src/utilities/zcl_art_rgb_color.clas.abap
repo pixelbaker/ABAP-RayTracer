@@ -38,17 +38,17 @@ CLASS zcl_art_rgb_color DEFINITION
       "! Gives you a new instance with the color red.
       new_red
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color,
+          VALUE(r_instance) TYPE REF TO zcl_art_rgb_color,
 
       "! Gives you a new instance with the color white.
       new_white
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color,
+          VALUE(r_instance) TYPE REF TO zcl_art_rgb_color,
 
       "! Gives you a new instance with the color black.
       new_black
         RETURNING
-          VALUE(r_instance)  TYPE REF TO zcl_art_rgb_color.
+          VALUE(r_instance) TYPE REF TO zcl_art_rgb_color.
 
 
 
@@ -92,7 +92,16 @@ CLASS zcl_art_rgb_color DEFINITION
         IMPORTING
           i_value        TYPE decfloat16
         RETURNING
-          VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
+          VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
+
+      "! operator*
+      "! multiplication by a float on the right
+      "! @parameter r_result | a new instance (value object), which contains the result of the multiplication
+      multiply_by_decfloat
+        IMPORTING
+          i_value         TYPE decfloat16
+        RETURNING
+          VALUE(r_result) TYPE REF TO zcl_art_rgb_color.
 
 
   PRIVATE SECTION.
@@ -108,6 +117,8 @@ ENDCLASS.
 
 
 CLASS zcl_art_rgb_color IMPLEMENTATION.
+
+
   METHOD add_and_assign_by_color.
     ADD i_color->r TO me->r.
     ADD i_color->g TO me->g.
@@ -152,6 +163,28 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD multiply_and_assign_by_decflt.
+    MULTIPLY me->r BY i_value.
+    MULTIPLY me->g BY i_value.
+    MULTIPLY me->b BY i_value.
+
+    r_color = me.
+  ENDMETHOD.
+
+
+  METHOD multiply_by_decfloat.
+    r_result = NEW #(
+      i_r = me->r * i_value
+      i_g = me->g * i_value
+      i_b = me->b * i_value ).
+  ENDMETHOD.
+
+
+  METHOD new_black.
+    r_instance = zcl_art_rgb_color=>new_unified( 0 ).
+  ENDMETHOD.
+
+
   METHOD new_copy.
     ASSERT i_color IS BOUND.
 
@@ -175,21 +208,16 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD new_red.
+    r_instance = zcl_art_rgb_color=>new_individual( i_r = 1  i_g = 0  i_b = 0 ).
+  ENDMETHOD.
+
+
   METHOD new_unified.
     r_instance = NEW #(
       i_r = i_value
       i_g = i_value
       i_b = i_value ).
-  ENDMETHOD.
-
-
-  METHOD new_black.
-    r_instance = zcl_art_rgb_color=>new_unified( 0 ).
-  ENDMETHOD.
-
-
-  METHOD new_red.
-    r_instance = zcl_art_rgb_color=>new_individual( i_r = 1  i_g = 0  i_b = 0 ).
   ENDMETHOD.
 
 
@@ -204,14 +232,4 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
       i_g = g ** i_power
       i_b = b ** i_power ).
   ENDMETHOD.
-
-
-  METHOD multiply_and_assign_by_decflt.
-    MULTIPLY me->r BY i_value.
-    MULTIPLY me->g BY i_value.
-    MULTIPLY me->b BY i_value.
-
-    r_color = me.
-  ENDMETHOD.
-
 ENDCLASS.

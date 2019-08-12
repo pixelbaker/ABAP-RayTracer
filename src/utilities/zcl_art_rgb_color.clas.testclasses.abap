@@ -19,6 +19,7 @@ CLASS ucl_art_rgb_color DEFINITION
       add_and_assign_by_color FOR TESTING,
       divide_and_assign_by_float FOR TESTING,
       multiply_and_assign_by_float FOR TESTING,
+      multiply_by_decfloat FOR TESTING,
 
       assign_by_color1 FOR TESTING,
       assign_by_color2 FOR TESTING,
@@ -153,6 +154,23 @@ CLASS ucl_art_rgb_color IMPLEMENTATION.
 
     "Then
     cl_abap_unit_assert=>assert_equals( act = result  exp = cut ).
+    cl_abap_unit_assert=>assert_equals( act = result->r  exp = 4 ).
+    cl_abap_unit_assert=>assert_equals( act = result->g  exp = 4 ).
+    cl_abap_unit_assert=>assert_equals( act = result->b  exp = 4 ).
+  ENDMETHOD.
+
+
+  METHOD multiply_by_decfloat.
+    "Check that the LHS color gets multiplied by a float and the result is available as a new instance
+
+    "Given
+    DATA(cut) = zcl_art_rgb_color=>new_unified( 2 ).
+
+    "When
+    DATA(result) = cut->multiply_by_decfloat( 2 ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( xsdbool( result <> cut ) ).
     cl_abap_unit_assert=>assert_equals( act = result->r  exp = 4 ).
     cl_abap_unit_assert=>assert_equals( act = result->g  exp = 4 ).
     cl_abap_unit_assert=>assert_equals( act = result->b  exp = 4 ).

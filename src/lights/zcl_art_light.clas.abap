@@ -10,6 +10,7 @@ CLASS zcl_art_light DEFINITION
         RETURNING
           VALUE(r_result) TYPE REF TO zcl_art_vector3d,
 
+      "! Calculates the incident radiance of the hit point
       l ABSTRACT
         IMPORTING
           i_shading_record TYPE REF TO zcl_art_shade_rec
