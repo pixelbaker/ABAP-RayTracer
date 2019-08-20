@@ -71,7 +71,7 @@ CLASS zcl_art_directional DEFINITION
     METHODS:
       constructor
         IMPORTING
-          i_directional TYPE REF TO zcl_art_directional OPTIONAL.
+          i_directional TYPE REF TO zcl_art_directional OPTIONAL. "Copy Constructor
 
 ENDCLASS.
 
