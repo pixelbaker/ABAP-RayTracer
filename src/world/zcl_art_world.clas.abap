@@ -1,9 +1,11 @@
 "! The World class does not have a copy constructor or an assignment operator, for the following reasons:
-"!  1    There's no need to copy construct or assign the World
-"!  2    We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data
-"!  3    These operations wouldn't work because the world is self-referencing:
-"!       the Tracer base class contains a pointer to the world. If we wrote a correct copy constructor for the
-"!       Tracer class, the World copy constructor would call itself recursively until we ran out of memory.
+"! <ol>
+"! <li>There's no need to copy construct or assign the World</li>
+"! <li>We wouldn't want to do this anyway, because the world can contain an arbitrary amount of data</li>
+"! <li><p>These operations wouldn't work because the world is self-referencing:</p>
+"! <p>the Tracer base class contains a pointer to the world. If we wrote a correct copy constructor for the
+"! Tracer class, the World copy constructor would call itself recursively until we ran out of memory.</p></li>
+"! </ol>
 CLASS zcl_art_world DEFINITION
   PUBLIC
   FINAL

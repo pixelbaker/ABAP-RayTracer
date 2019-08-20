@@ -45,6 +45,7 @@ CLASS ucl_art_vector3d DEFINITION
       new_individual FOR TESTING,
       new_unified FOR TESTING,
 
+      hat FOR TESTING,
       normalize1 FOR TESTING,
       normalize2 FOR TESTING.
 
@@ -548,6 +549,23 @@ CLASS ucl_art_vector3d IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( act = cut->x  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = cut->y  exp = 1 ).
     cl_abap_unit_assert=>assert_equals( act = cut->z  exp = 1 ).
+  ENDMETHOD.
+
+
+  METHOD hat.
+    "Normalize and return a vector
+
+    "Given
+    DATA(cut) = zcl_art_vector3d=>new_unified( 1 ).
+
+    "When
+    data(result) = cut->hat( ).
+
+    "Then
+    cl_abap_unit_assert=>assert_true( xsdbool( result = cut ) ).
+    cl_abap_unit_assert=>assert_equals( act = cut->x  exp = '0.5773502691896259' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->y  exp = '0.5773502691896259' ).
+    cl_abap_unit_assert=>assert_equals( act = cut->z  exp = '0.5773502691896259' ).
   ENDMETHOD.
 
 

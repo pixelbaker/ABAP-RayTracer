@@ -117,7 +117,12 @@ CLASS zcl_art_vector3d DEFINITION
           cx_sy_zerodivide,
 
       "! Convert vector to a unit vector
-      normalize.
+      normalize,
+
+      "! Return a unit vector, and normalize the vector
+      hat
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d.
 
 
   PRIVATE SECTION.
@@ -269,5 +274,11 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
     x = x / length.
     y = y / length.
     z = z / length.
+  ENDMETHOD.
+
+
+  METHOD hat.
+    normalize( ).
+    r_vector = me.
   ENDMETHOD.
 ENDCLASS.
