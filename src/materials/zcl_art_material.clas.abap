@@ -11,7 +11,7 @@ CLASS zcl_art_material DEFINITION
 
       shade
         CHANGING
-          c_shading_record TYPE REF TO zcl_art_shade_rec
+          c_shade_rec TYPE REF TO zcl_art_shade_rec
         RETURNING
           VALUE(r_color)   TYPE REF TO zcl_art_rgb_color.
 
