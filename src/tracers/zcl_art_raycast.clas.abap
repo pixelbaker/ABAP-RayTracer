@@ -15,7 +15,7 @@ ENDCLASS.
 
 CLASS zcl_art_raycast IMPLEMENTATION.
   METHOD trace_ray.
-    DATA(shade_rec) = _world->hit_objects( i_ray ).
+    DATA(shade_rec) = zcl_art_shade_rec=>new_copy( _world->hit_objects( i_ray ) ).
 
 
     IF shade_rec->hit_an_object = abap_true.
