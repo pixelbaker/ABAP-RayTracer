@@ -35,6 +35,9 @@ CLASS zcl_art_shade_rec DEFINITION
       "! recursion depth
       depth           TYPE int4,
 
+      "! ray parameter
+      t               TYPE decfloat16,
+
       "! for area lights
       dir             TYPE REF TO zcl_art_vector3d,
 
@@ -69,6 +72,7 @@ CLASS zcl_art_shade_rec DEFINITION
           i_dir             TYPE REF TO zcl_art_vector3d
           i_material        TYPE REF TO zcl_art_material OPTIONAL
           i_depth           TYPE int4
+          i_t               TYPE decfloat16
           VALUE(i_world)    TYPE REF TO zcl_art_world.
 
 ENDCLASS.
@@ -95,6 +99,8 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
 
     "Doesn't need to be bound
     me->material = i_material.
+    me->depth = i_depth.
+    me->t = i_t.
   ENDMETHOD.
 
 
@@ -111,6 +117,7 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
       i_ray = zcl_art_ray=>new_copy( i_shade_rec->ray )
       i_dir = zcl_art_vector3d=>new_copy( i_shade_rec->dir )
       i_depth = i_shade_rec->depth
+      i_t = i_shade_rec->t
       i_material = i_shade_rec->material ).
   ENDMETHOD.
 
@@ -128,7 +135,8 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
       i_ray = zcl_art_ray=>new_default( )
       i_dir = zcl_art_vector3d=>new_default( )
       "i_material = not bound by intention
-      i_depth = 0 ).
+      i_depth = 0
+      i_t = 0 ).
   ENDMETHOD.
 ENDCLASS.
 

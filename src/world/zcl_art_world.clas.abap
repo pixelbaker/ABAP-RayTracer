@@ -58,6 +58,12 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_shade_rec) TYPE REF TO zcl_art_shade_rec,
 
+      hit_objects
+        IMPORTING
+          i_ray              TYPE REF TO zcl_art_ray
+        RETURNING
+          VALUE(r_shade_rec) TYPE REF TO zcl_art_shade_rec,
+
       get_num_objects
         RETURNING
           VALUE(r_num_objects) TYPE int4,
@@ -598,5 +604,44 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD set_ambient_light.
     ASSERT i_light IS BOUND.
     _ambient_light = i_light.
+  ENDMETHOD.
+
+
+  METHOD hit_objects.
+    r_shade_rec = zcl_art_shade_rec=>new_from_world( me ).
+
+    DATA t TYPE decfloat16.
+
+    DATA(normal) = zcl_art_normal=>new_default( ).
+
+    DATA(local_hit_point) = zcl_art_point3d=>new_default( ).
+
+    DATA tmin TYPE decfloat16 VALUE zcl_art_constants=>k_huge_value.
+
+    LOOP AT _objects ASSIGNING FIELD-SYMBOL(<object>).
+      DATA(hit) = <object>->hit(
+        EXPORTING
+          i_ray = i_ray
+        IMPORTING
+          e_tmin = t
+        CHANGING
+          c_shade_rec = r_shade_rec ).
+
+      IF hit = abap_true AND
+         t < tmin.
+        r_shade_rec->hit_an_object = abap_true.
+        tmin = t.
+        r_shade_rec->hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t )  ).
+        normal = r_shade_rec->normal.
+        local_hit_point = r_shade_rec->local_hit_point.
+*        r_shade_rec->material = <object>->get_material( ).
+      ENDIF.
+    ENDLOOP.
+
+    IF r_shade_rec->hit_an_object = abap_true.
+      r_shade_rec->t = tmin.
+      r_shade_rec->normal = normal.
+      r_shade_rec->local_hit_point = local_hit_point.
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
