@@ -22,6 +22,14 @@ CLASS zcl_art_geometric_object DEFINITION
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
+      get_material
+        RETURNING
+          VALUE(r_result) TYPE REF TO zcl_art_material,
+
+      set_material
+        IMPORTING
+          i_material TYPE REF TO zcl_art_material,
+
       set_color_by_color
         IMPORTING
           i_color TYPE REF TO zcl_art_rgb_color,
@@ -35,7 +43,8 @@ CLASS zcl_art_geometric_object DEFINITION
 
   PROTECTED SECTION.
     DATA:
-      _color TYPE REF TO zcl_art_rgb_color.
+      _color    TYPE REF TO zcl_art_rgb_color,
+      _material TYPE REF TO zcl_art_material.
 
 
   PRIVATE SECTION.
@@ -65,6 +74,11 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_material.
+    r_result = _material.
+  ENDMETHOD.
+
+
   METHOD set_color_by_color.
     ASSERT i_color IS BOUND.
     _color = i_color.
@@ -75,5 +89,11 @@ CLASS zcl_art_geometric_object IMPLEMENTATION.
     _color->r = i_r.
     _color->g = i_g.
     _color->b = i_b.
+  ENDMETHOD.
+
+
+  METHOD set_material.
+    ASSERT i_material IS BOUND.
+    _material = i_material.
   ENDMETHOD.
 ENDCLASS.

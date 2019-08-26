@@ -634,7 +634,7 @@ CLASS zcl_art_world IMPLEMENTATION.
         r_shade_rec->hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t )  ).
         normal = r_shade_rec->normal.
         local_hit_point = r_shade_rec->local_hit_point.
-*        r_shade_rec->material = <object>->get_material( ).
+        r_shade_rec->material = <object>->get_material( ).
       ENDIF.
     ENDLOOP.
 
