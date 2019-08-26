@@ -18,39 +18,37 @@ CLASS zcl_art_brdf DEFINITION
         IMPORTING
           i_sampler TYPE REF TO zcl_art_sampler,
 
-      f ABSTRACT
+      f
         IMPORTING
           i_wo           TYPE REF TO zcl_art_vector3d
           i_wi           TYPE REF TO zcl_art_vector3d
-        CHANGING
-          c_shade_rec    TYPE REF TO zcl_art_shade_rec
+          i_shade_rec    TYPE REF TO zcl_art_shade_rec
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-      sample_f ABSTRACT
+      sample_f
         IMPORTING
           i_wo           TYPE REF TO zcl_art_vector3d
-          i_wi           TYPE REF TO zcl_art_vector3d
+          i_shade_rec    TYPE REF TO zcl_art_shade_rec
         CHANGING
-          c_shade_rec    TYPE REF TO zcl_art_shade_rec
+          c_wi           TYPE REF TO zcl_art_vector3d
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-      sample_f_by_pdf ABSTRACT
+      sample_f_by_pdf
         IMPORTING
           i_wo           TYPE REF TO zcl_art_vector3d
-          i_wi           TYPE REF TO zcl_art_vector3d
+          i_shade_rec    TYPE REF TO zcl_art_shade_rec
         CHANGING
-          c_shade_rec    TYPE REF TO zcl_art_shade_rec
+          c_wi           TYPE REF TO zcl_art_vector3d
           c_pdf          TYPE decfloat16
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color,
 
-      rho ABSTRACT
+      rho
         IMPORTING
           i_wo           TYPE REF TO zcl_art_vector3d
-        CHANGING
-          c_shade_rec    TYPE REF TO zcl_art_shade_rec
+          i_shade_rec    TYPE REF TO zcl_art_shade_rec
         RETURNING
           VALUE(r_color) TYPE REF TO zcl_art_rgb_color.
 
@@ -90,5 +88,28 @@ CLASS zcl_art_brdf IMPLEMENTATION.
   METHOD set_sampler.
     ASSERT i_sampler IS BOUND.
     _sampler = i_sampler.
+
+    "For perfect diffuse
+    _sampler->map_samples_to_hemisphere( 1 ).
+  ENDMETHOD.
+
+
+  METHOD f.
+    r_color = zcl_art_rgb_color=>new_black( ).
+  ENDMETHOD.
+
+
+  METHOD rho.
+    r_color = zcl_art_rgb_color=>new_black( ).
+  ENDMETHOD.
+
+
+  METHOD sample_f.
+    r_color = zcl_art_rgb_color=>new_black( ).
+  ENDMETHOD.
+
+
+  METHOD sample_f_by_pdf.
+    r_color = zcl_art_rgb_color=>new_black( ).
   ENDMETHOD.
 ENDCLASS.
