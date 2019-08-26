@@ -128,7 +128,9 @@ CLASS zcl_art_world DEFINITION
         IMPORTING
           i_camera TYPE REF TO zcl_art_camera,
 
-      build_with_pinhole.
+      build_with_pinhole,
+
+      build_with_material.
 
 ENDCLASS.
 
@@ -148,7 +150,8 @@ CLASS zcl_art_world IMPLEMENTATION.
 *    build_horizont( ).
 *    build_from_image_mask( ).
 *    build_sinusoid_function( ).
-    build_with_pinhole( ).
+*    build_with_pinhole( ).
+    build_with_material( ).
 
     ASSERT me->tracer IS BOUND.
     ASSERT me->viewplane IS BOUND.
@@ -647,5 +650,42 @@ CLASS zcl_art_world IMPLEMENTATION.
       r_shade_rec->normal = normal.
       r_shade_rec->local_hit_point = local_hit_point.
     ENDIF.
+  ENDMETHOD.
+
+
+  METHOD build_with_material.
+    me->viewplane->set_hres( 400 ).
+    me->viewplane->set_vres( 400 ).
+    me->viewplane->set_num_samples( 16 ).
+
+    me->tracer = NEW zcl_art_raycast( me ).
+
+    DATA(ambient) = zcl_art_ambient=>new_default( ).
+    ambient->scale_radiance( 1 ).
+    set_ambient_light( ambient ).
+
+    DATA(pinhole) = zcl_art_pinhole=>new_default( ).
+
+    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
+    pinhole->set_lookat_by_components( i_x = -5  i_y = 0  i_z = 0 ).
+    pinhole->set_view_plane_distance( 850 ).
+    pinhole->compute_uvw( ).
+    set_camera( pinhole ).
+
+    DATA(pointlight) = zcl_art_pointlight=>new_default( ).
+    pointlight->set_location_by_components( i_dx = 100  i_dy = 50  i_dz = 150 ).
+    pointlight->scale_radiance( 3 ).
+    add_light( pointlight ).
+
+    DATA(matte) = zcl_art_matte=>new_default( ).
+    matte->set_ka( '0.25' ).
+    matte->set_kd( '0.65' ).
+    matte->set_cd_by_components( i_r = 1  i_g = 1  i_b = 0 ).
+
+    DATA(sphere) = zcl_art_sphere=>new_by_center_and_radius(
+                     i_center = zcl_art_point3d=>new_individual( i_x = 10  i_y = -5  i_z = 0 )
+                     i_radius = '27' ).
+    sphere->set_material( matte ).
+    add_object( sphere ).
   ENDMETHOD.
 ENDCLASS.

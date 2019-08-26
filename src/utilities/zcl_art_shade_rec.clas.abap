@@ -87,7 +87,6 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
            i_normal IS BOUND AND
            i_color IS BOUND AND
            i_world IS BOUND AND
-           i_ray IS BOUND AND
            i_dir IS BOUND.
 
     me->hit_point = i_hit_point.
@@ -101,11 +100,15 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
     me->material = i_material.
     me->depth = i_depth.
     me->t = i_t.
+    me->ray = i_ray.
   ENDMETHOD.
 
 
   METHOD new_copy.
     ASSERT i_shade_rec IS BOUND.
+
+    DATA(ray) = COND #( WHEN i_shade_rec->ray IS BOUND
+                        THEN zcl_art_ray=>new_copy( i_shade_rec->ray ) ).
 
     r_instance = NEW #(
       i_world = i_shade_rec->world
@@ -114,7 +117,7 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
       i_color = zcl_art_rgb_color=>new_copy( i_shade_rec->color )
       i_hit_point = zcl_art_point3d=>new_copy( i_shade_rec->hit_point )
       i_local_hit_point = zcl_art_point3d=>new_copy( i_shade_rec->local_hit_point )
-      i_ray = zcl_art_ray=>new_copy( i_shade_rec->ray )
+      i_ray = ray
       i_dir = zcl_art_vector3d=>new_copy( i_shade_rec->dir )
       i_depth = i_shade_rec->depth
       i_t = i_shade_rec->t

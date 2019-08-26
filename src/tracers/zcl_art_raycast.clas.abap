@@ -2,7 +2,7 @@ CLASS zcl_art_raycast DEFINITION
   PUBLIC
   INHERITING FROM zcl_art_tracer
   FINAL
-  CREATE PRIVATE.
+  CREATE public.
 
   PUBLIC SECTION.
     METHODS:
