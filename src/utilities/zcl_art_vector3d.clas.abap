@@ -58,6 +58,11 @@ CLASS zcl_art_vector3d DEFINITION
 
 
     METHODS:
+      "! unary minus
+      reverse
+        RETURNING
+          VALUE(r_vector) TYPE REF TO zcl_art_vector3d,
+
       "! operator=
       assignment_by_vector
         IMPORTING
@@ -280,5 +285,13 @@ CLASS zcl_art_vector3d IMPLEMENTATION.
   METHOD hat.
     normalize( ).
     r_vector = me.
+  ENDMETHOD.
+
+
+  METHOD reverse.
+    r_vector = NEW #(
+      i_x = - me->x
+      i_y = - me->y
+      i_z = - me->z ).
   ENDMETHOD.
 ENDCLASS.

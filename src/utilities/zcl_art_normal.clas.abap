@@ -56,7 +56,13 @@ CLASS zcl_art_normal DEFINITION
         IMPORTING
           i_vector        TYPE REF TO zcl_art_vector3d
         RETURNING
-          VALUE(r_normal) TYPE REF TO zcl_art_normal.
+          VALUE(r_normal) TYPE REF TO zcl_art_normal,
+
+    dot_product_by_vector
+      IMPORTING
+        i_vector        TYPE REF TO zcl_art_vector3d
+      RETURNING
+          VALUE(R_RESULT) TYPE decfloat16.
 
 
   PRIVATE SECTION.
@@ -145,5 +151,12 @@ CLASS zcl_art_normal IMPLEMENTATION.
     x = x / length.
     y = y / length.
     z = z / length.
+  ENDMETHOD.
+
+
+  METHOD dot_product_by_vector.
+     r_result = me->x * i_vector->x +
+                me->y * i_vector->y +
+                me->z * i_vector->z.
   ENDMETHOD.
 ENDCLASS.

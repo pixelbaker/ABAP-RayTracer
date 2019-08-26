@@ -101,6 +101,15 @@ CLASS zcl_art_rgb_color DEFINITION
         IMPORTING
           i_value         TYPE decfloat16
         RETURNING
+          VALUE(r_result) TYPE REF TO zcl_art_rgb_color,
+
+      "! operator*
+      "! multiplication by a RGB color on the right
+      "! @parameter r_result | a new instance (value object), which contains the result of the multiplication
+      multiply_by_color
+        IMPORTING
+          i_color         TYPE ref to zcl_art_rgb_color
+        RETURNING
           VALUE(r_result) TYPE REF TO zcl_art_rgb_color.
 
 
@@ -231,5 +240,13 @@ CLASS zcl_art_rgb_color IMPLEMENTATION.
       i_r = r ** i_power
       i_g = g ** i_power
       i_b = b ** i_power ).
+  ENDMETHOD.
+
+
+  METHOD multiply_by_color.
+    r_result = NEW #(
+      i_r = me->r * i_color->r
+      i_g = me->g * i_color->g
+      i_b = me->b * i_color->b ).
   ENDMETHOD.
 ENDCLASS.

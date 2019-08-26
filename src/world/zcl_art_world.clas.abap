@@ -13,6 +13,10 @@ CLASS zcl_art_world DEFINITION
 
 
   PUBLIC SECTION.
+    TYPES:
+      t_lights TYPE STANDARD TABLE OF REF TO zcl_art_light WITH EMPTY KEY.
+
+
     DATA:
       background_color TYPE REF TO zcl_art_rgb_color READ-ONLY,
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
@@ -25,7 +29,10 @@ CLASS zcl_art_world DEFINITION
       camera           TYPE REF TO zcl_art_camera READ-ONLY,
 
       "! For chapter 3 only
-      sphere           TYPE REF TO zcl_art_sphere READ-ONLY.
+      sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
+
+      ambient_light    TYPE REF TO zcl_art_light READ-ONLY,
+      lights           TYPE t_lights READ-ONLY.
 
 
     METHODS:
@@ -86,14 +93,11 @@ CLASS zcl_art_world DEFINITION
 
   PRIVATE SECTION.
     TYPES:
-      geometric_objects TYPE STANDARD TABLE OF REF TO zcl_art_geometric_object WITH EMPTY KEY,
-      lights            TYPE STANDARD TABLE OF REF TO zcl_art_light WITH EMPTY KEY.
+      geometric_objects TYPE STANDARD TABLE OF REF TO zcl_art_geometric_object WITH EMPTY KEY.
 
 
     DATA:
-      _objects       TYPE geometric_objects,
-      _lights        TYPE lights,
-      _ambient_light TYPE REF TO zcl_art_light.
+      _objects TYPE geometric_objects.
 
 
     METHODS:
@@ -386,7 +390,7 @@ CLASS zcl_art_world IMPLEMENTATION.
       i_image_width_in_pixel = me->viewplane->hres ).
     me->tracer = NEW zcl_art_multiple_objects( me ).
 
-    _ambient_light = zcl_art_ambient=>new_default( ).
+    ambient_light = zcl_art_ambient=>new_default( ).
   ENDMETHOD.
 
 
@@ -597,13 +601,13 @@ CLASS zcl_art_world IMPLEMENTATION.
 
   METHOD add_light.
     ASSERT i_light IS BOUND.
-    INSERT i_light INTO TABLE _lights.
+    INSERT i_light INTO TABLE me->lights.
   ENDMETHOD.
 
 
   METHOD set_ambient_light.
     ASSERT i_light IS BOUND.
-    _ambient_light = i_light.
+    me->ambient_light = i_light.
   ENDMETHOD.
 
 
