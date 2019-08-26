@@ -15,7 +15,6 @@ CLASS zcl_art_world DEFINITION
   PUBLIC SECTION.
     DATA:
       background_color TYPE REF TO zcl_art_rgb_color READ-ONLY,
-      sphere           TYPE REF TO zcl_art_sphere READ-ONLY,
       bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
       viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
@@ -23,7 +22,10 @@ CLASS zcl_art_world DEFINITION
       eye              TYPE decfloat16,
       distance         TYPE decfloat16,
       tracer           TYPE REF TO zcl_art_tracer READ-ONLY,
-      camera           TYPE REF TO zcl_art_camera READ-ONLY.
+      camera           TYPE REF TO zcl_art_camera READ-ONLY,
+
+      "! For chapter 3 only
+      sphere           TYPE REF TO zcl_art_sphere READ-ONLY.
 
 
     METHODS:
@@ -35,6 +37,14 @@ CLASS zcl_art_world DEFINITION
       add_object
         IMPORTING
           i_object TYPE REF TO zcl_art_geometric_object,
+
+      add_light
+        IMPORTING
+          i_light TYPE REF TO zcl_art_light,
+
+      set_ambient_light
+        IMPORTING
+          i_light TYPE REF TO zcl_art_light,
 
       build,
 
@@ -52,6 +62,7 @@ CLASS zcl_art_world DEFINITION
         RETURNING
           VALUE(r_num_objects) TYPE int4,
 
+      "! It's used for unittests only
       set_bitmap
         IMPORTING
           i_bitmap TYPE REF TO zcl_art_bitmap,
@@ -69,11 +80,14 @@ CLASS zcl_art_world DEFINITION
 
   PRIVATE SECTION.
     TYPES:
-      _geometric_objects TYPE STANDARD TABLE OF REF TO zcl_art_geometric_object WITH EMPTY KEY.
+      geometric_objects TYPE STANDARD TABLE OF REF TO zcl_art_geometric_object WITH EMPTY KEY,
+      lights            TYPE STANDARD TABLE OF REF TO zcl_art_light WITH EMPTY KEY.
 
 
     DATA:
-      _objects TYPE _geometric_objects.
+      _objects       TYPE geometric_objects,
+      _lights        TYPE lights,
+      _ambient_light TYPE REF TO zcl_art_light.
 
 
     METHODS:
@@ -365,6 +379,8 @@ CLASS zcl_art_world IMPLEMENTATION.
       i_image_height_in_pixel = me->viewplane->vres
       i_image_width_in_pixel = me->viewplane->hres ).
     me->tracer = NEW zcl_art_multiple_objects( me ).
+
+    _ambient_light = zcl_art_ambient=>new_default( ).
   ENDMETHOD.
 
 
@@ -570,5 +586,17 @@ CLASS zcl_art_world IMPLEMENTATION.
   METHOD set_function.
     ASSERT i_function IS BOUND.
     me->function = i_function.
+  ENDMETHOD.
+
+
+  METHOD add_light.
+    ASSERT i_light IS BOUND.
+    INSERT i_light INTO TABLE _lights.
+  ENDMETHOD.
+
+
+  METHOD set_ambient_light.
+    ASSERT i_light IS BOUND.
+    _ambient_light = i_light.
   ENDMETHOD.
 ENDCLASS.
