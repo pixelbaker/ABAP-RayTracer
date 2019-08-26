@@ -78,7 +78,6 @@ ENDCLASS.
 
 CLASS zcl_art_pointlight IMPLEMENTATION.
   METHOD get_direction.
-    "TODO: Lets see if i need to reverse the subtraction
     DATA(vector) = _location->get_difference_by_point( i_sr->hit_point ).
     r_result = vector->hat( ).
   ENDMETHOD.

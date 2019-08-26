@@ -102,7 +102,7 @@ CLASS zcl_art_lambertian IMPLEMENTATION.
 
   METHOD f.
     "there is no sampling here
-    r_color = _cd->get_quotient_by_decfloat( _kd * zcl_art_constants=>inv_pi ).
+    r_color = _cd->multiply_by_decfloat( _kd * zcl_art_constants=>inv_pi ).
   ENDMETHOD.
 
 
@@ -119,7 +119,7 @@ CLASS zcl_art_lambertian IMPLEMENTATION.
 
 
   METHOD rho.
-    r_color = _cd->get_quotient_by_decfloat( _kd ).
+    r_color = _cd->multiply_by_decfloat( _kd ).
   ENDMETHOD.
 
 

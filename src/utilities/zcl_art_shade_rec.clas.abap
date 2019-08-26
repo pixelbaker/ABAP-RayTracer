@@ -101,6 +101,7 @@ CLASS zcl_art_shade_rec IMPLEMENTATION.
     me->depth = i_depth.
     me->t = i_t.
     me->ray = i_ray.
+    me->dir = i_dir.
   ENDMETHOD.
 
 

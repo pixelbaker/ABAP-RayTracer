@@ -638,10 +638,10 @@ CLASS zcl_art_world IMPLEMENTATION.
          t < tmin.
         r_shade_rec->hit_an_object = abap_true.
         tmin = t.
-        r_shade_rec->hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t )  ).
-        normal = r_shade_rec->normal.
-        local_hit_point = r_shade_rec->local_hit_point.
         r_shade_rec->material = <object>->get_material( ).
+        r_shade_rec->hit_point = i_ray->origin->get_sum_by_vector( i_ray->direction->get_product_by_decfloat( t )  ).
+        normal->assignment_by_normal( r_shade_rec->normal ).
+        local_hit_point->assignment( r_shade_rec->local_hit_point ).
       ENDIF.
     ENDLOOP.
 
@@ -654,38 +654,61 @@ CLASS zcl_art_world IMPLEMENTATION.
 
 
   METHOD build_with_material.
-    me->viewplane->set_hres( 400 ).
-    me->viewplane->set_vres( 400 ).
-    me->viewplane->set_num_samples( 16 ).
+    me->viewplane->set_hres( 200 ).
+    me->viewplane->set_vres( 200 ).
+    me->viewplane->set_num_samples( 1 ).
 
     me->tracer = NEW zcl_art_raycast( me ).
 
     DATA(ambient) = zcl_art_ambient=>new_default( ).
     ambient->scale_radiance( 1 ).
+    ambient->set_color_by_components( i_r = 0  i_g = 0  i_b = 1 ).
     set_ambient_light( ambient ).
 
     DATA(pinhole) = zcl_art_pinhole=>new_default( ).
 
-    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 500 ).
+    pinhole->set_eye_by_components( i_x = 0  i_y = 0  i_z = 400 ).
     pinhole->set_lookat_by_components( i_x = -5  i_y = 0  i_z = 0 ).
     pinhole->set_view_plane_distance( 850 ).
     pinhole->compute_uvw( ).
     set_camera( pinhole ).
 
     DATA(pointlight) = zcl_art_pointlight=>new_default( ).
-    pointlight->set_location_by_components( i_dx = 100  i_dy = 50  i_dz = 150 ).
+    pointlight->set_location_by_components( i_dx = 100  i_dy = 500  i_dz = 150 ).
     pointlight->scale_radiance( 3 ).
     add_light( pointlight ).
 
-    DATA(matte) = zcl_art_matte=>new_default( ).
-    matte->set_ka( '0.25' ).
-    matte->set_kd( '0.65' ).
-    matte->set_cd_by_components( i_r = 1  i_g = 1  i_b = 0 ).
+    DATA(matte1) = zcl_art_matte=>new_default( ).
+    matte1->set_ka( '0.25' ).
+    matte1->set_kd( '0.65' ).
+    matte1->set_cd_by_components( i_r = 1  i_g = 1  i_b = 0 ).
 
-    DATA(sphere) = zcl_art_sphere=>new_by_center_and_radius(
-                     i_center = zcl_art_point3d=>new_individual( i_x = 10  i_y = -5  i_z = 0 )
-                     i_radius = '27' ).
-    sphere->set_material( matte ).
-    add_object( sphere ).
+    DATA(sphere1) = zcl_art_sphere=>new_by_center_and_radius(
+      i_center = zcl_art_point3d=>new_individual( i_x = 10  i_y = -5  i_z = 0 )
+      i_radius = '27' ).
+    sphere1->set_material( matte1 ).
+    add_object( sphere1 ).
+
+    DATA(matte2) = zcl_art_matte=>new_default( ).
+    matte2->set_ka( '0.25' ).
+    matte2->set_kd( '0.65' ).
+    matte2->set_cd_by_components( i_r = 1  i_g = 0  i_b = 0 ).
+
+    DATA(sphere2) = zcl_art_sphere=>new_by_center_and_radius(
+      i_center = zcl_art_point3d=>new_individual( i_x = -20  i_y = 5  i_z = -30 )
+      i_radius = '27' ).
+    sphere2->set_material( matte2 ).
+    add_object( sphere2 ).
+
+    DATA(matte3) = zcl_art_matte=>new_default( ).
+    matte3->set_ka( '0.25' ).
+    matte3->set_kd( '0.65' ).
+    matte3->set_cd_by_components( i_r = 0  i_g = 0  i_b = 1 ).
+
+    DATA(plane) = zcl_art_plane=>new_by_normal_and_point(
+      i_normal = zcl_art_normal=>new_individual( i_x = 0  i_y = 1  i_z = 0 )
+      i_point = zcl_art_point3d=>new_individual( i_x = 0  i_y = -101  i_z = 0 ) ).
+    plane->set_material( matte3 ).
+    add_object( plane ).
   ENDMETHOD.
 ENDCLASS.
