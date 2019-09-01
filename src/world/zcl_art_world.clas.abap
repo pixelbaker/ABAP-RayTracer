@@ -19,7 +19,7 @@ CLASS zcl_art_world DEFINITION
 
     DATA:
       background_color TYPE REF TO zcl_art_rgb_color READ-ONLY,
-      bitmap           TYPE REF TO zcl_art_bitmap READ-ONLY,
+      bitmap           TYPE REF TO zcl_bmp_bitmap READ-ONLY,
       function         TYPE REF TO zcl_art_function_definition READ-ONLY,
       viewplane        TYPE REF TO zcl_art_viewplane READ-ONLY,
       num_rays         TYPE int4,
@@ -78,7 +78,7 @@ CLASS zcl_art_world DEFINITION
       "! It's used for unittests only
       set_bitmap
         IMPORTING
-          i_bitmap TYPE REF TO zcl_art_bitmap,
+          i_bitmap TYPE REF TO zcl_bmp_bitmap,
 
       display_pixel
         IMPORTING
@@ -159,7 +159,7 @@ build_paul(  ).
     ASSERT me->tracer IS BOUND.
     ASSERT me->viewplane IS BOUND.
 
-    me->bitmap = NEW zcl_art_bitmap(
+    me->bitmap = NEW zcl_bmp_bitmap(
       i_image_height_in_pixel = me->viewplane->vres
       i_image_width_in_pixel = me->viewplane->hres ).
   ENDMETHOD.
@@ -391,7 +391,7 @@ build_paul(  ).
 
     me->background_color = zcl_art_rgb_color=>new_black( ).
     me->sphere = zcl_art_sphere=>new_default( ).
-    me->bitmap = NEW zcl_art_bitmap(
+    me->bitmap = NEW zcl_bmp_bitmap(
       i_image_height_in_pixel = me->viewplane->vres
       i_image_width_in_pixel = me->viewplane->hres ).
     me->tracer = NEW zcl_art_multiple_objects( me ).

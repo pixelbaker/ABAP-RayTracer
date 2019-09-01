@@ -21,6 +21,10 @@ CLASS zcl_art_manifest IMPLEMENTATION.
       group_id = 'pixelbaker.com'
       artifact_id = 'abap-raytracer'
       version = '0.14.0'
-      git_url = 'https://github.com/pixelbaker/ABAP-RayTracer.git' ).
+      git_url = 'https://github.com/pixelbaker/ABAP-RayTracer.git'
+      dependencies = VALUE #(
+        ( group_id = 'pixelbaker.com'
+          artifact_id = 'abap-bitmap'
+          git_url = 'https://github.com/pixelbaker/ABAP-Bitmap.git' ) ) ).
   ENDMETHOD.
 ENDCLASS.
