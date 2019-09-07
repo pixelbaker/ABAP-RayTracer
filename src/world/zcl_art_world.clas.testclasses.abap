@@ -14,12 +14,12 @@ CLASS ucl_art_world DEFINITION
 
       build FOR TESTING,
 
-      display_pixel1 FOR TESTING RAISING zcx_bmp_bitmap,
-      display_pixel2 FOR TESTING RAISING zcx_bmp_bitmap,
-      display_pixel3 FOR TESTING RAISING zcx_bmp_bitmap,
+      display_pixel1 FOR TESTING RAISING zcx_art_bitmap,
+      display_pixel2 FOR TESTING RAISING zcx_art_bitmap,
+      display_pixel3 FOR TESTING RAISING zcx_art_bitmap,
 
-      render_scene1 FOR TESTING RAISING zcx_bmp_bitmap,
-      render_perspective1 FOR TESTING RAISING zcx_bmp_bitmap,
+      render_scene1 FOR TESTING RAISING zcx_art_bitmap,
+      render_perspective1 FOR TESTING RAISING zcx_art_bitmap,
       get_num_objects FOR TESTING,
 
       hit_bare_bones_objects1 FOR TESTING,
@@ -122,7 +122,7 @@ CLASS ucl_art_world IMPLEMENTATION.
 
     "Given
     _cut->viewplane->set_gamut_display( abap_false ).
-    _cut->set_bitmap( NEW zcl_bmp_bitmap(
+    _cut->set_bitmap( NEW zcl_art_bitmap(
       i_image_height_in_pixel = 1
       i_image_width_in_pixel = 1 ) ).
 
@@ -147,7 +147,7 @@ CLASS ucl_art_world IMPLEMENTATION.
     "Given
     _cut->viewplane->set_gamut_display( abap_true ).
     _cut->viewplane->set_gamma( '1.5' ).
-    _cut->set_bitmap( NEW zcl_bmp_bitmap(
+    _cut->set_bitmap( NEW zcl_art_bitmap(
       i_image_height_in_pixel = 1
       i_image_width_in_pixel = 1 ) ).
 
@@ -171,7 +171,7 @@ CLASS ucl_art_world IMPLEMENTATION.
 
     "Given
     _cut->viewplane->set_gamut_display( abap_false ).
-    _cut->set_bitmap( NEW zcl_bmp_bitmap(
+    _cut->set_bitmap( NEW zcl_art_bitmap(
       i_image_height_in_pixel = 1
       i_image_width_in_pixel = 1 ) ).
 

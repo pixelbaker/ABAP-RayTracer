@@ -4,16 +4,9 @@
   <DATA>
    <GROUP_ID>pixelbaker.com</GROUP_ID>
    <ARTIFACT_ID>abap-raytracer</ARTIFACT_ID>
-   <VERSION>0.14.0</VERSION>
+   <VERSION>0.15.0</VERSION>
    <REPOSITORY_TYPE>abapGit</REPOSITORY_TYPE>
    <GIT_URL>https://github.com/pixelbaker/ABAP-RayTracer.git</GIT_URL>
-   <DEPENDENCIES>
-    <item>
-     <GROUP_ID>pixelbaker.com</GROUP_ID>
-     <ARTIFACT_ID>abap-bitmap</ARTIFACT_ID>
-     <GIT_URL>https://github.com/pixelbaker/ABAP-Bitmap.git</GIT_URL>
-    </item>
-   </DEPENDENCIES>
   </DATA>
  </asx:values>
 </asx:abap>
