@@ -14,7 +14,6 @@
    </VSEOCLASS>
    <DESCRIPTIONS>
     <SEOCOMPOTX>
-     <CLSNAME>ZCL_ART_CAMERA</CLSNAME>
      <CMPNAME>COMPUTE_UVW</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>This computes an orthornormal basis given the view point, lo</DESCRIPT>
